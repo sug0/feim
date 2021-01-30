@@ -16,14 +16,22 @@ impl Default for DecodeOptions {
 }
 
 pub trait Format {
-    const NAME: &'static str;
-    const MAGIC: &'static [u8];
+    /// Should return a format id, such as:
+    ///
+    /// - feim:ff
+    /// - feim:png
+    /// - feim:jpeg
+    fn id(&self) -> &'static str;
 
-    fn has_valid_magic(magic: &[u8]) -> bool {
-        if Self::MAGIC.len() != magic.len() {
+    /// Returns the magic string situated at the start of the image file.
+    fn magic(&self) -> &'static [u8] { b"farbfeld????????" }
+
+    /// Compares the format's magic string against another byte string.
+    fn is_valid_magic(&self, magic: &[u8]) -> bool {
+        if magic.len() < self.magic().len() {
             return false
         }
-        Self::MAGIC.iter()
+        self.magic().iter()
             .copied()
             .zip(magic.iter().copied())
             .all(|(m, n)| m == n || m == '?' as u8)
