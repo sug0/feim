@@ -1,3 +1,4 @@
+use std::default::Default;
 use std::io::{self, Write, BufReader, BufWriter};
 
 use feim::image::{
@@ -16,7 +17,7 @@ fn main() -> io::Result<()> {
     let stdout_lock = stdout.lock();
     let mut stdout_writer = BufWriter::new(stdout_lock);
 
-    let image: RawPixBuf<Nrgba64> = Farbfeld::decode(stdin_reader)?;
+    let image: RawPixBuf<Nrgba64> = Farbfeld::decode(stdin_reader, Default::default())?;
     write!(&mut stdout_writer, "{:#?}", image).unwrap_or(());
     Ok(())
 }
