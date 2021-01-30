@@ -24,7 +24,7 @@ pub trait Format {
     fn id(&self) -> &'static str;
 
     /// Returns the magic string situated at the start of the image file.
-    fn magic(&self) -> &'static [u8] { b"farbfeld????????" }
+    fn magic(&self) -> &'static [u8];
 
     /// Compares the format's magic string against another byte string.
     fn is_valid_magic(&self, magic: &[u8]) -> bool {
