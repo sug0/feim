@@ -1,3 +1,8 @@
+pub trait Color {
+    /// Return an alpha premultiplied color in RGBA 16 bits.
+    fn as_rgba(&self) -> (u32, u32, u32, u32);
+}
+
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Nrgba64 {
     pub r: u16,
