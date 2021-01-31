@@ -21,22 +21,24 @@ impl<T> RawPixBuf<T> {
         RawPixBuf { width, height, buf, _phantom }
     }
 
-    //fn into_raw_parts(self) -> (usize, usize, Box<[T]>) {
-    //    let buf = unsafe {
-    //        let ptr: *mut [T] = Box::into_raw(self.buf) as _;
-    //        Box::from_raw(ptr)
-    //    };
-    //    (self.width, self.height, buf)
-    //}
+    pub fn into_raw_parts(self) -> (usize, usize, Box<[T]>) {
+        let buf = unsafe {
+            let len = self.buf.len() / std::mem::size_of::<T>();
+            let ptr: *mut T = Box::into_raw(self.buf) as _;
+            Box::from_raw(std::slice::from_raw_parts_mut(ptr, len))
+        };
+        (self.width, self.height, buf)
+    }
 
-    //unsafe fn from_raw_parts(width: usize, height: usize, buf: Box<[T]>) -> Self {
-    //    let _phantom = PhantomData;
-    //    let buf = unsafe {
-    //        let ptr: *mut [u8] = Box::into_raw(buf) as _;
-    //        Box::from_raw(ptr)
-    //    };
-    //    RawPixBuf { width, height, buf, _phantom }
-    //}
+    pub unsafe fn from_raw_parts(width: usize, height: usize, buf: Box<[T]>) -> Self {
+        let _phantom = PhantomData;
+        let buf = {
+            let len = buf.len() * std::mem::size_of::<T>();
+            let ptr: *mut u8 = Box::into_raw(buf) as _;
+            Box::from_raw(std::slice::from_raw_parts_mut(ptr, len))
+        };
+        RawPixBuf { width, height, buf, _phantom }
+    }
 }
 
 impl<T> AsRef<[u8]> for RawPixBuf<T> {
