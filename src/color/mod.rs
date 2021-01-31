@@ -15,6 +15,21 @@ pub struct Nrgba {
 }
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+pub struct Rgb {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+pub struct Cmyk {
+    pub c: u8,
+    pub m: u8,
+    pub y: u8,
+    pub k: u8,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Gray {
     pub y: u8,
 }
