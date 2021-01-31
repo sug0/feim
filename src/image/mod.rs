@@ -39,8 +39,11 @@ pub trait Format {
     }
 }
 
-pub trait Codec<B: PixelBuffer>: Format {
+pub trait Encode<B: PixelBuffer> {
     fn encode<W: Write>(&self, w: W, buf: &B) -> io::Result<()>;
+}
+
+pub trait Decode<B: PixelBuffer> {
     fn decode<R: Read>(r: R, opt: DecodeOptions) -> io::Result<B>;
 }
 

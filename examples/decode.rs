@@ -1,7 +1,7 @@
 use std::io::{self, Write, BufReader, BufWriter};
 
 use feim::image::{
-    Codec,
+    Decode,
     Format,
     DecodeOptions,
     farbfeld::Farbfeld,
