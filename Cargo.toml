@@ -1,13 +1,15 @@
 [package]
 name = "feim"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Tiago Carvalho <sugoiuguu@tfwno.gf>"]
 edition = "2018"
 
 [features]
 default = ["fmt-farbfeld"]
+fmt-png = ["png"]
 fmt-jpeg = ["jpeg-decoder"]
 fmt-farbfeld = []
 
 [dependencies]
 jpeg-decoder = { version = "0.1", optional = true }
+png = { version = "0.16", optional = true }
