@@ -47,7 +47,7 @@ pub trait Decode<B: PixelBuffer> {
     fn decode<R: Read>(r: R, opt: DecodeOptions) -> io::Result<B>;
 }
 
-//trait Image: PixelBuffer {
-//    fn set ???
-//    fn at ???
+//pub trait Image: PixelBuffer {
+//    fn set<C: Color>(&mut self, x: usize, y: usize, color: C);
+//    fn get<C: Color>(&self, x: usize, y: usize) -> C;
 //}
