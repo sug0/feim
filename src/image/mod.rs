@@ -1,3 +1,4 @@
+#[cfg(feature = "fmt-farbfeld")]
 pub mod farbfeld;
 
 use std::io::{self, Read, Write};
