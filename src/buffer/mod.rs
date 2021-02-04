@@ -1,12 +1,7 @@
 use std::marker::PhantomData;
 
-use crate::image::Image;
 use crate::color::{Color, Nrgba};
-
-pub trait PixelBuffer: AsRef<[u8]> + AsMut<[u8]> {
-    fn width(&self) -> usize;
-    fn height(&self) -> usize;
-}
+use crate::image::{Image, ImageMut, Dimensions};
 
 #[derive(Clone, Debug)]
 pub struct RawPixBuf<T> {
@@ -14,16 +9,6 @@ pub struct RawPixBuf<T> {
     height: usize,
     buf: Box<[u8]>,
     _phantom: PhantomData<T>,
-}
-
-impl<P: PixelBuffer> PixelBuffer for &mut P {
-    fn width(&self) -> usize {
-        (**self).width()
-    }
-
-    fn height(&self) -> usize {
-        (**self).height()
-    }
 }
 
 impl<T> RawPixBuf<T> {
@@ -82,7 +67,7 @@ impl<T> AsMut<[u8]> for RawPixBuf<T> {
     }
 }
 
-impl<T> PixelBuffer for RawPixBuf<T> {
+impl<T> Dimensions for RawPixBuf<T> {
     fn width(&self) -> usize {
         self.width
     }
@@ -95,16 +80,18 @@ impl<T> PixelBuffer for RawPixBuf<T> {
 impl Image for RawPixBuf<Nrgba> {
     type Pixel = Nrgba;
 
+    fn color_get(&self, x: usize, y: usize) -> Self::Pixel {
+        let width = self.width();
+        let buffer = self.as_typed();
+        buffer[y*width + x]
+    }
+}
+
+impl ImageMut for RawPixBuf<Nrgba> {
     fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C) {
         let width = self.width();
         let buffer = self.as_typed_mut();
         let color: Nrgba = (&color).into();
         buffer[y*width + x] = color;
-    }
-
-    fn color_get(&self, x: usize, y: usize) -> Self::Pixel {
-        let width = self.width();
-        let buffer = self.as_typed();
-        buffer[y*width + x]
     }
 }

@@ -1,6 +1,25 @@
-use std::io::{self, BufRead};
+use std::io::{self, Read, Write, BufRead};
+use std::default::Default;
 
 use crate::image::Format;
+
+pub trait Encode<B> {
+    fn encode<W: Write>(&self, w: W, buf: &B) -> io::Result<()>;
+}
+
+pub trait Decode<B> {
+    fn decode<R: Read>(r: R, opt: DecodeOptions) -> io::Result<B>;
+}
+
+pub struct DecodeOptions {
+    pub check_header: bool,
+}
+
+impl Default for DecodeOptions {
+    fn default() -> Self {
+        Self { check_header: true }
+    }
+}
 
 pub fn try_format<R: BufRead>(mut r: R, formats: &[&dyn Format]) -> io::Result<usize> {
     let buf = r.fill_buf()?;

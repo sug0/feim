@@ -1,9 +1,7 @@
 use std::io::{self, BufWriter};
 
-use feim::image::{
-    Encode,
-    farbfeld::Farbfeld,
-};
+use feim::image::farbfeld::Farbfeld;
+use feim::serialize::Encode;
 use feim::buffer::RawPixBuf;
 use feim::color::Nrgba;
 
@@ -17,7 +15,7 @@ fn main() -> io::Result<()> {
     let mut image = RawPixBuf::new(DIM, DIM);
     draw_image(image.as_typed_mut());
 
-    Farbfeld.encode(&mut stdout_writer, &&mut image)
+    Farbfeld.encode(&mut stdout_writer, &&image)
 }
 
 fn draw_image(buf: &mut [Nrgba]) {

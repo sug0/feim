@@ -1,12 +1,14 @@
 use std::io::{self, Write, BufReader, BufWriter};
 
 use feim::image::{
-    Decode,
     Format,
-    DecodeOptions,
     farbfeld::Farbfeld,
 };
-use feim::serialize::try_format;
+use feim::serialize::{
+    Decode,
+    try_format,
+    DecodeOptions,
+};
 use feim::buffer::RawPixBuf;
 use feim::color::Nrgba64;
 

@@ -1,21 +1,7 @@
 #[cfg(feature = "fmt-farbfeld")]
 pub mod farbfeld;
 
-use std::io::{self, Read, Write};
-use std::default::Default;
-
 use crate::color::Color;
-use crate::buffer::PixelBuffer;
-
-pub struct DecodeOptions {
-    pub check_header: bool,
-}
-
-impl Default for DecodeOptions {
-    fn default() -> Self {
-        Self { check_header: true }
-    }
-}
 
 pub trait Format {
     /// Should return a format id, such as:
@@ -40,17 +26,27 @@ pub trait Format {
     }
 }
 
-pub trait Encode<B: PixelBuffer> {
-    fn encode<W: Write>(&self, w: W, buf: &B) -> io::Result<()>;
+pub trait Dimensions {
+    fn width(&self) -> usize;
+    fn height(&self) -> usize;
 }
 
-pub trait Decode<B: PixelBuffer> {
-    fn decode<R: Read>(r: R, opt: DecodeOptions) -> io::Result<B>;
+impl<I: Dimensions> Dimensions for &I {
+    fn width(&self) -> usize {
+        (**self).width()
+    }
+
+    fn height(&self) -> usize {
+        (**self).height()
+    }
 }
 
-pub trait Image: PixelBuffer {
+pub trait Image: Dimensions {
     type Pixel: Color;
 
-    fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C);
     fn color_get(&self, x: usize, y: usize) -> Self::Pixel;
+}
+
+pub trait ImageMut: Dimensions {
+    fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C);
 }
