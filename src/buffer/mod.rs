@@ -1,5 +1,8 @@
 use std::marker::PhantomData;
 
+use crate::image::Image;
+use crate::color::{Color, Nrgba};
+
 pub trait PixelBuffer: AsRef<[u8]> + AsMut<[u8]> {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
@@ -39,6 +42,22 @@ impl<T> RawPixBuf<T> {
         };
         RawPixBuf { width, height, buf, _phantom }
     }
+
+    pub fn as_typed(&self) -> &[T] {
+        unsafe {
+            let len = self.buf.len() / std::mem::size_of::<T>();
+            let ptr: *mut T = self.buf.as_ptr() as _;
+            std::slice::from_raw_parts(ptr, len)
+        }
+    }
+
+    pub fn as_typed_mut(&mut self) -> &mut [T] {
+        unsafe {
+            let len = self.buf.len() / std::mem::size_of::<T>();
+            let ptr: *mut T = self.buf.as_mut_ptr() as _;
+            std::slice::from_raw_parts_mut(ptr, len)
+        }
+    }
 }
 
 impl<T> AsRef<[u8]> for RawPixBuf<T> {
@@ -60,5 +79,22 @@ impl<T> PixelBuffer for RawPixBuf<T> {
 
     fn height(&self) -> usize {
         self.height
+    }
+}
+
+impl Image for RawPixBuf<Nrgba> {
+    type Pixel = Nrgba;
+
+    fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C) {
+        let width = self.width();
+        let buffer = self.as_typed_mut();
+        let color: Nrgba = (&color).into();
+        buffer[y*width + x] = color;
+    }
+
+    fn color_get(&self, x: usize, y: usize) -> Self::Pixel {
+        let width = self.width();
+        let buffer = self.as_typed();
+        buffer[y*width + x]
     }
 }
