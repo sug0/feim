@@ -24,7 +24,7 @@ impl Color for Nrgba64 {
 }
 
 impl<C: Color> From<&C> for Nrgba64 {
-    fn from(c: &C) -> Nrgba {
+    fn from(c: &C) -> Nrgba64 {
         let (r, g, b, a) = c.as_rgba();
         Nrgba64 {
             r: (r & 0xffff) as u16,
