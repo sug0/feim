@@ -16,6 +16,16 @@ pub struct RawPixBuf<T> {
     _phantom: PhantomData<T>,
 }
 
+impl<P: PixelBuffer> PixelBuffer for &mut P {
+    fn width(&self) -> usize {
+        (**self).width()
+    }
+
+    fn height(&self) -> usize {
+        (**self).height()
+    }
+}
+
 impl<T> RawPixBuf<T> {
     pub fn new(width: usize, height: usize) -> Self {
         let _phantom = PhantomData;
