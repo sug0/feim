@@ -34,3 +34,13 @@ impl<C: Color> From<&C> for Nrgba64 {
         }
     }
 }
+
+impl From<Nrgba64> for u64 {
+    fn from(c: Nrgba64) -> u64 {
+        let r = (c.r as u64) << (16 * 0);
+        let g = (c.g as u64) << (16 * 1);
+        let b = (c.b as u64) << (16 * 2);
+        let a = (c.a as u64) << (16 * 3);
+        r | g | b | a
+    }
+}
