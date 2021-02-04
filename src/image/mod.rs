@@ -4,6 +4,7 @@ pub mod farbfeld;
 use std::io::{self, Read, Write};
 use std::default::Default;
 
+use crate::color::Color;
 use crate::buffer::PixelBuffer;
 
 pub struct DecodeOptions {
@@ -47,7 +48,7 @@ pub trait Decode<B: PixelBuffer> {
     fn decode<R: Read>(r: R, opt: DecodeOptions) -> io::Result<B>;
 }
 
-//pub trait Image: PixelBuffer {
-//    fn set<C: Color>(&mut self, x: usize, y: usize, color: C);
-//    fn get<C: Color>(&self, x: usize, y: usize) -> C;
-//}
+pub trait Image: PixelBuffer {
+    fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C);
+    fn color_get<C: Color>(&self, x: usize, y: usize) -> C;
+}
