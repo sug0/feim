@@ -49,6 +49,8 @@ pub trait Decode<B: PixelBuffer> {
 }
 
 pub trait Image: PixelBuffer {
+    type Pixel: Color;
+
     fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C);
-    fn color_get<C: Color>(&self, x: usize, y: usize) -> C;
+    fn color_get(&self, x: usize, y: usize) -> Self::Pixel;
 }
