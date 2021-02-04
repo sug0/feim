@@ -1,7 +1,7 @@
 use std::io::{self, Read, Write};
 
+use super::{Image, Format, Encode, Decode, DecodeOptions};
 use crate::buffer::{PixelBuffer, RawPixBuf};
-use super::{Format, Encode, Decode, DecodeOptions};
 use crate::color::Nrgba64;
 
 pub struct Farbfeld;
@@ -20,6 +20,30 @@ impl Encode<RawPixBuf<Nrgba64>> for Farbfeld {
         w.write_all(&width[..])?;
         w.write_all(&height[..])?;
         w.write_all(buf.as_ref())?;
+        Ok(())
+    }
+}
+
+impl<I: Image> Encode<&mut I> for Farbfeld {
+    fn encode<W: Write>(&self, mut w: W, buf: &&mut I) -> io::Result<()> {
+        let (width, height) = (buf.width(), buf.height());
+        {
+            let width_ = (width as u32).to_be_bytes();
+            let height_ = (height as u32).to_be_bytes();
+            let magic = Farbfeld.magic();
+            w.write_all(&magic[..8])?;
+            w.write_all(&width_[..])?;
+            w.write_all(&height_[..])?;
+        }
+        for y in 0..height {
+            for x in 0..width {
+                let c = (**buf).color_get(x, y);
+                let c: Nrgba64 = (&c).into();
+                let c: u64 = c.into();
+                let c = c.to_ne_bytes();
+                w.write_all(&c[..])?;
+            }
+        }
         Ok(())
     }
 }
