@@ -4,7 +4,7 @@ use std::default::Default;
 use crate::image::Format;
 
 pub trait Encode<B> {
-    fn encode<W: Write>(&self, w: W, buf: &B) -> io::Result<()>;
+    fn encode<W: Write>(w: W, buf: &B) -> io::Result<()>;
 }
 
 pub trait Decode<B> {

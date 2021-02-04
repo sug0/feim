@@ -13,7 +13,7 @@ impl Format for Farbfeld {
 }
 
 impl Encode<RawPixBuf<Nrgba64>> for Farbfeld {
-    fn encode<W: Write>(&self, mut w: W, buf: &RawPixBuf<Nrgba64>) -> io::Result<()> {
+    fn encode<W: Write>(mut w: W, buf: &RawPixBuf<Nrgba64>) -> io::Result<()> {
         let width = (buf.width() as u32).to_be_bytes();
         let height = (buf.height() as u32).to_be_bytes();
         let magic = Farbfeld.magic();
@@ -26,7 +26,7 @@ impl Encode<RawPixBuf<Nrgba64>> for Farbfeld {
 }
 
 impl<I: Image + Dimensions> Encode<&I> for Farbfeld {
-    fn encode<W: Write>(&self, mut w: W, buf: &&I) -> io::Result<()> {
+    fn encode<W: Write>(mut w: W, buf: &&I) -> io::Result<()> {
         let (width, height) = (buf.width(), buf.height());
         {
             let width_ = (width as u32).to_be_bytes();
