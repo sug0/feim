@@ -41,12 +41,12 @@ impl<I: Dimensions> Dimensions for &I {
     }
 }
 
-pub trait Image: Dimensions {
+pub trait Image {
     type Pixel: Color;
 
     fn color_get(&self, x: usize, y: usize) -> Self::Pixel;
 }
 
-pub trait ImageMut: Dimensions {
+pub trait ImageMut {
     fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C);
 }
