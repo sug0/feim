@@ -33,3 +33,9 @@ impl From<Gray> for u8 {
         c.y
     }
 }
+
+impl From<u8> for Gray {
+    fn from(y: u8) -> Gray {
+        Gray { y }
+    }
+}

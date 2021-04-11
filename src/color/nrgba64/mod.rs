@@ -45,3 +45,13 @@ impl From<Nrgba64> for u64 {
         r | g | b | a
     }
 }
+
+impl From<u64> for Nrgba64 {
+    fn from(c: u64) -> Nrgba64 {
+        let r = (c & 0xffff) as u16;
+        let g = ((c & 0xffff0000) >> 16) as u16;
+        let b = ((c & 0xffff00000000) >> 32) as u16;
+        let a = ((c & 0xffff000000000000) >> 48) as u16;
+        Nrgba64 { r, g, b, a }
+    }
+}

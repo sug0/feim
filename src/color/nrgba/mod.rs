@@ -46,3 +46,13 @@ impl From<Nrgba> for u32 {
         r | g | b | a
     }
 }
+
+impl From<u32> for Nrgba {
+    fn from(c: u32) -> Nrgba {
+        let r = (c & 0xff) as u8;
+        let g = ((c & 0xff00) >> 8) as u8;
+        let b = ((c & 0xff0000) >> 16) as u8;
+        let a = ((c & 0xff000000) >> 24) as u8;
+        Nrgba { r, g, b, a }
+    }
+}

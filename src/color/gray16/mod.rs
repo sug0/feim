@@ -32,3 +32,9 @@ impl From<Gray16> for u16 {
         c.y
     }
 }
+
+impl From<u16> for Gray16 {
+    fn from(y: u16) -> Gray16 {
+        Gray16 { y }
+    }
+}
