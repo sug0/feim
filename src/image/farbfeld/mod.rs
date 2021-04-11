@@ -28,7 +28,7 @@ impl Encode<RawPixBuf<Nrgba64>> for Farbfeld {
 
 impl<I: Image + Dimensions> Encode<I> for Farbfeld {
     default fn encode<W: Write>(mut w: W, buf: &I) -> io::Result<()> {
-        let (width, height) = (buf.width(), buf.height());
+        let (width, height) = buf.dimensions();
         {
             let width_ = (width as u32).to_be_bytes();
             let height_ = (height as u32).to_be_bytes();

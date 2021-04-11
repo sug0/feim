@@ -33,6 +33,12 @@ pub trait Format {
 pub trait Dimensions {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
+
+    fn dimensions(&self) -> (usize, usize) {
+        let w = self.width();
+        let h = self.height();
+        (w, h)
+    }
 }
 
 pub trait Image {
