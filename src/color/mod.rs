@@ -1,3 +1,5 @@
+pub mod convert;
+
 mod rgb;
 mod cmyk;
 mod nrgba;

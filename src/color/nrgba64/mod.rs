@@ -1,3 +1,4 @@
+use super::convert::ConvertFrom;
 use super::Color;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
@@ -23,8 +24,8 @@ impl Color for Nrgba64 {
     }
 }
 
-impl<C: Color> From<&C> for Nrgba64 {
-    fn from(c: &C) -> Nrgba64 {
+impl<C: Color> ConvertFrom<C> for Nrgba64 {
+    default fn convert_from(c: C) -> Nrgba64 {
         let (r, g, b, a) = c.as_rgba();
         Nrgba64 {
             r: (r & 0xffff) as u16,

@@ -15,7 +15,7 @@ fn main() -> io::Result<()> {
     let mut image = RawPixBuf::new(DIM, DIM);
     draw_image(image.as_typed_mut());
 
-    Farbfeld::encode(&mut stdout_writer, &&image)
+    Farbfeld::encode(&mut stdout_writer, &image)
 }
 
 fn draw_image(buf: &mut [Nrgba]) {
@@ -40,6 +40,7 @@ fn draw_image(buf: &mut [Nrgba]) {
     }
 }
 
+#[inline]
 const fn lerp_nrgba(v0: Nrgba, v1: Nrgba, t: u8) -> Nrgba {
     let r = lerp(v0.r, v1.r, t);
     let g = lerp(v0.g, v1.g, t);

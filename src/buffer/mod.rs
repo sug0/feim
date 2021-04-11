@@ -1,4 +1,5 @@
 use crate::color::{Color, Nrgba};
+use crate::color::convert::ConvertInto;
 use crate::image::{Image, ImageMut, Dimensions};
 
 #[derive(Clone, Debug)]
@@ -73,7 +74,7 @@ impl ImageMut for RawPixBuf<Nrgba> {
     fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C) {
         let width = self.width();
         let buffer = self.as_typed_mut();
-        let color: Nrgba = (&color).into();
+        let color: Nrgba = color.convert_into();
         buffer[y*width + x] = color;
     }
 }
