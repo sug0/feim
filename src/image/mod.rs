@@ -1,6 +1,7 @@
 #[cfg(feature = "fmt-farbfeld")]
 pub mod farbfeld;
 
+use crate::color::convert::ConvertInto;
 use crate::color::Color;
 
 pub trait Format {
@@ -48,5 +49,9 @@ pub trait Image {
 }
 
 pub trait ImageMut {
-    fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C);
+    type Pixel: Color;
+
+    fn color_set<C>(&mut self, x: usize, y: usize, color: C)
+    where
+        C: ConvertInto<Self::Pixel>;
 }

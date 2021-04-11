@@ -1,4 +1,4 @@
-use crate::color::{Color, Nrgba};
+use crate::color::Color;
 use crate::color::convert::ConvertInto;
 use crate::image::{Image, ImageMut, Dimensions};
 
@@ -60,21 +60,26 @@ impl<T> Dimensions for RawPixBuf<T> {
     }
 }
 
-impl Image for RawPixBuf<Nrgba> {
-    type Pixel = Nrgba;
+impl<C: Copy + Color> Image for RawPixBuf<C> {
+    type Pixel = C;
 
-    fn color_get(&self, x: usize, y: usize) -> Self::Pixel {
+    default fn color_get(&self, x: usize, y: usize) -> C {
         let width = self.width();
         let buffer = self.as_typed();
         buffer[y*width + x]
     }
 }
 
-impl ImageMut for RawPixBuf<Nrgba> {
-    fn color_set<C: Color>(&mut self, x: usize, y: usize, color: C) {
+impl<C: Color> ImageMut for RawPixBuf<C> {
+    type Pixel = C;
+
+    default fn color_set<P>(&mut self, x: usize, y: usize, color: P)
+    where
+        P: ConvertInto<C>,
+    {
         let width = self.width();
         let buffer = self.as_typed_mut();
-        let color: Nrgba = color.convert_into();
+        let color: C = color.convert_into();
         buffer[y*width + x] = color;
     }
 }
