@@ -15,7 +15,7 @@ fn main() -> io::Result<()> {
     let mut image = RawPixBuf::new(DIM, DIM);
     draw_image(image.as_typed_mut());
 
-    Farbfeld::encode(&mut stdout_writer, &image)
+    <Farbfeld as Encode<RawPixBuf<Nrgba>>>::encode(&mut stdout_writer, &image)
 }
 
 fn draw_image(buf: &mut [Nrgba]) {
