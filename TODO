@@ -1,3 +1,6 @@
+* disable all codecs by default
+    + enabled with feature flags as
+      needed by users
 * jpeg encoding
     + probably switch to mozjpeg
 * png encoding/decoding
