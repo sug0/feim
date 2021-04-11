@@ -1,1 +1,3 @@
-research https://stackoverflow.com/questions/64955738/generic-implementation-depending-on-traits
+* jpeg encoding
+    + probably switch to mozjpeg
+* png encoding/decoding
