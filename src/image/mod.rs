@@ -1,6 +1,9 @@
 #[cfg(feature = "fmt-farbfeld")]
 pub mod farbfeld;
 
+#[cfg(feature = "fmt-jpeg")]
+pub mod jpeg;
+
 use crate::color::convert::ConvertInto;
 use crate::color::Color;
 
@@ -32,16 +35,6 @@ pub trait Dimensions {
     fn height(&self) -> usize;
 }
 
-impl<I: Dimensions> Dimensions for &I {
-    fn width(&self) -> usize {
-        (**self).width()
-    }
-
-    fn height(&self) -> usize {
-        (**self).height()
-    }
-}
-
 pub trait Image {
     type Pixel: Color;
 
@@ -53,5 +46,5 @@ pub trait ImageMut {
 
     fn color_set<C>(&mut self, x: usize, y: usize, color: C)
     where
-        C: ConvertInto<Self::Pixel>;
+        C: ConvertInto<Self::Pixel> + Color;
 }

@@ -21,6 +21,20 @@ impl<T> RawPixBuf<T> {
         RawPixBuf { width, height, buf }
     }
 
+    pub fn from_vec(width: usize, height: usize, buf: Vec<u8>) -> Option<Self> {
+        let slice = buf.into_boxed_slice();
+        Self::from_slice(width, height, slice)
+    }
+
+    pub fn from_slice(width: usize, height: usize, buf: Box<[u8]>) -> Option<Self> {
+        let expected_len = width * height * std::mem::size_of::<T>();
+        if buf.len() != expected_len {
+            return None;
+        }
+        let buf = unsafe { std::mem::transmute(buf) };
+        Some(RawPixBuf { width, height, buf })
+    }
+
     pub fn as_typed(&self) -> &[T] {
         self.buf.as_ref()
     }

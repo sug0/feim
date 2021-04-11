@@ -2,6 +2,7 @@ use std::io::{self, Write, BufReader, BufWriter};
 
 use feim::image::{
     Format,
+    jpeg::Jpeg,
     farbfeld::Farbfeld,
 };
 use feim::serialize::{
@@ -11,8 +12,6 @@ use feim::serialize::{
 };
 use feim::buffer::RawPixBuf;
 use feim::color::Nrgba64;
-
-struct Dummy;
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -25,7 +24,7 @@ fn main() -> io::Result<()> {
 
     let formats: [&dyn Format; 2] = [
         &Farbfeld,
-        &Dummy,
+        &Jpeg,
         // ...
     ];
     let opts = DecodeOptions {
@@ -38,13 +37,12 @@ fn main() -> io::Result<()> {
             write!(&mut stdout_writer, "{:#?}", image).unwrap_or(());
             Ok(())
         },
+        Ok(1) => {
+            let image = Jpeg::decode(stdin_reader, opts)?;
+            write!(&mut stdout_writer, "{:#?}", image).unwrap_or(());
+            Ok(())
+        },
         Ok(_) => unreachable!(),
         Err(e) => Err(e),
     }
-}
-
-impl Format for Dummy {
-    fn id(&self) -> &'static str { "" }
-
-    fn magic(&self) -> &'static [u8] { b"xxxxxxxx" }
 }
