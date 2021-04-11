@@ -2,6 +2,18 @@ use crate::color::Color;
 use crate::color::convert::ConvertInto;
 use crate::image::{Image, ImageMut, Dimensions};
 
+pub trait AsTyped {
+    type Pixel: Color;
+
+    fn as_typed(&self) -> &[Self::Pixel];
+}
+
+pub trait AsTypedMut {
+    type Pixel: Color;
+
+    fn as_typed_mut(&mut self) -> &mut [Self::Pixel];
+}
+
 #[derive(Clone, Debug)]
 pub struct RawPixBuf<T> {
     width: usize,
@@ -34,12 +46,20 @@ impl<T> RawPixBuf<T> {
         let buf = unsafe { std::mem::transmute(buf) };
         Some(RawPixBuf { width, height, buf })
     }
+}
 
-    pub fn as_typed(&self) -> &[T] {
+impl<C: Color> AsTyped for RawPixBuf<C> {
+    type Pixel = C;
+
+    fn as_typed(&self) -> &[C] {
         self.buf.as_ref()
     }
+}
 
-    pub fn as_typed_mut(&mut self) -> &mut [T] {
+impl<C: Color> AsTypedMut for RawPixBuf<C> {
+    type Pixel = C;
+
+    fn as_typed_mut(&mut self) -> &mut [C] {
         self.buf.as_mut()
     }
 }

@@ -1,8 +1,8 @@
 use std::io::{self, BufWriter};
 
+use feim::buffer::{RawPixBuf, AsTypedMut};
 use feim::image::farbfeld::Farbfeld;
 use feim::serialize::Encode;
-use feim::buffer::RawPixBuf;
 use feim::color::Nrgba;
 
 const DIM: usize = 500;
