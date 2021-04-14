@@ -44,35 +44,35 @@ fn convolve(im: &RawPixBuf<Nrgba64>, x: usize, y: usize) -> Nrgba64 {
         [0.0625, 0.125, 0.0625],
     ];
 
-    let mut accum = Nrgba64 { r: 0, g: 0, b: 0, a: 0xffff };
+    let mut accum = (0.0, 0.0, 0.0);
 
     for ky in -1isize..2 {
         for kx in -1isize..2 {
             let mult = KERN[(kx + 1) as usize][(ky + 1) as usize];
             let x = (x as isize + kx) as usize;
             let y = (y as isize + ky) as usize;
-            let pix = get_clamped(im, x, y);
-            accum.r += (pix.r as f32 * mult) as u16;
-            accum.g += (pix.g as f32 * mult) as u16;
-            accum.b += (pix.b as f32 * mult) as u16;
+            let (r, g, b) = get_clamped(im, x, y);
+            accum.0 = r.mul_add(mult, accum.0);
+            accum.1 = g.mul_add(mult, accum.1);
+            accum.2 = b.mul_add(mult, accum.2);
         }
     }
 
-    accum
+    Nrgba64 {
+        r: accum.0 as u16,
+        g: accum.1 as u16,
+        b: accum.2 as u16,
+        a: 0xffff,
+    }
 }
 
-fn get_clamped(im: &RawPixBuf<Nrgba64>, mut x: usize, mut y: usize) -> Nrgba64 {
-    const CLAMP: u64 = 0x0000_ffff_ffff_ffff;
-    let mut clamp = u64::MAX;
-
+fn get_clamped(im: &RawPixBuf<Nrgba64>, mut x: usize, mut y: usize) -> (f32, f32, f32) {
     if x >= im.width() {
-        clamp = CLAMP;
         x = im.width() - 1;
     }
     if y >= im.height() {
-        clamp = CLAMP;
         y = im.height() - 1;
     }
-
-    Nrgba64::from(u64::from(im.as_typed()[im.width()*y + x]) & clamp)
+    let c = im.as_typed()[im.width()*y + x];
+    (c.r as f32, c.g as f32, c.b as f32)
 }
