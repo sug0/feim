@@ -46,8 +46,8 @@ fn convolve(im: &RawPixBuf<Nrgba64>, x: usize, y: usize) -> Nrgba64 {
 
     let mut accum = (0.0, 0.0, 0.0);
 
-    for ky in -1isize..2 {
-        for kx in -1isize..2 {
+    for ky in -1..2 {
+        for kx in -1..2 {
             let x = x as isize + kx;
             let y = y as isize + ky;
             let (r, g, b) = get_clamped(im, x, y);
