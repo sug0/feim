@@ -1,6 +1,8 @@
 * disable all codecs by default
     + enabled with feature flags as
       needed by users
+    + move each example to a separate crate,
+      and enable feature flags on its Cargo.toml
 * jpeg encoding
     + probably switch to mozjpeg
 * png encoding/decoding
