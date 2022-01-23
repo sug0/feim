@@ -6,3 +6,5 @@
 * jpeg encoding
     + probably switch to mozjpeg
 * png encoding/decoding
+* generic image impl, with enum containing all enabled formats
+    + create feature flag for it
