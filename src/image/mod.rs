@@ -7,6 +7,16 @@ pub mod jpeg;
 use crate::color::convert::ConvertInto;
 use crate::color::Color;
 
+#[macro_export]
+macro_rules! impl_format {
+    (name: $name:ty, id: $id:expr, magic: $magic:expr $(,)?) => {
+        impl $crate::image::Format for $name {
+            fn id(&self) -> &'static str { $id }
+            fn magic(&self) -> &'static [u8] { $magic }
+        }
+    }
+}
+
 pub trait Format {
     /// Should return a format id, such as:
     ///

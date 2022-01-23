@@ -4,6 +4,7 @@ use super::{Image, Dimensions, Format};
 use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
 use crate::color::Nrgba64;
+use crate::impl_format;
 use crate::serialize::{
     Encode,
     Decode,
@@ -14,9 +15,10 @@ use crate::serialize::{
 
 pub struct Farbfeld;
 
-impl Format for Farbfeld {
-    fn id(&self) -> &'static str { "feim:ff" }
-    fn magic(&self) -> &'static [u8] { b"farbfeld????????" }
+impl_format! {
+    name: Farbfeld,
+    id: "feim:ff",
+    magic: b"farbfeld????????",
 }
 
 impl EncodeOptions for Farbfeld {

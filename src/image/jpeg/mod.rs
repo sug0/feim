@@ -2,10 +2,11 @@ use std::io::{self, Read};
 
 use jpeg_decoder::{Decoder, PixelFormat, Error};
 
-use super::{Image, ImageMut, Dimensions, Format};
+use super::{Image, ImageMut, Dimensions};
 use crate::color::{Color, Gray, Gray16, Rgb, Cmyk};
 use crate::color::convert::ConvertInto;
 use crate::buffer::RawPixBuf;
+use crate::impl_format;
 use crate::serialize::{
     Decode,
     DecodeOptions,
@@ -13,9 +14,10 @@ use crate::serialize::{
 
 pub struct Jpeg;
 
-impl Format for Jpeg {
-    fn id(&self) -> &'static str { "feim:jpeg" }
-    fn magic(&self) -> &'static [u8] { b"\xff\xd8\xff" }
+impl_format! {
+    name: Jpeg,
+    id: "feim:jpeg",
+    magic: b"\xff\xd8\xff",
 }
 
 #[derive(Copy, Clone, Debug)]
