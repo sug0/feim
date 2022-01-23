@@ -7,7 +7,7 @@ use feim::color::Nrgba64;
 use feim::serialize::{
     Encode,
     Decode,
-    DecodeOptions,
+    GenericDecodeOptions,
 };
 
 fn main() -> io::Result<()> {
@@ -19,9 +19,9 @@ fn main() -> io::Result<()> {
     let stdout_lock = stdout.lock();
     let stdout_writer = BufWriter::new(stdout_lock);
 
-    let opts = DecodeOptions { check_header: false };
+    let opts = GenericDecodeOptions { check_header: false };
     let image: RawPixBuf<Nrgba64> = Farbfeld::decode(stdin_reader, opts)?;
-    Farbfeld::encode(stdout_writer, &blur(image))
+    Farbfeld::encode(stdout_writer, (), &blur(image))
 }
 
 fn blur(orig: RawPixBuf<Nrgba64>) -> RawPixBuf<Nrgba64> {

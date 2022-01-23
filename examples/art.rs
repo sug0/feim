@@ -18,7 +18,7 @@ fn main() -> io::Result<()> {
         image
     };
 
-    Farbfeld::encode(&mut stdout_writer, &image)
+    Farbfeld::encode(&mut stdout_writer, (), &image)
 }
 
 const fn shade(y: u16) -> Nrgba64 {

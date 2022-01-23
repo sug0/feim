@@ -8,7 +8,7 @@ use feim::image::{
 use feim::serialize::{
     Decode,
     try_format,
-    DecodeOptions,
+    GenericDecodeOptions,
 };
 use feim::buffer::RawPixBuf;
 use feim::color::Nrgba64;
@@ -27,18 +27,18 @@ fn main() -> io::Result<()> {
         &Jpeg,
         // ...
     ];
-    let opts = DecodeOptions {
-        check_header: false,
-    };
 
     match try_format(&mut stdin_reader, &formats[..]) {
         Ok(0) => {
+            let opts = GenericDecodeOptions {
+                check_header: false,
+            };
             let image: RawPixBuf<Nrgba64> = Farbfeld::decode(stdin_reader, opts)?;
             write!(&mut stdout_writer, "{:#?}", image).unwrap_or(());
             Ok(())
         },
         Ok(1) => {
-            let image = Jpeg::decode(stdin_reader, opts)?;
+            let image = Jpeg::decode(stdin_reader, ())?;
             write!(&mut stdout_writer, "{:#?}", image).unwrap_or(());
             Ok(())
         },
