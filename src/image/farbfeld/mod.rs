@@ -1,10 +1,16 @@
 use std::io::{self, Read, Write};
 
-use crate::serialize::{Encode, Decode, DecodeOptions};
 use super::{Image, Dimensions, Format};
 use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
 use crate::color::Nrgba64;
+use crate::serialize::{
+    Encode,
+    Decode,
+    EncodeOptions,
+    DecodeOptions,
+    GenericDecodeOptions,
+};
 
 pub struct Farbfeld;
 
@@ -13,8 +19,16 @@ impl Format for Farbfeld {
     fn magic(&self) -> &'static [u8] { b"farbfeld????????" }
 }
 
+impl EncodeOptions for Farbfeld {
+    type Options = ();
+}
+
+impl DecodeOptions for Farbfeld {
+    type Options = GenericDecodeOptions;
+}
+
 impl Encode<RawPixBuf<Nrgba64>> for Farbfeld {
-    fn encode<W: Write>(mut w: W, buf: &RawPixBuf<Nrgba64>) -> io::Result<()> {
+    fn encode<W: Write>(mut w: W, _opts: (), buf: &RawPixBuf<Nrgba64>) -> io::Result<()> {
         let width = (buf.width() as u32).to_be_bytes();
         let height = (buf.height() as u32).to_be_bytes();
         let magic = Farbfeld.magic();
@@ -27,7 +41,7 @@ impl Encode<RawPixBuf<Nrgba64>> for Farbfeld {
 }
 
 impl<I: Image + Dimensions> Encode<I> for Farbfeld {
-    default fn encode<W: Write>(mut w: W, buf: &I) -> io::Result<()> {
+    default fn encode<W: Write>(mut w: W, _opts: (), buf: &I) -> io::Result<()> {
         let (width, height) = buf.dimensions();
         {
             let width_ = (width as u32).to_be_bytes();
@@ -51,7 +65,7 @@ impl<I: Image + Dimensions> Encode<I> for Farbfeld {
 }
 
 impl Decode<RawPixBuf<Nrgba64>> for Farbfeld {
-    fn decode<R: Read>(mut r: R, opt: DecodeOptions) -> io::Result<RawPixBuf<Nrgba64>> {
+    fn decode<R: Read>(mut r: R, opt: Self::Options) -> io::Result<RawPixBuf<Nrgba64>> {
         let mut m: [u8; 16] = [0; 16];
         r.read_exact(&mut m[..])?;
         if opt.check_header && !Farbfeld.is_valid_magic(&m[..]) {

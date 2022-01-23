@@ -3,19 +3,27 @@ use std::default::Default;
 
 use crate::image::Format;
 
-pub trait Encode<B> {
-    fn encode<W: Write>(w: W, buf: &B) -> io::Result<()>;
+pub trait EncodeOptions {
+    type Options;
 }
 
-pub trait Decode<B> {
-    fn decode<R: Read>(r: R, opt: DecodeOptions) -> io::Result<B>;
+pub trait DecodeOptions {
+    type Options;
 }
 
-pub struct DecodeOptions {
+pub trait Encode<B>: EncodeOptions {
+    fn encode<W: Write>(w: W, opts: Self::Options, buf: &B) -> io::Result<()>;
+}
+
+pub trait Decode<B>: DecodeOptions {
+    fn decode<R: Read>(r: R, opt: Self::Options) -> io::Result<B>;
+}
+
+pub struct GenericDecodeOptions {
     pub check_header: bool,
 }
 
-impl Default for DecodeOptions {
+impl Default for GenericDecodeOptions {
     fn default() -> Self {
         Self { check_header: true }
     }

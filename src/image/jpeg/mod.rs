@@ -2,11 +2,14 @@ use std::io::{self, Read};
 
 use jpeg_decoder::{Decoder, PixelFormat, Error};
 
-use crate::serialize::{Decode, DecodeOptions};
 use super::{Image, ImageMut, Dimensions, Format};
 use crate::color::{Color, Gray, Gray16, Rgb, Cmyk};
 use crate::color::convert::ConvertInto;
 use crate::buffer::RawPixBuf;
+use crate::serialize::{
+    Decode,
+    DecodeOptions,
+};
 
 pub struct Jpeg;
 
@@ -91,8 +94,12 @@ impl ImageMut for JpegBuf {
     }
 }
 
+impl DecodeOptions for Jpeg {
+    type Options = ();
+}
+
 impl Decode<JpegBuf> for Jpeg {
-    fn decode<R: Read>(r: R, _opt: DecodeOptions) -> io::Result<JpegBuf> {
+    fn decode<R: Read>(r: R, _opt: ()) -> io::Result<JpegBuf> {
         let mut d = Decoder::new(r);
         d.read_info().map_err(|e| match e {
             Error::Io(e) => e,
