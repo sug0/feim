@@ -1,15 +1,25 @@
-use std::io::{self, Read};
+use std::io::{self, Read, Write};
 
 use jpeg_decoder::{Decoder, PixelFormat, Error};
+use jpeg_encoder::{Encoder, ColorType, EncodingError};
 
 use super::{Image, ImageMut, Dimensions};
-use crate::color::{Color, Gray, Gray16, Rgb, Cmyk};
 use crate::color::convert::ConvertInto;
 use crate::buffer::RawPixBuf;
 use crate::impl_format;
 use crate::serialize::{
+    Encode,
     Decode,
+    EncodeOptions,
     DecodeOptions,
+};
+use crate::color::{
+    Color,
+    Gray,
+    Gray16,
+    Nrgba,
+    Rgb,
+    Cmyk,
 };
 
 pub struct Jpeg;
@@ -96,6 +106,24 @@ impl ImageMut for JpegBuf {
     }
 }
 
+pub struct JpegEncodeOptions {
+    quality: u8,
+}
+
+impl JpegEncodeOptions {
+    pub fn new(quality: u8) -> Option<Self> {
+        if quality <= 100 {
+            Some(Self { quality })
+        } else {
+            None
+        }
+    }
+}
+
+impl EncodeOptions for Jpeg {
+    type Options = JpegEncodeOptions;
+}
+
 impl DecodeOptions for Jpeg {
     type Options = ();
 }
@@ -122,3 +150,36 @@ impl Decode<JpegBuf> for Jpeg {
         })
     }
 }
+
+macro_rules! impl_encode {
+    ($type:ty, $color:expr) => {
+        impl Encode<RawPixBuf<$type>> for Jpeg {
+            fn encode<W: Write>(
+                w: W,
+                JpegEncodeOptions { quality }: JpegEncodeOptions,
+                buf: &RawPixBuf<$type>,
+            ) -> io::Result<()> {
+                let width = (buf.width() & 0xffff) as u16;
+                let height = (buf.height() & 0xffff) as u16;
+                let encoder = Encoder::new(w, quality);
+                let color = $color;
+                let buf = buf.as_ref();
+                encoder
+                    .encode(buf, width, height, color)
+                    .map_err(|e| {
+                        match e {
+                            EncodingError::IoError(e) => e,
+                            other => io::Error::new(io::ErrorKind::Other, other),
+                        }
+                    })
+            }
+        }
+    }
+}
+
+impl_encode!(Rgb, ColorType::Rgb);
+impl_encode!(Gray, ColorType::Luma);
+impl_encode!(Cmyk, ColorType::Cmyk);
+impl_encode!(Nrgba, ColorType::Rgba);
+
+// TODO: default encode / decode for jpeg
