@@ -1,9 +1,9 @@
 use std::io::{self, BufWriter};
 
+use feim::image::jpeg::{Jpeg, JpegEncodeOptions};
 use feim::buffer::{RawPixBuf, AsTypedMut};
-use feim::image::farbfeld::Farbfeld;
 use feim::serialize::Encode;
-use feim::color::Nrgba64;
+use feim::color::Gray;
 
 const DIM: usize = 2000;
 
@@ -18,21 +18,22 @@ fn main() -> io::Result<()> {
         image
     };
 
-    Farbfeld::encode(&mut stdout_writer, (), &image)
+    let opts = JpegEncodeOptions::new(85).unwrap();
+    Jpeg::encode(&mut stdout_writer, opts, &image)
 }
 
-const fn shade(y: u16) -> Nrgba64 {
-    Nrgba64 { r: y, g: y, b: y, a: 0xffff }
+const fn shade(y: u8) -> Gray {
+    Gray { y }
 }
 
-fn draw_image(buf: &mut [Nrgba64]) {
+fn draw_image(buf: &mut [Gray]) {
     for y in 0..DIM {
         let yf = y as f32;
         for x in 0..DIM {
             let xf = x as f32;
-            let value = 65535.0 * (xf - std::f32::consts::PI*xf).sin();
+            let value = 255.0 * (xf - std::f32::consts::PI*xf).sin();
             let v = ((value as usize) << (x ^ !y)) ^ (value.cos().mul_add(yf, std::f32::consts::PI * xf.cos()) as usize);
-            buf[y*DIM + x] = shade((v & 0xffff) as u16);
+            buf[y*DIM + x] = shade((v & 0xff) as u8);
         }
     }
 }
