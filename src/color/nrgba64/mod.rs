@@ -2,6 +2,7 @@ use super::convert::ConvertFrom;
 use super::Color;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
+#[repr(C)]
 pub struct Nrgba64 {
     pub r: u16,
     pub g: u16,
