@@ -18,3 +18,12 @@ pub trait Color {
     /// Return an alpha premultiplied color in RGBA 16 bits.
     fn as_rgba(&self) -> (u32, u32, u32, u32);
 }
+
+/// Tag a pixel's channel value as big-endian.
+pub enum BigEndian {}
+
+/// Tag a pixel's channel value as little-endian.
+pub enum LittleEndian {}
+
+/// Tag a pixel's channel value as native-endian.
+pub enum NativeEndian {}
