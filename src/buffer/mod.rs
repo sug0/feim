@@ -33,18 +33,19 @@ impl<T> RawPixBuf<T> {
         RawPixBuf { width, height, buf }
     }
 
-    pub fn from_vec(width: usize, height: usize, buf: Vec<u8>) -> Option<Self> {
+    #[inline]
+    pub fn from_vec(width: usize, height: usize, buf: Vec<u8>) -> Result<Self, Vec<u8>> {
         let slice = buf.into_boxed_slice();
-        Self::from_slice(width, height, slice)
+        Self::from_slice(width, height, slice).map_err(Vec::from)
     }
 
-    pub fn from_slice(width: usize, height: usize, buf: Box<[u8]>) -> Option<Self> {
+    pub fn from_slice(width: usize, height: usize, buf: Box<[u8]>) -> Result<Self, Box<[u8]>> {
         let expected_len = width * height * std::mem::size_of::<T>();
         if buf.len() != expected_len {
-            return None;
+            return Err(buf);
         }
         let buf = unsafe { std::mem::transmute(buf) };
-        Some(RawPixBuf { width, height, buf })
+        Ok(RawPixBuf { width, height, buf })
     }
 }
 
