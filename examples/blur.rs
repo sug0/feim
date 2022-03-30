@@ -1,14 +1,16 @@
 use std::io::{self, BufReader, BufWriter};
 
 use feim::buffer::{RawPixBuf, AsTyped, AsTypedMut};
+use feim::color::{Nrgba64, BigEndian};
 use feim::image::farbfeld::Farbfeld;
 use feim::image::Dimensions;
-use feim::color::Nrgba64;
 use feim::serialize::{
     Encode,
     Decode,
     GenericDecodeOptions,
 };
+
+type Nrgba64Be = Nrgba64<BigEndian>;
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -20,11 +22,11 @@ fn main() -> io::Result<()> {
     let stdout_writer = BufWriter::new(stdout_lock);
 
     let opts = GenericDecodeOptions { check_header: false };
-    let image: RawPixBuf<Nrgba64> = Farbfeld::decode(stdin_reader, opts)?;
+    let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode(stdin_reader, opts)?;
     Farbfeld::encode(stdout_writer, (), &blur(image))
 }
 
-fn blur(orig: RawPixBuf<Nrgba64>) -> RawPixBuf<Nrgba64> {
+fn blur(orig: RawPixBuf<Nrgba64Be>) -> RawPixBuf<Nrgba64Be> {
     let mut img = orig.clone();
     let buf = img.as_typed_mut();
 
@@ -37,7 +39,7 @@ fn blur(orig: RawPixBuf<Nrgba64>) -> RawPixBuf<Nrgba64> {
     img
 }
 
-fn convolve(im: &RawPixBuf<Nrgba64>, x: usize, y: usize) -> Nrgba64 {
+fn convolve(im: &RawPixBuf<Nrgba64Be>, x: usize, y: usize) -> Nrgba64Be {
     static KERN: [[f32; 3]; 3] = [
         [0.0625, 0.125, 0.0625],
         [0.1250, 0.250, 0.1250],
@@ -58,15 +60,15 @@ fn convolve(im: &RawPixBuf<Nrgba64>, x: usize, y: usize) -> Nrgba64 {
         }
     }
 
-    Nrgba64 {
-        r: accum.0 as u16,
-        g: accum.1 as u16,
-        b: accum.2 as u16,
-        a: 0xffff,
-    }
+    Nrgba64Be::be(
+        accum.0 as u16,
+        accum.1 as u16,
+        accum.2 as u16,
+        0xffff,
+    )
 }
 
-fn get_clamped(im: &RawPixBuf<Nrgba64>, mut x: isize, mut y: isize) -> (f32, f32, f32) {
+fn get_clamped(im: &RawPixBuf<Nrgba64Be>, mut x: isize, mut y: isize) -> (f32, f32, f32) {
     let w = im.width() as isize;
     let h = im.height() as isize;
     if x < 0 {
@@ -84,5 +86,5 @@ fn get_clamped(im: &RawPixBuf<Nrgba64>, mut x: isize, mut y: isize) -> (f32, f32
     let x = x as usize;
     let y = y as usize;
     let c = im.as_typed()[im.width()*y + x];
-    (c.r as f32, c.g as f32, c.b as f32)
+    (c.r() as f32, c.g() as f32, c.b() as f32)
 }
