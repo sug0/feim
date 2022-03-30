@@ -100,6 +100,7 @@ impl<C: Color> ConvertFrom<C> for Nrgba64<NativeEndian> {
             g: (g & 0xffff) as u16,
             b: (b & 0xffff) as u16,
             a: (a & 0xffff) as u16,
+            _endianness: PhantomData,
         }
     }
 }
@@ -112,6 +113,7 @@ impl<C: Color> ConvertFrom<C> for Nrgba64<BigEndian> {
             g: ((g & 0xffff) as u16).to_be(),
             b: ((b & 0xffff) as u16).to_be(),
             a: ((a & 0xffff) as u16).to_be(),
+            _endianness: PhantomData,
         }
     }
 }
@@ -124,6 +126,7 @@ impl<C: Color> ConvertFrom<C> for Nrgba64<LittleEndian> {
             g: ((g & 0xffff) as u16).to_le(),
             b: ((b & 0xffff) as u16).to_le(),
             a: ((a & 0xffff) as u16).to_le(),
+            _endianness: PhantomData,
         }
     }
 }
