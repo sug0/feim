@@ -12,9 +12,48 @@ use super::{
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
 pub struct Gray16<E> {
-    pub y: u16,
-    // TODO: make this field private, and create `Gray16` constructor
-    pub _endianness: PhantomData<E>,
+    y: u16,
+    _endianness: PhantomData<E>,
+}
+
+// -------------------------------------------------------------------------- //
+
+impl Gray16<NativeEndian> {
+    pub fn ne(y: u16) -> Self {
+        Self { y, _endianness: PhantomData }
+    }
+
+    pub fn y(self) -> u16 {
+        self.y
+    }
+}
+
+impl Gray16<LittleEndian> {
+    pub fn le(y: u16) -> Self {
+        Self { y, _endianness: PhantomData }
+    }
+
+    pub fn y(self) -> u16 {
+        #[cfg(target_endian = "little")]
+        { self.y }
+
+        #[cfg(target_endian = "big")]
+        { self.y.to_be() }
+    }
+}
+
+impl Gray16<BigEndian> {
+    pub fn be(y: u16) -> Self {
+        Self { y, _endianness: PhantomData }
+    }
+
+    pub fn y(self) -> u16 {
+        #[cfg(target_endian = "little")]
+        { self.y.to_le() }
+
+        #[cfg(target_endian = "big")]
+        { self.y }
+    }
 }
 
 // -------------------------------------------------------------------------- //
