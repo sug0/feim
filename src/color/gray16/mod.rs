@@ -11,9 +11,9 @@ use super::{
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
 pub struct Gray16<E> {
+    pub y: u16,
     // TODO: make this field private, and create `Gray16` constructor
     pub _endianness: PhantomData<E>,
-    pub y: u16,
 }
 
 // -------------------------------------------------------------------------- //
