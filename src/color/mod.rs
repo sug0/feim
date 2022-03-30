@@ -21,6 +21,8 @@ pub trait Color {
     fn as_rgba(&self) -> (u32, u32, u32, u32);
 }
 
+// -------------------------------------------------------------------------- //
+
 /// Tag a pixel's channel value as big-endian.
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum BigEndian {}
@@ -32,3 +34,13 @@ pub enum LittleEndian {}
 /// Tag a pixel's channel value as native-endian.
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub enum NativeEndian {}
+
+// -------------------------------------------------------------------------- //
+
+pub(crate) trait Endianness {}
+
+impl Endianness for BigEndian {}
+
+impl Endianness for LittleEndian {}
+
+impl Endianness for NativeEndian {}
