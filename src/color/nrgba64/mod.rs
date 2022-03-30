@@ -12,12 +12,77 @@ use super::{
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
 pub struct Nrgba64<E> {
-    pub r: u16,
-    pub g: u16,
-    pub b: u16,
-    pub a: u16,
-    // TODO: make this field private, and create `Gray16` constructor
-    pub _endianness: PhantomData<E>,
+    r: u16,
+    g: u16,
+    b: u16,
+    a: u16,
+    _endianness: PhantomData<E>,
+}
+
+// -------------------------------------------------------------------------- //
+
+macro_rules! impl_constructor {
+    ($endianness:ident) => {
+        pub fn $endianness(r: u16, b: u16, g: u16, a: u16) -> Self {
+            Self { r, g, b, a, _endianness: PhantomData }
+        }
+    }
+}
+
+macro_rules! impl_component_fn_ne {
+    ($c:ident) => {
+        pub fn $c(self) -> u16 {
+            self.$c
+        }
+    }
+}
+
+macro_rules! impl_component_fn_le {
+    ($c:ident) => {
+        pub fn $c(self) -> u16 {
+            #[cfg(target_endian = "little")]
+            { self.$c }
+
+            #[cfg(target_endian = "big")]
+            { self.$c.to_be() }
+        }
+    }
+}
+
+macro_rules! impl_component_fn_be {
+    ($c:ident) => {
+        pub fn $c(self) -> u16 {
+            #[cfg(target_endian = "little")]
+            { self.$c.to_le() }
+
+            #[cfg(target_endian = "big")]
+            { self.$c }
+        }
+    }
+}
+
+impl Nrgba64<NativeEndian> {
+    impl_constructor!(ne);
+    impl_component_fn_ne!(r);
+    impl_component_fn_ne!(g);
+    impl_component_fn_ne!(b);
+    impl_component_fn_ne!(a);
+}
+
+impl Nrgba64<LittleEndian> {
+    impl_constructor!(le);
+    impl_component_fn_le!(r);
+    impl_component_fn_le!(g);
+    impl_component_fn_le!(b);
+    impl_component_fn_le!(a);
+}
+
+impl Nrgba64<BigEndian> {
+    impl_constructor!(be);
+    impl_component_fn_be!(r);
+    impl_component_fn_be!(g);
+    impl_component_fn_be!(b);
+    impl_component_fn_be!(a);
 }
 
 // -------------------------------------------------------------------------- //
