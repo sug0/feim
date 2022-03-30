@@ -1,6 +1,6 @@
 [package]
 name = "feim"
-version = "0.8.0"
+version = "0.9.0"
 authors = ["Tiago Carvalho <sugoiuguu@tfwno.gf>"]
 edition = "2018"
 
