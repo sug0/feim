@@ -11,7 +11,7 @@ use feim::serialize::{
     GenericDecodeOptions,
 };
 use feim::buffer::RawPixBuf;
-use feim::color::Nrgba64;
+use feim::color::{Nrgba64, BigEndian};
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -33,7 +33,7 @@ fn main() -> io::Result<()> {
             let opts = GenericDecodeOptions {
                 check_header: false,
             };
-            let image: RawPixBuf<Nrgba64> = Farbfeld::decode(stdin_reader, opts)?;
+            let image: RawPixBuf<Nrgba64<BigEndian>> = Farbfeld::decode(stdin_reader, opts)?;
             write!(&mut stdout_writer, "{:#?}", image).unwrap_or(());
             Ok(())
         },

@@ -1,11 +1,13 @@
 use std::io::{self, BufWriter};
 
 use feim::buffer::{RawPixBuf, AsTypedMut};
+use feim::color::{Nrgba64, BigEndian};
 use feim::image::farbfeld::Farbfeld;
 use feim::serialize::Encode;
-use feim::color::Nrgba64;
 
 const DIM: usize = 1000;
+
+type Nrgba64Be = Nrgba64<BigEndian>;
 
 fn main() -> io::Result<()> {
     let stdout = io::stdout();
@@ -18,11 +20,11 @@ fn main() -> io::Result<()> {
     Farbfeld::encode(&mut stdout_writer, (), &image)
 }
 
-fn draw_image(buf: &mut [Nrgba64]) {
+fn draw_image(buf: &mut [Nrgba64Be]) {
     const MAX: u16 = 0xffff;
     const HALF: usize = DIM / 2;
-    const BLACK: Nrgba64 = Nrgba64 { r: 0, g: 0, b: 0, a: MAX };
-    const WHITE: Nrgba64 = Nrgba64 { r: MAX, g: MAX, b: MAX, a: MAX };
+    const BLACK: Nrgba64Be = Nrgba64::be(0, 0, 0, MAX);
+    const WHITE: Nrgba64Be = Nrgba64::be(MAX, MAX, MAX, MAX);
 
     for y in 0..DIM {
         let yt = y.next_power_of_two();
