@@ -3,7 +3,7 @@ use std::io::{self, Read, Write};
 use super::{Image, Dimensions, Format};
 use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
-use crate::color::Nrgba64;
+use crate::color::{Nrgba64, BigEndian};
 use crate::impl_format;
 use crate::serialize::{
     Encode,
@@ -29,8 +29,8 @@ impl DecodeOptions for Farbfeld {
     type Options = GenericDecodeOptions;
 }
 
-impl Encode<RawPixBuf<Nrgba64>> for Farbfeld {
-    fn encode<W: Write>(mut w: W, _opts: (), buf: &RawPixBuf<Nrgba64>) -> io::Result<()> {
+impl Encode<RawPixBuf<Nrgba64<BigEndian>>> for Farbfeld {
+    fn encode<W: Write>(mut w: W, _opts: (), buf: &RawPixBuf<Nrgba64<BigEndian>>) -> io::Result<()> {
         let width = (buf.width() as u32).to_be_bytes();
         let height = (buf.height() as u32).to_be_bytes();
         let magic = Farbfeld.magic();
@@ -56,7 +56,7 @@ impl<I: Image + Dimensions> Encode<I> for Farbfeld {
         for y in 0..height {
             for x in 0..width {
                 let c = buf.color_get(x, y);
-                let c: Nrgba64 = c.convert_into();
+                let c: Nrgba64<BigEndian> = c.convert_into();
                 let c: u64 = c.into();
                 let c = c.to_ne_bytes();
                 w.write_all(&c[..])?;
@@ -66,8 +66,8 @@ impl<I: Image + Dimensions> Encode<I> for Farbfeld {
     }
 }
 
-impl Decode<RawPixBuf<Nrgba64>> for Farbfeld {
-    fn decode<R: Read>(mut r: R, opt: Self::Options) -> io::Result<RawPixBuf<Nrgba64>> {
+impl Decode<RawPixBuf<Nrgba64<BigEndian>>> for Farbfeld {
+    fn decode<R: Read>(mut r: R, opt: Self::Options) -> io::Result<RawPixBuf<Nrgba64<BigEndian>>> {
         let mut m: [u8; 16] = [0; 16];
         r.read_exact(&mut m[..])?;
         if opt.check_header && !Farbfeld.is_valid_magic(&m[..]) {
