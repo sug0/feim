@@ -23,7 +23,7 @@ pub struct Nrgba64<E> {
 
 macro_rules! impl_constructor {
     ($endianness:ident) => {
-        pub fn $endianness(r: u16, b: u16, g: u16, a: u16) -> Self {
+        pub const fn $endianness(r: u16, b: u16, g: u16, a: u16) -> Self {
             Self { r, g, b, a, _endianness: PhantomData }
         }
     }
@@ -31,7 +31,7 @@ macro_rules! impl_constructor {
 
 macro_rules! impl_component_fn_ne {
     ($c:ident) => {
-        pub fn $c(self) -> u16 {
+        pub const fn $c(self) -> u16 {
             self.$c
         }
     }
@@ -39,7 +39,7 @@ macro_rules! impl_component_fn_ne {
 
 macro_rules! impl_component_fn_le {
     ($c:ident) => {
-        pub fn $c(self) -> u16 {
+        pub const fn $c(self) -> u16 {
             #[cfg(target_endian = "little")]
             { self.$c }
 
@@ -51,7 +51,7 @@ macro_rules! impl_component_fn_le {
 
 macro_rules! impl_component_fn_be {
     ($c:ident) => {
-        pub fn $c(self) -> u16 {
+        pub const fn $c(self) -> u16 {
             #[cfg(target_endian = "little")]
             { self.$c.to_le() }
 

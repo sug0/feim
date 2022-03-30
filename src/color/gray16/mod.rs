@@ -19,21 +19,21 @@ pub struct Gray16<E> {
 // -------------------------------------------------------------------------- //
 
 impl Gray16<NativeEndian> {
-    pub fn ne(y: u16) -> Self {
+    pub const fn ne(y: u16) -> Self {
         Self { y, _endianness: PhantomData }
     }
 
-    pub fn y(self) -> u16 {
+    pub const fn y(self) -> u16 {
         self.y
     }
 }
 
 impl Gray16<LittleEndian> {
-    pub fn le(y: u16) -> Self {
+    pub const fn le(y: u16) -> Self {
         Self { y, _endianness: PhantomData }
     }
 
-    pub fn y(self) -> u16 {
+    pub const fn y(self) -> u16 {
         #[cfg(target_endian = "little")]
         { self.y }
 
@@ -43,11 +43,11 @@ impl Gray16<LittleEndian> {
 }
 
 impl Gray16<BigEndian> {
-    pub fn be(y: u16) -> Self {
+    pub const fn be(y: u16) -> Self {
         Self { y, _endianness: PhantomData }
     }
 
-    pub fn y(self) -> u16 {
+    pub const fn y(self) -> u16 {
         #[cfg(target_endian = "little")]
         { self.y.to_le() }
 
