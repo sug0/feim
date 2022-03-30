@@ -131,7 +131,7 @@ impl<C: Color> ConvertFrom<C> for Nrgba64<LittleEndian> {
 // -------------------------------------------------------------------------- //
 
 impl From<Nrgba64<NativeEndian>> for u64 {
-    fn from(c: Nrgba64) -> u64 {
+    fn from(c: Nrgba64<NativeEndian>) -> u64 {
         let r = (c.r as u64) << (16 * 0);
         let g = (c.g as u64) << (16 * 1);
         let b = (c.b as u64) << (16 * 2);
@@ -141,7 +141,7 @@ impl From<Nrgba64<NativeEndian>> for u64 {
 }
 
 impl From<Nrgba64<BigEndian>> for u64 {
-    fn from(c: Nrgba64) -> u64 {
+    fn from(c: Nrgba64<BigEndian>) -> u64 {
         #[cfg(target_endian = "little")]
         let (r, g, b, a) = {
             let r = ((c.r as u64) << (16 * 0)).to_le();
@@ -165,7 +165,7 @@ impl From<Nrgba64<BigEndian>> for u64 {
 }
 
 impl From<Nrgba64<LittleEndian>> for u64 {
-    fn from(c: Nrgba64) -> u64 {
+    fn from(c: Nrgba64<LittleEndian>) -> u64 {
         #[cfg(target_endian = "little")]
         let (r, g, b, a) = {
             let r = (c.r as u64) << (16 * 0);
