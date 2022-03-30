@@ -10,7 +10,7 @@ in your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-feim = { git = "https://git.sr.ht/~sugo/feim", tag = "v0.8" }
+feim = { git = "https://git.sr.ht/~sugo/feim", tag = "v0.9" }
 ```
 
 You need a nightly toolchain to build this crate, because I'm
