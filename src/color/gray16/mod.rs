@@ -2,6 +2,7 @@ use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
 use super::{
+    Endianness,
     NativeEndian,
     LittleEndian,
     BigEndian,
@@ -59,7 +60,7 @@ impl Color for Gray16<LittleEndian> {
 // -------------------------------------------------------------------------- //
 
 impl<C: Color> ConvertFrom<C> for Gray16<NativeEndian> {
-    default fn convert_from(c: C) -> Gray16<NativeEndian> {
+    default fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
         let y = ((19595*r + 38470*g + 7471*b + 0x8000) >> 16) as u16;
         Gray16 { y, _endianness: PhantomData }
@@ -67,7 +68,7 @@ impl<C: Color> ConvertFrom<C> for Gray16<NativeEndian> {
 }
 
 impl<C: Color> ConvertFrom<C> for Gray16<BigEndian> {
-    default fn convert_from(c: C) -> Gray16<BigEndian> {
+    default fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
         let y = (((19595*r + 38470*g + 7471*b + 0x8000) >> 16) as u16).to_be();
         Gray16 { y, _endianness: PhantomData }
@@ -75,7 +76,7 @@ impl<C: Color> ConvertFrom<C> for Gray16<BigEndian> {
 }
 
 impl<C: Color> ConvertFrom<C> for Gray16<LittleEndian> {
-    default fn convert_from(c: C) -> Gray16<LittleEndian> {
+    default fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
         let y = (((19595*r + 38470*g + 7471*b + 0x8000) >> 16) as u16).to_le();
         Gray16 { y, _endianness: PhantomData }
@@ -112,20 +113,8 @@ impl From<Gray16<LittleEndian>> for u16 {
 
 // -------------------------------------------------------------------------- //
 
-impl From<u16> for Gray16<NativeEndian> {
-    fn from(y: u16) -> Gray16<NativeEndian> {
-        Gray16 { y, _endianness: PhantomData }
-    }
-}
-
-impl From<u16> for Gray16<BigEndian> {
-    fn from(y: u16) -> Gray16<BigEndian> {
-        Gray16 { y, _endianness: PhantomData }
-    }
-}
-
-impl From<u16> for Gray16<LittleEndian> {
-    fn from(y: u16) -> Gray16<LittleEndian> {
-        Gray16 { y, _endianness: PhantomData }
+impl<E: Endianness> From<u16> for Gray16<E> {
+    fn from(y: u16) -> Self {
+        Self { y, _endianness: PhantomData }
     }
 }
