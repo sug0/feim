@@ -32,6 +32,11 @@ impl Gray16<NativeEndian> {
     pub const fn y(self) -> u16 {
         self.y
     }
+
+    pub const fn set_y(mut self, y: u16) -> Self {
+        self.y = y;
+        self
+    }
 }
 
 impl Gray16<LittleEndian> {
@@ -46,6 +51,16 @@ impl Gray16<LittleEndian> {
         #[cfg(target_endian = "big")]
         { self.y.to_be() }
     }
+
+    pub const fn set_y(mut self, y: u16) -> Self {
+        #[cfg(target_endian = "little")]
+        { self.y = y }
+
+        #[cfg(target_endian = "big")]
+        { self.y = y.to_be() }
+
+        self
+    }
 }
 
 impl Gray16<BigEndian> {
@@ -59,6 +74,16 @@ impl Gray16<BigEndian> {
 
         #[cfg(target_endian = "big")]
         { self.y }
+    }
+
+    pub const fn set_y(mut self, y: u16) -> Self {
+        #[cfg(target_endian = "little")]
+        { self.y = y.to_le() }
+
+        #[cfg(target_endian = "big")]
+        { self.y = y }
+
+        self
     }
 }
 
