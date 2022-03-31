@@ -4,6 +4,9 @@ pub mod farbfeld;
 #[cfg(feature = "fmt-jpeg")]
 pub mod jpeg;
 
+#[cfg(feature = "fmt-png")]
+pub mod png;
+
 use crate::color::convert::ConvertInto;
 use crate::color::Color;
 
