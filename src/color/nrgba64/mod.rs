@@ -35,10 +35,38 @@ macro_rules! impl_constructor {
     }
 }
 
-macro_rules! impl_component_fn_set {
+macro_rules! impl_component_fn_set_ne {
     ($comp:ident, $set_component:ident) => {
         pub const fn $set_component(mut self, value: u16) -> Self {
             self.$comp = value;
+            self
+        }
+    }
+}
+
+macro_rules! impl_component_fn_set_le {
+    ($comp:ident, $set_component:ident) => {
+        pub const fn $set_component(mut self, value: u16) -> Self {
+            #[cfg(target_endian = "little")]
+            { self.$comp = value }
+
+            #[cfg(target_endian = "big")]
+            { self.$comp = value.to_be() }
+
+            self
+        }
+    }
+}
+
+macro_rules! impl_component_fn_set_be {
+    ($comp:ident, $set_component:ident) => {
+        pub const fn $set_component(mut self, value: u16) -> Self {
+            #[cfg(target_endian = "little")]
+            { self.$comp = value.to_le() }
+
+            #[cfg(target_endian = "big")]
+            { self.$comp = value }
+
             self
         }
     }
@@ -84,10 +112,10 @@ impl Nrgba64<NativeEndian> {
     impl_component_fn_ne!(b);
     impl_component_fn_ne!(a);
 
-    impl_component_fn_set!(r, set_r);
-    impl_component_fn_set!(g, set_g);
-    impl_component_fn_set!(b, set_b);
-    impl_component_fn_set!(a, set_a);
+    impl_component_fn_set_ne!(r, set_r);
+    impl_component_fn_set_ne!(g, set_g);
+    impl_component_fn_set_ne!(b, set_b);
+    impl_component_fn_set_ne!(a, set_a);
 }
 
 impl Nrgba64<LittleEndian> {
@@ -98,10 +126,10 @@ impl Nrgba64<LittleEndian> {
     impl_component_fn_le!(b);
     impl_component_fn_le!(a);
 
-    impl_component_fn_set!(r, set_r);
-    impl_component_fn_set!(g, set_g);
-    impl_component_fn_set!(b, set_b);
-    impl_component_fn_set!(a, set_a);
+    impl_component_fn_set_le!(r, set_r);
+    impl_component_fn_set_le!(g, set_g);
+    impl_component_fn_set_le!(b, set_b);
+    impl_component_fn_set_le!(a, set_a);
 }
 
 impl Nrgba64<BigEndian> {
@@ -112,10 +140,10 @@ impl Nrgba64<BigEndian> {
     impl_component_fn_be!(b);
     impl_component_fn_be!(a);
 
-    impl_component_fn_set!(r, set_r);
-    impl_component_fn_set!(g, set_g);
-    impl_component_fn_set!(b, set_b);
-    impl_component_fn_set!(a, set_a);
+    impl_component_fn_set_be!(r, set_r);
+    impl_component_fn_set_be!(g, set_g);
+    impl_component_fn_set_be!(b, set_b);
+    impl_component_fn_set_be!(a, set_a);
 }
 
 // -------------------------------------------------------------------------- //
