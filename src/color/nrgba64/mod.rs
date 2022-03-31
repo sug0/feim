@@ -19,6 +19,12 @@ pub struct Nrgba64<E> {
     _endianness: PhantomData<E>,
 }
 
+pub type Nrgba64Ne = Nrgba64<NativeEndian>;
+
+pub type Nrgba64Be = Nrgba64<BigEndian>;
+
+pub type Nrgba64Le = Nrgba64<LittleEndian>;
+
 // -------------------------------------------------------------------------- //
 
 macro_rules! impl_constructor {

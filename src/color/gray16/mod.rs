@@ -16,6 +16,12 @@ pub struct Gray16<E> {
     _endianness: PhantomData<E>,
 }
 
+pub type Gray16Ne = Gray16<NativeEndian>;
+
+pub type Gray16Be = Gray16<BigEndian>;
+
+pub type Gray16Le = Gray16<LittleEndian>;
+
 // -------------------------------------------------------------------------- //
 
 impl Gray16<NativeEndian> {

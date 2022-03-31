@@ -14,10 +14,9 @@ use crate::serialize::{
     DecodeOptions,
 };
 use crate::color::{
-    NativeEndian,
     Color,
     Gray,
-    Gray16,
+    Gray16Ne,
     Nrgba,
     Rgb,
     Cmyk,
@@ -34,7 +33,7 @@ impl_format! {
 #[derive(Copy, Clone, Debug)]
 pub enum JpegPix {
     Gray(Gray),
-    Gray16(Gray16<NativeEndian>),
+    Gray16(Gray16Ne),
     Rgb(Rgb),
     Cmyk(Cmyk),
 }
@@ -53,7 +52,7 @@ impl Color for JpegPix {
 #[derive(Clone, Debug)]
 pub enum JpegBuf {
     Gray(RawPixBuf<Gray>),
-    Gray16(RawPixBuf<Gray16<NativeEndian>>),
+    Gray16(RawPixBuf<Gray16Ne>),
     Rgb(RawPixBuf<Rgb>),
     Cmyk(RawPixBuf<Cmyk>),
 }
