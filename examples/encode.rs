@@ -1,13 +1,39 @@
+use std::env;
+use std::process;
+use std::default::Default;
 use std::io::{self, BufWriter};
 
 use feim::buffer::{RawPixBuf, AsTypedMut};
-use feim::image::farbfeld::Farbfeld;
 use feim::serialize::Encode;
 use feim::color::Nrgba;
+use feim::image::{
+    jpeg::{Jpeg, JpegEncodeOptions},
+    farbfeld::Farbfeld,
+    png::Png,
+};
 
 const DIM: usize = 500;
 
+enum EncodeAs {
+    Jpg,
+    Png,
+    Ff,
+}
+
 fn main() -> io::Result<()> {
+    let args: Vec<_> = env::args().collect();
+
+    if args.len() < 2 {
+        usage(&args);
+    }
+
+    let encode_as = match args[1].as_ref() {
+        "ff" => EncodeAs::Ff,
+        "png" => EncodeAs::Png,
+        "jpg" => EncodeAs::Jpg,
+        _ => usage(&args),
+    };
+
     let stdout = io::stdout();
     let stdout_lock = stdout.lock();
     let mut stdout_writer = BufWriter::new(stdout_lock);
@@ -15,7 +41,19 @@ fn main() -> io::Result<()> {
     let mut image = RawPixBuf::new(DIM, DIM);
     draw_image(image.as_typed_mut());
 
-    <Farbfeld as Encode<RawPixBuf<Nrgba>>>::encode(&mut stdout_writer, (), &image)
+    match encode_as {
+        EncodeAs::Ff => {
+            <Farbfeld as Encode<RawPixBuf<Nrgba>>>::encode(&mut stdout_writer, (), &image)
+        },
+        EncodeAs::Png => {
+            let opts = Default::default();
+            Png::encode(&mut stdout_writer, opts, &image)
+        },
+        EncodeAs::Jpg => {
+            let opts = JpegEncodeOptions::new(85).unwrap();
+            Jpeg::encode(&mut stdout_writer, opts, &image)
+        },
+    }
 }
 
 fn draw_image(buf: &mut [Nrgba]) {
@@ -53,4 +91,9 @@ const fn lerp_nrgba(v0: Nrgba, v1: Nrgba, t: u8) -> Nrgba {
 const fn lerp(v0: u8, v1: u8, t: u8) -> u8 {
     let (v0, v1, t) = (v0 as u32, v1 as u32, t as u32);
     let result = (v0*(255-t) + v1*t) / 255; result as u8
+}
+
+fn usage(args: &[String]) -> ! {
+    eprintln!("Usage: {} <ff|jpg|png>", args[0]);
+    process::exit(1);
 }
