@@ -12,5 +12,5 @@ fmt-farbfeld = []
 
 [dependencies]
 jpeg-decoder = { version = "0.2", optional = true }
-jpeg-encoder = { version = "0.4", optional = true }
+jpeg-encoder = { version = "0.5", features = ["simd"], optional = true }
 png = { version = "0.17", optional = true }
