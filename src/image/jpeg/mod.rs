@@ -182,4 +182,4 @@ impl_encode!(Gray, ColorType::Luma);
 impl_encode!(Cmyk, ColorType::Cmyk);
 impl_encode!(Nrgba, ColorType::Rgba);
 
-// TODO: default encode / decode for jpeg
+// TODO: default encode for jpeg
