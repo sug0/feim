@@ -2,6 +2,7 @@ use std::io::{self, Write, BufReader, BufWriter};
 
 use feim::image::{
     Format,
+    png::Png,
     jpeg::Jpeg,
     farbfeld::Farbfeld,
 };
@@ -25,6 +26,7 @@ fn main() -> io::Result<()> {
     let formats: [&dyn Format; 2] = [
         &Farbfeld,
         &Jpeg,
+        &Png,
         // ...
     ];
 
@@ -39,6 +41,11 @@ fn main() -> io::Result<()> {
         },
         Ok(1) => {
             let image = Jpeg::decode(stdin_reader, ())?;
+            write!(&mut stdout_writer, "{:#?}", image).unwrap_or(());
+            Ok(())
+        },
+        Ok(2) => {
+            let image = Png::decode(stdin_reader, ())?;
             write!(&mut stdout_writer, "{:#?}", image).unwrap_or(());
             Ok(())
         },
