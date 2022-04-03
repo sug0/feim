@@ -1,6 +1,7 @@
 pub mod convert;
 
 mod rgb;
+mod rgb48;
 mod cmyk;
 mod nrgba;
 mod nrgba64;
@@ -8,6 +9,7 @@ mod gray;
 mod gray16;
 
 pub use rgb::*;
+pub use rgb48::*;
 pub use cmyk::*;
 pub use nrgba::*;
 pub use nrgba64::*;
