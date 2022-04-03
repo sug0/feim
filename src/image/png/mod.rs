@@ -7,9 +7,12 @@ use std::io::{self, Read, Write};
 
 use png::{
     Encoder,
+    Decoder,
     BitDepth,
     ColorType,
     EncodingError,
+    DecodingError,
+    Transformations,
 };
 
 // re-export this stuff
@@ -30,9 +33,10 @@ use crate::serialize::{
 use crate::color::{
     Gray,
     Gray16Ne,
-    Nrgba64Ne,
     Nrgba,
+    Nrgba64Ne,
     Rgb,
+    Rgb48Ne,
 };
 
 pub struct Png;
@@ -49,7 +53,41 @@ impl DecodeOptions for Png {
 
 impl Decode<PngBuf> for Png {
     fn decode<R: Read>(r: R, _opt: ()) -> io::Result<PngBuf> {
-        todo!()
+        let mut decoder = Decoder::new(r);
+        decoder.set_transformations(Transformations::EXPAND);
+
+        let mut reader = decoder
+            .read_info()
+            .map_err(|e| {
+                match e {
+                    DecodingError::IoError(e) => e,
+                    other => io::Error::new(io::ErrorKind::Other, other),
+                }
+            })?;
+
+        let width = reader.info().width as usize;
+        let height = reader.info().height as usize;
+
+        let mut buffer = match reader.output_color_type() {
+            (ColorType::Grayscale, BitDepth::Eight) => PngBuf::Gray(RawPixBuf::new(width, height)),
+            (ColorType::Grayscale, BitDepth::Sixteen) => PngBuf::Gray16(RawPixBuf::new(width, height)),
+            (ColorType::Rgba, BitDepth::Eight) => PngBuf::Nrgba(RawPixBuf::new(width, height)),
+            (ColorType::Rgba, BitDepth::Sixteen) => PngBuf::Nrgba64(RawPixBuf::new(width, height)),
+            (ColorType::Rgb, BitDepth::Eight) => PngBuf::Rgb(RawPixBuf::new(width, height)),
+            (ColorType::Rgb, BitDepth::Sixteen) => PngBuf::Rgb48(RawPixBuf::new(width, height)),
+            _ => return Err(io::Error::new(io::ErrorKind::Other, "Invalid color type detected")),
+        };
+
+        reader
+            .next_frame(buffer.as_mut())
+            .map_err(|e| {
+                match e {
+                    DecodingError::IoError(e) => e,
+                    other => io::Error::new(io::ErrorKind::Other, other),
+                }
+            })?;
+
+        Ok(buffer)
     }
 }
 
@@ -110,10 +148,11 @@ macro_rules! impl_encode {
     }
 }
 
-impl_encode!(Rgb, BitDepth::Eight, ColorType::Rgb);
 impl_encode!(Gray, BitDepth::Eight, ColorType::Grayscale);
 impl_encode!(Gray16Ne, BitDepth::Sixteen, ColorType::Grayscale);
 impl_encode!(Nrgba, BitDepth::Eight, ColorType::Rgba);
 impl_encode!(Nrgba64Ne, BitDepth::Sixteen, ColorType::Rgba);
+impl_encode!(Rgb, BitDepth::Eight, ColorType::Rgb);
+impl_encode!(Rgb48Ne, BitDepth::Sixteen, ColorType::Rgb);
 
 // TODO: default encode / decode
