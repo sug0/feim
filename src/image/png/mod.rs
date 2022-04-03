@@ -1,5 +1,9 @@
+mod png_buf;
+
+pub use png_buf::*;
+
 use std::default::Default;
-use std::io::{self, Write};
+use std::io::{self, Read, Write};
 
 use png::{
     Encoder,
@@ -19,7 +23,9 @@ use crate::buffer::RawPixBuf;
 use crate::impl_format;
 use crate::serialize::{
     Encode,
+    Decode,
     EncodeOptions,
+    DecodeOptions,
 };
 use crate::color::{
     Gray,
@@ -37,6 +43,15 @@ impl_format! {
     magic: b"\x89PNG\r\n\x1a\n",
 }
 
+impl DecodeOptions for Png {
+    type Options = ();
+}
+
+impl Decode<PngBuf> for Png {
+    fn decode<R: Read>(r: R, _opt: ()) -> io::Result<PngBuf> {
+        todo!()
+    }
+}
 
 pub struct PngEncodeOptions {
     pub filter: FilterType,
