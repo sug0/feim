@@ -66,6 +66,28 @@ impl ImageMut for JpegBuf {
     }
 }
 
+impl AsRef<[u8]> for JpegBuf {
+    fn as_ref(&self) -> &[u8] {
+        match self {
+            JpegBuf::Gray(buf) => buf.as_ref(),
+            JpegBuf::Gray16(buf) => buf.as_ref(),
+            JpegBuf::Rgb(buf) => buf.as_ref(),
+            JpegBuf::Cmyk(buf) => buf.as_ref(),
+        }
+    }
+}
+
+impl AsMut<[u8]> for JpegBuf {
+    fn as_mut(&mut self) -> &mut [u8] {
+        match self {
+            JpegBuf::Gray(buf) => buf.as_mut(),
+            JpegBuf::Gray16(buf) => buf.as_mut(),
+            JpegBuf::Rgb(buf) => buf.as_mut(),
+            JpegBuf::Cmyk(buf) => buf.as_mut(),
+        }
+    }
+}
+
 #[derive(Copy, Clone, Debug)]
 pub enum JpegPix {
     Gray(Gray),

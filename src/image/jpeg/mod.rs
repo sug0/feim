@@ -7,6 +7,7 @@ use std::io::{self, Read, Write};
 use jpeg_decoder::{Decoder, PixelFormat, Error};
 use jpeg_encoder::{Encoder, ColorType, EncodingError};
 
+use crate::image::Dimensions;
 use crate::buffer::RawPixBuf;
 use crate::impl_format;
 use crate::serialize::{
@@ -17,7 +18,6 @@ use crate::serialize::{
 };
 use crate::color::{
     Gray,
-    Gray16Ne,
     Nrgba,
     Rgb,
     Cmyk,

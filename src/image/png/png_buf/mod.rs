@@ -70,10 +70,10 @@ impl ImageMut for PngBuf {
         match self {
             PngBuf::Gray(buf) => buf.color_set(x, y, color),
             PngBuf::Gray16(buf) => buf.color_set(x, y, color),
-            PngPix::Nrgba(c) => buf.color_set(x, y, color),
-            PngPix::Nrgba64(c) => buf.color_set(x, y, color),
-            PngPix::Rgb(c) => buf.color_set(x, y, color),
-            PngPix::Rgb48(c) => buf.color_set(x, y, color),
+            PngBuf::Nrgba(buf) => buf.color_set(x, y, color),
+            PngBuf::Nrgba64(buf) => buf.color_set(x, y, color),
+            PngBuf::Rgb(buf) => buf.color_set(x, y, color),
+            PngBuf::Rgb48(buf) => buf.color_set(x, y, color),
         }
     }
 }
@@ -97,6 +97,32 @@ impl Color for PngPix {
             PngPix::Nrgba64(c) => c.as_rgba(),
             PngPix::Rgb(c) => c.as_rgba(),
             PngPix::Rgb48(c) => c.as_rgba(),
+        }
+    }
+}
+
+impl AsRef<[u8]> for PngBuf {
+    fn as_ref(&self) -> &[u8] {
+        match self {
+            PngBuf::Gray(buf) => buf.as_ref(),
+            PngBuf::Gray16(buf) => buf.as_ref(),
+            PngBuf::Nrgba(buf) => buf.as_ref(),
+            PngBuf::Nrgba64(buf) => buf.as_ref(),
+            PngBuf::Rgb(buf) => buf.as_ref(),
+            PngBuf::Rgb48(buf) => buf.as_ref(),
+        }
+    }
+}
+
+impl AsMut<[u8]> for PngBuf {
+    fn as_mut(&mut self) -> &mut [u8] {
+        match self {
+            PngBuf::Gray(buf) => buf.as_mut(),
+            PngBuf::Gray16(buf) => buf.as_mut(),
+            PngBuf::Nrgba(buf) => buf.as_mut(),
+            PngBuf::Nrgba64(buf) => buf.as_mut(),
+            PngBuf::Rgb(buf) => buf.as_mut(),
+            PngBuf::Rgb48(buf) => buf.as_mut(),
         }
     }
 }

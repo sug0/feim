@@ -23,7 +23,7 @@ fn main() -> io::Result<()> {
     let stdout_lock = stdout.lock();
     let mut stdout_writer = BufWriter::new(stdout_lock);
 
-    let formats: [&dyn Format; 2] = [
+    let formats: [&dyn Format; 3] = [
         &Farbfeld,
         &Jpeg,
         &Png,

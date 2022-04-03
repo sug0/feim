@@ -2,7 +2,6 @@ use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
 use super::{
-    Endianness,
     NativeEndian,
     LittleEndian,
     BigEndian,
@@ -153,7 +152,7 @@ fn rgb48_to_rgba(r: u16, g: u16, b: u16) -> (u32, u32, u32, u32) {
 
 impl Color for Rgb48<NativeEndian> {
     fn as_rgba(&self) -> (u32, u32, u32, u32) {
-        rgb48_to_rgba(self.r, self.g, self.b, self.a)
+        rgb48_to_rgba(self.r, self.g, self.b)
     }
 }
 
