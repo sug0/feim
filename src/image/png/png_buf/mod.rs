@@ -8,7 +8,6 @@ use crate::color::{
     Nrgba64Ne,
     Rgb,
     Rgb48Ne,
-    Cmyk,
     Color,
 };
 
@@ -20,7 +19,6 @@ pub enum PngBuf {
     Nrgba64(RawPixBuf<Nrgba64Ne>),
     Rgb(RawPixBuf<Rgb>),
     Rgb48(RawPixBuf<Rgb48Ne>),
-    Cmyk(RawPixBuf<Cmyk>),
 }
 
 impl Dimensions for PngBuf {
@@ -32,7 +30,6 @@ impl Dimensions for PngBuf {
             PngBuf::Nrgba64(buf) => buf.width(),
             PngBuf::Rgb(buf) => buf.width(),
             PngBuf::Rgb48(buf) => buf.width(),
-            PngBuf::Cmyk(buf) => buf.width(),
         }
     }
 
@@ -44,7 +41,6 @@ impl Dimensions for PngBuf {
             PngBuf::Nrgba64(buf) => buf.height(),
             PngBuf::Rgb(buf) => buf.height(),
             PngBuf::Rgb48(buf) => buf.height(),
-            PngBuf::Cmyk(buf) => buf.height(),
         }
     }
 }
@@ -60,7 +56,6 @@ impl Image for PngBuf {
             PngBuf::Nrgba64(buf) => PngPix::Nrgba64(buf.color_get(x, y)),
             PngBuf::Rgb(buf) => PngPix::Rgb(buf.color_get(x, y)),
             PngBuf::Rgb48(buf) => PngPix::Rgb48(buf.color_get(x, y)),
-            PngBuf::Cmyk(buf) => PngPix::Cmyk(buf.color_get(x, y)),
         }
     }
 }
@@ -79,7 +74,6 @@ impl ImageMut for PngBuf {
             PngPix::Nrgba64(c) => buf.color_set(x, y, color),
             PngPix::Rgb(c) => buf.color_set(x, y, color),
             PngPix::Rgb48(c) => buf.color_set(x, y, color),
-            PngPix::Cmyk(c) => buf.color_set(x, y, color),
         }
     }
 }
@@ -92,7 +86,6 @@ pub enum PngPix {
     Nrgba64(Nrgba64Ne),
     Rgb(Rgb),
     Rgb48(Rgb48Ne),
-    Cmyk(Cmyk),
 }
 
 impl Color for PngPix {
@@ -104,7 +97,6 @@ impl Color for PngPix {
             PngPix::Nrgba64(c) => c.as_rgba(),
             PngPix::Rgb(c) => c.as_rgba(),
             PngPix::Rgb48(c) => c.as_rgba(),
-            PngPix::Cmyk(c) => c.as_rgba(),
         }
     }
 }
