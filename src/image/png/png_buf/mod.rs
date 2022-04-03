@@ -28,7 +28,10 @@ impl Dimensions for PngBuf {
         match self {
             PngBuf::Gray(buf) => buf.width(),
             PngBuf::Gray16(buf) => buf.width(),
+            PngBuf::Nrgba(buf) => buf.width(),
+            PngBuf::Nrgba64(buf) => buf.width(),
             PngBuf::Rgb(buf) => buf.width(),
+            PngBuf::Rgb48(buf) => buf.width(),
             PngBuf::Cmyk(buf) => buf.width(),
         }
     }
@@ -37,7 +40,10 @@ impl Dimensions for PngBuf {
         match self {
             PngBuf::Gray(buf) => buf.height(),
             PngBuf::Gray16(buf) => buf.height(),
+            PngBuf::Nrgba(buf) => buf.height(),
+            PngBuf::Nrgba64(buf) => buf.height(),
             PngBuf::Rgb(buf) => buf.height(),
+            PngBuf::Rgb48(buf) => buf.height(),
             PngBuf::Cmyk(buf) => buf.height(),
         }
     }
@@ -50,7 +56,10 @@ impl Image for PngBuf {
         match self {
             PngBuf::Gray(buf) => PngPix::Gray(buf.color_get(x, y)),
             PngBuf::Gray16(buf) => PngPix::Gray16(buf.color_get(x, y)),
+            PngBuf::Nrgba(buf) => PngPix::Nrgba(buf.color_get(x, y)),
+            PngBuf::Nrgba64(buf) => PngPix::Nrgba64(buf.color_get(x, y)),
             PngBuf::Rgb(buf) => PngPix::Rgb(buf.color_get(x, y)),
+            PngBuf::Rgb48(buf) => PngPix::Rgb48(buf.color_get(x, y)),
             PngBuf::Cmyk(buf) => PngPix::Cmyk(buf.color_get(x, y)),
         }
     }
@@ -66,8 +75,11 @@ impl ImageMut for PngBuf {
         match self {
             PngBuf::Gray(buf) => buf.color_set(x, y, color),
             PngBuf::Gray16(buf) => buf.color_set(x, y, color),
-            PngBuf::Rgb(buf) => buf.color_set(x, y, color),
-            PngBuf::Cmyk(buf) => buf.color_set(x, y, color),
+            PngPix::Nrgba(c) => buf.color_set(x, y, color),
+            PngPix::Nrgba64(c) => buf.color_set(x, y, color),
+            PngPix::Rgb(c) => buf.color_set(x, y, color),
+            PngPix::Rgb48(c) => buf.color_set(x, y, color),
+            PngPix::Cmyk(c) => buf.color_set(x, y, color),
         }
     }
 }
@@ -76,7 +88,10 @@ impl ImageMut for PngBuf {
 pub enum PngPix {
     Gray(Gray),
     Gray16(Gray16Ne),
+    Nrgba(Nrgba),
+    Nrgba64(Nrgba64Ne),
     Rgb(Rgb),
+    Rgb48(Rgb48Ne),
     Cmyk(Cmyk),
 }
 
@@ -85,7 +100,10 @@ impl Color for PngPix {
         match self {
             PngPix::Gray(c) => c.as_rgba(),
             PngPix::Gray16(c) => c.as_rgba(),
+            PngPix::Nrgba(c) => c.as_rgba(),
+            PngPix::Nrgba64(c) => c.as_rgba(),
             PngPix::Rgb(c) => c.as_rgba(),
+            PngPix::Rgb48(c) => c.as_rgba(),
             PngPix::Cmyk(c) => c.as_rgba(),
         }
     }
