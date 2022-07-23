@@ -33,18 +33,18 @@ macro_rules! impl_constructor {
     }
 }
 
-macro_rules! impl_component_fn_set_ne {
-    ($comp:ident, $set_component:ident) => {
-        pub const fn $set_component(mut self, value: u16) -> Self {
+macro_rules! impl_channel_fn_set_ne {
+    ($comp:ident, $set_channel:ident) => {
+        pub const fn $set_channel(mut self, value: u16) -> Self {
             self.$comp = value;
             self
         }
     }
 }
 
-macro_rules! impl_component_fn_set_le {
-    ($comp:ident, $set_component:ident) => {
-        pub const fn $set_component(mut self, value: u16) -> Self {
+macro_rules! impl_channel_fn_set_le {
+    ($comp:ident, $set_channel:ident) => {
+        pub const fn $set_channel(mut self, value: u16) -> Self {
             #[cfg(target_endian = "little")]
             { self.$comp = value }
 
@@ -56,9 +56,9 @@ macro_rules! impl_component_fn_set_le {
     }
 }
 
-macro_rules! impl_component_fn_set_be {
-    ($comp:ident, $set_component:ident) => {
-        pub const fn $set_component(mut self, value: u16) -> Self {
+macro_rules! impl_channel_fn_set_be {
+    ($comp:ident, $set_channel:ident) => {
+        pub const fn $set_channel(mut self, value: u16) -> Self {
             #[cfg(target_endian = "little")]
             { self.$comp = value.to_le() }
 
@@ -70,7 +70,7 @@ macro_rules! impl_component_fn_set_be {
     }
 }
 
-macro_rules! impl_component_fn_ne {
+macro_rules! impl_channel_fn_ne {
     ($c:ident) => {
         pub const fn $c(self) -> u16 {
             self.$c
@@ -78,7 +78,7 @@ macro_rules! impl_component_fn_ne {
     }
 }
 
-macro_rules! impl_component_fn_le {
+macro_rules! impl_channel_fn_le {
     ($c:ident) => {
         pub const fn $c(self) -> u16 {
             #[cfg(target_endian = "little")]
@@ -90,7 +90,7 @@ macro_rules! impl_component_fn_le {
     }
 }
 
-macro_rules! impl_component_fn_be {
+macro_rules! impl_channel_fn_be {
     ($c:ident) => {
         pub const fn $c(self) -> u16 {
             #[cfg(target_endian = "little")]
@@ -105,37 +105,44 @@ macro_rules! impl_component_fn_be {
 impl Rgb48<NativeEndian> {
     impl_constructor!(ne);
 
-    impl_component_fn_ne!(r);
-    impl_component_fn_ne!(g);
-    impl_component_fn_ne!(b);
+    impl_channel_fn_ne!(r);
+    impl_channel_fn_ne!(g);
+    impl_channel_fn_ne!(b);
 
-    impl_component_fn_set_ne!(r, set_r);
-    impl_component_fn_set_ne!(g, set_g);
-    impl_component_fn_set_ne!(b, set_b);
+    impl_channel_fn_set_ne!(r, set_r);
+    impl_channel_fn_set_ne!(g, set_g);
+    impl_channel_fn_set_ne!(b, set_b);
 }
 
 impl Rgb48<LittleEndian> {
     impl_constructor!(le);
 
-    impl_component_fn_le!(r);
-    impl_component_fn_le!(g);
-    impl_component_fn_le!(b);
+    impl_channel_fn_le!(r);
+    impl_channel_fn_le!(g);
+    impl_channel_fn_le!(b);
 
-    impl_component_fn_set_le!(r, set_r);
-    impl_component_fn_set_le!(g, set_g);
-    impl_component_fn_set_le!(b, set_b);
+    impl_channel_fn_set_le!(r, set_r);
+    impl_channel_fn_set_le!(g, set_g);
+    impl_channel_fn_set_le!(b, set_b);
 }
 
 impl Rgb48<BigEndian> {
     impl_constructor!(be);
 
-    impl_component_fn_be!(r);
-    impl_component_fn_be!(g);
-    impl_component_fn_be!(b);
+    impl_channel_fn_be!(r);
+    impl_channel_fn_be!(g);
+    impl_channel_fn_be!(b);
 
-    impl_component_fn_set_be!(r, set_r);
-    impl_component_fn_set_be!(g, set_g);
-    impl_component_fn_set_be!(b, set_b);
+    impl_channel_fn_set_be!(r, set_r);
+    impl_channel_fn_set_be!(g, set_g);
+    impl_channel_fn_set_be!(b, set_b);
+}
+
+impl<E> Rgb48<E> {
+    pub fn get_channels(self) -> (u16, u16, u16) {
+        let Rgb48 { r, g, b, .. } = self;
+        (r, g, b)
+    }
 }
 
 // -------------------------------------------------------------------------- //
