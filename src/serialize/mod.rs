@@ -2,21 +2,21 @@ use std::default::Default;
 use std::io::{self, BufRead, Read, Write};
 
 use crate::image::Format;
-use crate::specialized::No;
+use crate::specialized::Aye;
 
-pub trait EncodeOptions<Specialized = No> {
+pub trait EncodeOptions {
     type Options;
 }
 
-pub trait DecodeOptions<Specialized = No> {
+pub trait DecodeOptions {
     type Options;
 }
 
-pub trait Encode<B, Specialized = No>: EncodeOptions<Specialized> {
+pub trait Encode<B, Specialized = Aye>: EncodeOptions {
     fn encode<W: Write>(w: W, opts: Self::Options, buf: &B) -> io::Result<()>;
 }
 
-pub trait Decode<B, Specialized = No>: DecodeOptions<Specialized> {
+pub trait Decode<B, Specialized = Aye>: DecodeOptions {
     fn decode<R: Read>(r: R, opt: Self::Options) -> io::Result<B>;
 }
 

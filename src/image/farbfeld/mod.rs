@@ -16,7 +16,7 @@ impl_format! {
     magic: b"farbfeld????????",
 }
 
-impl<S> EncodeOptions<S> for Farbfeld {
+impl EncodeOptions for Farbfeld {
     type Options = ();
 }
 
@@ -41,7 +41,7 @@ impl Encode<RawPixBuf<Nrgba64<BigEndian>>> for Farbfeld {
     }
 }
 
-impl<I: Image + Dimensions> Encode<I, specialized::Aye> for Farbfeld {
+impl<I: Image + Dimensions> Encode<I, specialized::No> for Farbfeld {
     fn encode<W: Write>(mut w: W, _opts: (), buf: &I) -> io::Result<()> {
         let (width, height) = buf.dimensions();
         {
