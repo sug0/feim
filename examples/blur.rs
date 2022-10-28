@@ -4,7 +4,7 @@ use feim::buffer::{AsTyped, AsTypedMut, RawPixBuf};
 use feim::color::{BigEndian, Nrgba64};
 use feim::image::farbfeld::Farbfeld;
 use feim::image::Dimensions;
-use feim::serialize::{Decode, Encode, GenericDecodeOptions};
+use feim::serialize::{Decode, EncodeSpecialized, GenericDecodeOptions};
 
 type Nrgba64Be = Nrgba64<BigEndian>;
 
@@ -21,7 +21,7 @@ fn main() -> io::Result<()> {
         check_header: false,
     };
     let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode(stdin_reader, opts)?;
-    Farbfeld::encode(stdout_writer, (), &blur(image))
+    Farbfeld::encode_specialized(stdout_writer, (), &blur(image))
 }
 
 fn blur(orig: RawPixBuf<Nrgba64Be>) -> RawPixBuf<Nrgba64Be> {

@@ -42,9 +42,7 @@ fn main() -> io::Result<()> {
     draw_image(image.as_typed_mut());
 
     match encode_as {
-        EncodeAs::Ff => {
-            <Farbfeld as Encode<RawPixBuf<Nrgba>>>::encode(&mut stdout_writer, (), &image)
-        }
+        EncodeAs::Ff => Farbfeld::encode(&mut stdout_writer, (), &image),
         EncodeAs::Png => {
             let opts = Default::default();
             Png::encode(&mut stdout_writer, opts, &image)
