@@ -82,3 +82,4 @@ pub mod buffer;
 pub mod color;
 pub mod image;
 pub mod serialize;
+pub mod specialized;

@@ -9,6 +9,7 @@ pub mod png;
 
 use crate::color::convert::ConvertInto;
 use crate::color::Color;
+use crate::specialized::No;
 
 #[macro_export]
 macro_rules! impl_format {
@@ -59,13 +60,13 @@ pub trait Dimensions {
     }
 }
 
-pub trait Image {
+pub trait Image<Specialized = No> {
     type Pixel: Color;
 
     fn color_get(&self, x: usize, y: usize) -> Self::Pixel;
 }
 
-pub trait ImageMut {
+pub trait ImageMut<Specialized = No> {
     type Pixel: Color;
 
     fn color_set<C>(&mut self, x: usize, y: usize, color: C)
