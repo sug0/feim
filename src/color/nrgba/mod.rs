@@ -16,12 +16,12 @@ impl Color for Nrgba {
         let g = self.g as u32;
         let b = self.b as u32;
         let a = self.a as u32;
-        
+
         let r = r | (r << 8);
         let g = g | (g << 8);
         let b = b | (b << 8);
         let a = a | (a << 8);
-        
+
         (r, g, b, a)
     }
 }

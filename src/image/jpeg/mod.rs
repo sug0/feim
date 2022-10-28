@@ -4,24 +4,14 @@ pub use jpeg_buf::*;
 
 use std::io::{self, Read, Write};
 
-use jpeg_decoder::{Decoder, PixelFormat, Error};
-use jpeg_encoder::{Encoder, ColorType, EncodingError};
+use jpeg_decoder::{Decoder, Error, PixelFormat};
+use jpeg_encoder::{ColorType, Encoder, EncodingError};
 
-use crate::image::Dimensions;
 use crate::buffer::RawPixBuf;
+use crate::color::{Cmyk, Gray, Nrgba, Rgb};
+use crate::image::Dimensions;
 use crate::impl_format;
-use crate::serialize::{
-    Encode,
-    Decode,
-    EncodeOptions,
-    DecodeOptions,
-};
-use crate::color::{
-    Gray,
-    Nrgba,
-    Rgb,
-    Cmyk,
-};
+use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions};
 
 pub struct Jpeg;
 
@@ -91,15 +81,13 @@ macro_rules! impl_encode {
                 let buf = buf.as_ref();
                 encoder
                     .encode(buf, width, height, color)
-                    .map_err(|e| {
-                        match e {
-                            EncodingError::IoError(e) => e,
-                            other => io::Error::new(io::ErrorKind::Other, other),
-                        }
+                    .map_err(|e| match e {
+                        EncodingError::IoError(e) => e,
+                        other => io::Error::new(io::ErrorKind::Other, other),
                     })
             }
         }
-    }
+    };
 }
 
 impl_encode!(Rgb, ColorType::Rgb);

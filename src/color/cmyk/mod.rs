@@ -17,13 +17,13 @@ impl Color for Cmyk {
         let y = self.y as u32;
         let k = self.k as u32;
 
-        let w = 0xffff - k*0x101;
-        
-        let r = (0xffff - c*0x101) * w / 0xffff;
-        let g = (0xffff - m*0x101) * w / 0xffff;
-        let b = (0xffff - y*0x101) * w / 0xffff;
+        let w = 0xffff - k * 0x101;
+
+        let r = (0xffff - c * 0x101) * w / 0xffff;
+        let g = (0xffff - m * 0x101) * w / 0xffff;
+        let b = (0xffff - y * 0x101) * w / 0xffff;
         let a = 0xffff;
-        
+
         (r, g, b, a)
     }
 }
@@ -40,7 +40,7 @@ impl<C: Color> ConvertFrom<C> for Cmyk {
                 m: 0,
                 y: 0,
                 k: 0xff,
-            }
+            };
         }
 
         let c = (w - r) * 0xffff / w;

@@ -1,20 +1,20 @@
 pub mod convert;
 
-mod rgb;
-mod rgb48;
 mod cmyk;
-mod nrgba;
-mod nrgba64;
 mod gray;
 mod gray16;
+mod nrgba;
+mod nrgba64;
+mod rgb;
+mod rgb48;
 
-pub use rgb::*;
-pub use rgb48::*;
 pub use cmyk::*;
-pub use nrgba::*;
-pub use nrgba64::*;
 pub use gray::*;
 pub use gray16::*;
+pub use nrgba::*;
+pub use nrgba64::*;
+pub use rgb::*;
+pub use rgb48::*;
 
 pub trait Color {
     /// Return an alpha premultiplied color in RGBA 16 bits.

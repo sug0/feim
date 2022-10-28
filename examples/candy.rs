@@ -1,7 +1,7 @@
 use std::io::{self, BufWriter};
 
-use feim::buffer::{RawPixBuf, AsTypedMut};
-use feim::color::{Nrgba64, BigEndian};
+use feim::buffer::{AsTypedMut, RawPixBuf};
+use feim::color::{BigEndian, Nrgba64};
 use feim::image::farbfeld::Farbfeld;
 use feim::serialize::Encode;
 
@@ -32,8 +32,8 @@ fn draw_image(buf: &mut [Nrgba64Be]) {
         for x in 0..DIM {
             let xt = x.next_power_of_two();
             let xh = x - HALF;
-            let cond = ((xt*yt)+(xh*(yt-yh))) < ((xh>>yt)%(!(yh<<xh)|1));
-            buf[y*DIM + x] = if cond { BLACK } else { WHITE };
+            let cond = ((xt * yt) + (xh * (yt - yh))) < ((xh >> yt) % (!(yh << xh) | 1));
+            buf[y * DIM + x] = if cond { BLACK } else { WHITE };
         }
     }
 }

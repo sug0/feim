@@ -1,13 +1,7 @@
 use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
-use crate::image::{Image, ImageMut, Dimensions};
-use crate::color::{
-    Color,
-    Gray,
-    Gray16Ne,
-    Rgb,
-    Cmyk,
-};
+use crate::color::{Cmyk, Color, Gray, Gray16Ne, Rgb};
+use crate::image::{Dimensions, Image, ImageMut};
 
 #[derive(Clone, Debug)]
 pub enum JpegBuf {

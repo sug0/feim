@@ -14,10 +14,14 @@ use crate::color::Color;
 macro_rules! impl_format {
     (name: $name:ty, id: $id:expr, magic: $magic:expr $(,)?) => {
         impl $crate::image::Format for $name {
-            fn id(&self) -> &'static str { $id }
-            fn magic(&self) -> &'static [u8] { $magic }
+            fn id(&self) -> &'static str {
+                $id
+            }
+            fn magic(&self) -> &'static [u8] {
+                $magic
+            }
         }
-    }
+    };
 }
 
 pub trait Format {
@@ -34,9 +38,10 @@ pub trait Format {
     /// Compares the format's magic string against another byte string.
     fn is_valid_magic(&self, magic: &[u8]) -> bool {
         if magic.len() < self.magic().len() {
-            return false
+            return false;
         }
-        self.magic().iter()
+        self.magic()
+            .iter()
             .copied()
             .zip(magic.iter().copied())
             .all(|(m, n)| m == n || m == '?' as u8)

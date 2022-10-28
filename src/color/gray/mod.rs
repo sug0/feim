@@ -16,7 +16,7 @@ impl Color for Gray {
         let g = y;
         let b = y;
         let a = 0xffff;
-        
+
         (r, g, b, a)
     }
 }
@@ -24,7 +24,7 @@ impl Color for Gray {
 impl<C: Color> ConvertFrom<C> for Gray {
     default fn convert_from(c: C) -> Gray {
         let (r, g, b, _) = c.as_rgba();
-        let y = ((19595*r + 38470*g + 7471*b + 0x8000) >> 24) as u8;
+        let y = ((19595 * r + 38470 * g + 7471 * b + 0x8000) >> 24) as u8;
         Gray { y }
     }
 }

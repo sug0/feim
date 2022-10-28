@@ -1,17 +1,11 @@
 use std::io::{self, Read, Write};
 
-use super::{Image, Dimensions, Format};
+use super::{Dimensions, Format, Image};
 use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
-use crate::color::{Nrgba64, BigEndian};
+use crate::color::{BigEndian, Nrgba64};
 use crate::impl_format;
-use crate::serialize::{
-    Encode,
-    Decode,
-    EncodeOptions,
-    DecodeOptions,
-    GenericDecodeOptions,
-};
+use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions, GenericDecodeOptions};
 
 pub struct Farbfeld;
 
@@ -30,7 +24,11 @@ impl DecodeOptions for Farbfeld {
 }
 
 impl Encode<RawPixBuf<Nrgba64<BigEndian>>> for Farbfeld {
-    fn encode<W: Write>(mut w: W, _opts: (), buf: &RawPixBuf<Nrgba64<BigEndian>>) -> io::Result<()> {
+    fn encode<W: Write>(
+        mut w: W,
+        _opts: (),
+        buf: &RawPixBuf<Nrgba64<BigEndian>>,
+    ) -> io::Result<()> {
         let width = (buf.width() as u32).to_be_bytes();
         let height = (buf.height() as u32).to_be_bytes();
         let magic = Farbfeld.magic();
@@ -73,7 +71,7 @@ impl Decode<RawPixBuf<Nrgba64<BigEndian>>> for Farbfeld {
         if opt.check_header && !Farbfeld.is_valid_magic(&m[..]) {
             let k = std::io::ErrorKind::Other;
             let e = std::io::Error::new(k, "Invalid farbfeld magic.");
-            return Err(e)
+            return Err(e);
         }
         let width = u32::from_be_bytes([m[8], m[9], m[10], m[11]]) as usize;
         let height = u32::from_be_bytes([m[12], m[13], m[14], m[15]]) as usize;

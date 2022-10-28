@@ -14,12 +14,12 @@ impl Color for Rgb {
         let r = self.r as u32;
         let g = self.g as u32;
         let b = self.b as u32;
-        
+
         let r = r | (r << 8);
         let g = g | (g << 8);
         let b = b | (b << 8);
         let a = 0xffff;
-        
+
         (r, g, b, a)
     }
 }

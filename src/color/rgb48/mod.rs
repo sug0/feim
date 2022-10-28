@@ -1,12 +1,7 @@
 use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
-use super::{
-    NativeEndian,
-    LittleEndian,
-    BigEndian,
-    Color,
-};
+use super::{BigEndian, Color, LittleEndian, NativeEndian};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -28,9 +23,14 @@ pub type Rgb48Le = Rgb48<LittleEndian>;
 macro_rules! impl_constructor {
     ($endianness:ident) => {
         pub const fn $endianness(r: u16, b: u16, g: u16) -> Self {
-            Self { r, g, b, _endianness: PhantomData }
+            Self {
+                r,
+                g,
+                b,
+                _endianness: PhantomData,
+            }
         }
-    }
+    };
 }
 
 macro_rules! impl_channel_fn_set_ne {
@@ -39,35 +39,43 @@ macro_rules! impl_channel_fn_set_ne {
             self.$comp = value;
             self
         }
-    }
+    };
 }
 
 macro_rules! impl_channel_fn_set_le {
     ($comp:ident, $set_channel:ident) => {
         pub const fn $set_channel(mut self, value: u16) -> Self {
             #[cfg(target_endian = "little")]
-            { self.$comp = value }
+            {
+                self.$comp = value
+            }
 
             #[cfg(target_endian = "big")]
-            { self.$comp = value.to_be() }
+            {
+                self.$comp = value.to_be()
+            }
 
             self
         }
-    }
+    };
 }
 
 macro_rules! impl_channel_fn_set_be {
     ($comp:ident, $set_channel:ident) => {
         pub const fn $set_channel(mut self, value: u16) -> Self {
             #[cfg(target_endian = "little")]
-            { self.$comp = value.to_le() }
+            {
+                self.$comp = value.to_le()
+            }
 
             #[cfg(target_endian = "big")]
-            { self.$comp = value }
+            {
+                self.$comp = value
+            }
 
             self
         }
-    }
+    };
 }
 
 macro_rules! impl_channel_fn_ne {
@@ -75,31 +83,39 @@ macro_rules! impl_channel_fn_ne {
         pub const fn $c(self) -> u16 {
             self.$c
         }
-    }
+    };
 }
 
 macro_rules! impl_channel_fn_le {
     ($c:ident) => {
         pub const fn $c(self) -> u16 {
             #[cfg(target_endian = "little")]
-            { self.$c }
+            {
+                self.$c
+            }
 
             #[cfg(target_endian = "big")]
-            { self.$c.to_be() }
+            {
+                self.$c.to_be()
+            }
         }
-    }
+    };
 }
 
 macro_rules! impl_channel_fn_be {
     ($c:ident) => {
         pub const fn $c(self) -> u16 {
             #[cfg(target_endian = "little")]
-            { self.$c.to_le() }
+            {
+                self.$c.to_le()
+            }
 
             #[cfg(target_endian = "big")]
-            { self.$c }
+            {
+                self.$c
+            }
         }
-    }
+    };
 }
 
 impl Rgb48<NativeEndian> {

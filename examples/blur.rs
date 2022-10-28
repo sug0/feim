@@ -1,14 +1,10 @@
 use std::io::{self, BufReader, BufWriter};
 
-use feim::buffer::{RawPixBuf, AsTyped, AsTypedMut};
-use feim::color::{Nrgba64, BigEndian};
+use feim::buffer::{AsTyped, AsTypedMut, RawPixBuf};
+use feim::color::{BigEndian, Nrgba64};
 use feim::image::farbfeld::Farbfeld;
 use feim::image::Dimensions;
-use feim::serialize::{
-    Encode,
-    Decode,
-    GenericDecodeOptions,
-};
+use feim::serialize::{Decode, Encode, GenericDecodeOptions};
 
 type Nrgba64Be = Nrgba64<BigEndian>;
 
@@ -21,7 +17,9 @@ fn main() -> io::Result<()> {
     let stdout_lock = stdout.lock();
     let stdout_writer = BufWriter::new(stdout_lock);
 
-    let opts = GenericDecodeOptions { check_header: false };
+    let opts = GenericDecodeOptions {
+        check_header: false,
+    };
     let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode(stdin_reader, opts)?;
     Farbfeld::encode(stdout_writer, (), &blur(image))
 }
@@ -32,7 +30,7 @@ fn blur(orig: RawPixBuf<Nrgba64Be>) -> RawPixBuf<Nrgba64Be> {
 
     for y in 0..orig.height() {
         for x in 0..orig.width() {
-            buf[y*orig.width() + x] = convolve(&orig, x, y);
+            buf[y * orig.width() + x] = convolve(&orig, x, y);
         }
     }
 
@@ -60,12 +58,7 @@ fn convolve(im: &RawPixBuf<Nrgba64Be>, x: usize, y: usize) -> Nrgba64Be {
         }
     }
 
-    Nrgba64Be::be(
-        accum.0 as u16,
-        accum.1 as u16,
-        accum.2 as u16,
-        0xffff,
-    )
+    Nrgba64Be::be(accum.0 as u16, accum.1 as u16, accum.2 as u16, 0xffff)
 }
 
 fn get_clamped(im: &RawPixBuf<Nrgba64Be>, mut x: isize, mut y: isize) -> (f32, f32, f32) {
@@ -85,6 +78,6 @@ fn get_clamped(im: &RawPixBuf<Nrgba64Be>, mut x: isize, mut y: isize) -> (f32, f
     }
     let x = x as usize;
     let y = y as usize;
-    let c = im.as_typed()[im.width()*y + x];
+    let c = im.as_typed()[im.width() * y + x];
     (c.r() as f32, c.g() as f32, c.b() as f32)
 }

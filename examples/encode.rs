@@ -1,16 +1,16 @@
-use std::env;
-use std::process;
 use std::default::Default;
+use std::env;
 use std::io::{self, BufWriter};
+use std::process;
 
-use feim::buffer::{RawPixBuf, AsTypedMut};
-use feim::serialize::Encode;
+use feim::buffer::{AsTypedMut, RawPixBuf};
 use feim::color::Nrgba;
 use feim::image::{
-    jpeg::{Jpeg, JpegEncodeOptions},
     farbfeld::Farbfeld,
+    jpeg::{Jpeg, JpegEncodeOptions},
     png::Png,
 };
+use feim::serialize::Encode;
 
 const DIM: usize = 500;
 
@@ -44,22 +44,32 @@ fn main() -> io::Result<()> {
     match encode_as {
         EncodeAs::Ff => {
             <Farbfeld as Encode<RawPixBuf<Nrgba>>>::encode(&mut stdout_writer, (), &image)
-        },
+        }
         EncodeAs::Png => {
             let opts = Default::default();
             Png::encode(&mut stdout_writer, opts, &image)
-        },
+        }
         EncodeAs::Jpg => {
             let opts = JpegEncodeOptions::new(85).unwrap();
             Jpeg::encode(&mut stdout_writer, opts, &image)
-        },
+        }
     }
 }
 
 fn draw_image(buf: &mut [Nrgba]) {
     const HALF: usize = DIM / 2;
-    const RED: Nrgba = Nrgba { r: 255, g: 0, b: 0, a: 255 };
-    const WHITE: Nrgba = Nrgba { r: 255, g: 255, b: 255, a: 255 };
+    const RED: Nrgba = Nrgba {
+        r: 255,
+        g: 0,
+        b: 0,
+        a: 255,
+    };
+    const WHITE: Nrgba = Nrgba {
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 255,
+    };
 
     let mut color = WHITE;
     const DIST: u8 = 128;
@@ -68,12 +78,12 @@ fn draw_image(buf: &mut [Nrgba]) {
         let yh = y - HALF;
         for x in 0..DIM {
             let xh = x - HALF;
-            color = if xh*xh + yh*yh < HALF*HALF {
+            color = if xh * xh + yh * yh < HALF * HALF {
                 lerp_nrgba(color, RED, DIST)
             } else {
                 lerp_nrgba(color, WHITE, DIST)
             };
-            buf[y*DIM + x] = color;
+            buf[y * DIM + x] = color;
         }
     }
 }
@@ -90,7 +100,8 @@ const fn lerp_nrgba(v0: Nrgba, v1: Nrgba, t: u8) -> Nrgba {
 #[inline]
 const fn lerp(v0: u8, v1: u8, t: u8) -> u8 {
     let (v0, v1, t) = (v0 as u32, v1 as u32, t as u32);
-    let result = (v0*(255-t) + v1*t) / 255; result as u8
+    let result = (v0 * (255 - t) + v1 * t) / 255;
+    result as u8
 }
 
 fn usage(args: &[String]) -> ! {

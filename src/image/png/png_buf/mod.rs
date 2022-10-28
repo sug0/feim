@@ -1,15 +1,7 @@
 use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
-use crate::image::{Image, ImageMut, Dimensions};
-use crate::color::{
-    Gray,
-    Gray16Ne,
-    Nrgba,
-    Nrgba64Ne,
-    Rgb,
-    Rgb48Ne,
-    Color,
-};
+use crate::color::{Color, Gray, Gray16Ne, Nrgba, Nrgba64Ne, Rgb, Rgb48Ne};
+use crate::image::{Dimensions, Image, ImageMut};
 
 #[derive(Clone, Debug)]
 pub enum PngBuf {
