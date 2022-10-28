@@ -16,8 +16,30 @@ pub trait Encode<B, Specialized = Aye>: EncodeOptions {
     fn encode<W: Write>(w: W, opts: Self::Options, buf: &B) -> io::Result<()>;
 }
 
+pub trait EncodeSpecialized<B>: EncodeOptions {
+    fn encode_specialized<W: Write>(w: W, opts: Self::Options, buf: &B) -> io::Result<()>;
+}
+
+impl<B, F: Encode<B, Aye>> EncodeSpecialized<B> for F {
+    #[inline]
+    fn encode_specialized<W: Write>(w: W, opts: Self::Options, buf: &B) -> io::Result<()> {
+        Self::encode(w, opts, buf)
+    }
+}
+
 pub trait Decode<B, Specialized = Aye>: DecodeOptions {
     fn decode<R: Read>(r: R, opt: Self::Options) -> io::Result<B>;
+}
+
+pub trait DecodeSpecialized<B>: DecodeOptions {
+    fn decode_specialized<R: Read>(r: R, opt: Self::Options) -> io::Result<B>;
+}
+
+impl<B, F: Decode<B, Aye>> DecodeSpecialized<B> for F {
+    #[inline]
+    fn decode_specialized<R: Read>(r: R, opt: Self::Options) -> io::Result<B> {
+        Self::decode(r, opt)
+    }
 }
 
 pub struct GenericDecodeOptions {
