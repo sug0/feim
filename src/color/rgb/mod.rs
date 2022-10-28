@@ -25,7 +25,7 @@ impl Color for Rgb {
 }
 
 impl<C: Color> ConvertFrom<C> for Rgb {
-    default fn convert_from(c: C) -> Rgb {
+    fn convert_from(c: C) -> Rgb {
         let (r, g, b, _) = c.as_rgba();
         Rgb {
             r: ((r >> 8) & 0xff) as u8,

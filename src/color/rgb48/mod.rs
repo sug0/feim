@@ -226,7 +226,7 @@ impl Color for Rgb48<LittleEndian> {
 // -------------------------------------------------------------------------- //
 
 impl<C: Color> ConvertFrom<C> for Rgb48<NativeEndian> {
-    default fn convert_from(c: C) -> Self {
+    fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
         Rgb48 {
             r: (r & 0xffff) as u16,
@@ -238,7 +238,7 @@ impl<C: Color> ConvertFrom<C> for Rgb48<NativeEndian> {
 }
 
 impl<C: Color> ConvertFrom<C> for Rgb48<BigEndian> {
-    default fn convert_from(c: C) -> Self {
+    fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
         Rgb48 {
             r: ((r & 0xffff) as u16).to_be(),
@@ -250,7 +250,7 @@ impl<C: Color> ConvertFrom<C> for Rgb48<BigEndian> {
 }
 
 impl<C: Color> ConvertFrom<C> for Rgb48<LittleEndian> {
-    default fn convert_from(c: C) -> Self {
+    fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
         Rgb48 {
             r: ((r & 0xffff) as u16).to_le(),

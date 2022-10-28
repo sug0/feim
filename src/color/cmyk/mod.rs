@@ -29,7 +29,7 @@ impl Color for Cmyk {
 }
 
 impl<C: Color> ConvertFrom<C> for Cmyk {
-    default fn convert_from(c: C) -> Cmyk {
+    fn convert_from(c: C) -> Cmyk {
         let (r, g, b, _) = c.as_rgba();
 
         let w = std::cmp::min(std::cmp::min(r, g), b);

@@ -157,7 +157,7 @@ impl Color for Gray16<LittleEndian> {
 // -------------------------------------------------------------------------- //
 
 impl<C: Color> ConvertFrom<C> for Gray16<NativeEndian> {
-    default fn convert_from(c: C) -> Self {
+    fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
         let y = ((19595 * r + 38470 * g + 7471 * b + 0x8000) >> 16) as u16;
         Gray16 {
@@ -168,7 +168,7 @@ impl<C: Color> ConvertFrom<C> for Gray16<NativeEndian> {
 }
 
 impl<C: Color> ConvertFrom<C> for Gray16<BigEndian> {
-    default fn convert_from(c: C) -> Self {
+    fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
         let y = (((19595 * r + 38470 * g + 7471 * b + 0x8000) >> 16) as u16).to_be();
         Gray16 {
@@ -179,7 +179,7 @@ impl<C: Color> ConvertFrom<C> for Gray16<BigEndian> {
 }
 
 impl<C: Color> ConvertFrom<C> for Gray16<LittleEndian> {
-    default fn convert_from(c: C) -> Self {
+    fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
         let y = (((19595 * r + 38470 * g + 7471 * b + 0x8000) >> 16) as u16).to_le();
         Gray16 {

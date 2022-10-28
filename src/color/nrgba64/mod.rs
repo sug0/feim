@@ -242,7 +242,7 @@ impl Color for Nrgba64<LittleEndian> {
 // -------------------------------------------------------------------------- //
 
 impl<C: Color> ConvertFrom<C> for Nrgba64<NativeEndian> {
-    default fn convert_from(c: C) -> Self {
+    fn convert_from(c: C) -> Self {
         let (r, g, b, a) = c.as_rgba();
         Nrgba64 {
             r: (r & 0xffff) as u16,
@@ -255,7 +255,7 @@ impl<C: Color> ConvertFrom<C> for Nrgba64<NativeEndian> {
 }
 
 impl<C: Color> ConvertFrom<C> for Nrgba64<BigEndian> {
-    default fn convert_from(c: C) -> Self {
+    fn convert_from(c: C) -> Self {
         let (r, g, b, a) = c.as_rgba();
         Nrgba64 {
             r: ((r & 0xffff) as u16).to_be(),
@@ -268,7 +268,7 @@ impl<C: Color> ConvertFrom<C> for Nrgba64<BigEndian> {
 }
 
 impl<C: Color> ConvertFrom<C> for Nrgba64<LittleEndian> {
-    default fn convert_from(c: C) -> Self {
+    fn convert_from(c: C) -> Self {
         let (r, g, b, a) = c.as_rgba();
         Nrgba64 {
             r: ((r & 0xffff) as u16).to_le(),

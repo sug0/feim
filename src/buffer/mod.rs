@@ -98,7 +98,7 @@ impl<T> Dimensions for RawPixBuf<T> {
 impl<C: Copy + Color> Image for RawPixBuf<C> {
     type Pixel = C;
 
-    default fn color_get(&self, x: usize, y: usize) -> C {
+    fn color_get(&self, x: usize, y: usize) -> C {
         let width = self.width();
         let buffer = self.as_typed();
         buffer[y * width + x]
@@ -108,7 +108,7 @@ impl<C: Copy + Color> Image for RawPixBuf<C> {
 impl<C: Color> ImageMut for RawPixBuf<C> {
     type Pixel = C;
 
-    default fn color_set<P>(&mut self, x: usize, y: usize, color: P)
+    fn color_set<P>(&mut self, x: usize, y: usize, color: P)
     where
         P: ConvertInto<C>,
     {

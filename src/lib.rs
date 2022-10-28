@@ -75,9 +75,6 @@
 //! }
 //! ```
 
-#![feature(specialization)]
-#![allow(incomplete_features)]
-
 pub mod buffer;
 pub mod color;
 pub mod image;

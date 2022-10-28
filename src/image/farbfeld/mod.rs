@@ -6,6 +6,7 @@ use crate::color::convert::ConvertInto;
 use crate::color::{BigEndian, Nrgba64};
 use crate::impl_format;
 use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions, GenericDecodeOptions};
+use crate::specialized;
 
 pub struct Farbfeld;
 
@@ -15,7 +16,7 @@ impl_format! {
     magic: b"farbfeld????????",
 }
 
-impl EncodeOptions for Farbfeld {
+impl<S> EncodeOptions<S> for Farbfeld {
     type Options = ();
 }
 
@@ -40,8 +41,8 @@ impl Encode<RawPixBuf<Nrgba64<BigEndian>>> for Farbfeld {
     }
 }
 
-impl<I: Image + Dimensions> Encode<I> for Farbfeld {
-    default fn encode<W: Write>(mut w: W, _opts: (), buf: &I) -> io::Result<()> {
+impl<I: Image + Dimensions> Encode<I, specialized::Aye> for Farbfeld {
+    fn encode<W: Write>(mut w: W, _opts: (), buf: &I) -> io::Result<()> {
         let (width, height) = buf.dimensions();
         {
             let width_ = (width as u32).to_be_bytes();
