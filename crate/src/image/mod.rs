@@ -61,15 +61,15 @@ pub trait Dimensions {
 }
 
 pub trait Image<Specialized = No> {
-    type Pixel: Color;
+    type Pixel: Color<Specialized>;
 
     fn color_get(&self, x: usize, y: usize) -> Self::Pixel;
 }
 
 pub trait ImageMut<Specialized = No> {
-    type Pixel: Color;
+    type Pixel: Color<Specialized>;
 
     fn color_set<C>(&mut self, x: usize, y: usize, color: C)
     where
-        C: ConvertInto<Self::Pixel> + Color;
+        C: ConvertInto<Self::Pixel, Specialized> + Color<Specialized>;
 }
