@@ -10,8 +10,5 @@ in your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-feim = { git = "https://git.sr.ht/~sugo/feim", tag = "v0.11" }
+feim = { git = "https://git.sr.ht/~sugo/feim", tag = "v0.12" }
 ```
-
-You need a nightly toolchain to build this crate, because I'm
-using the unstable `specialization` feature.
