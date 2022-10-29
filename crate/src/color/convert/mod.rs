@@ -3,7 +3,7 @@ use crate::specialized::No;
 
 pub trait ConvertFrom<C, Specialized = No>
 where
-    C: Color<Specialized>,
+    C: Color,
 {
     /// Returns the result of converting a color from `C` into
     /// `Self`.
@@ -12,7 +12,7 @@ where
 
 pub trait ConvertInto<C, Specialized = No>
 where
-    C: Color<Specialized>,
+    C: Color,
 {
     /// Returns the result of converting a color from `Self` into
     /// `C`.
@@ -21,8 +21,8 @@ where
 
 impl<A, B, Specialized> ConvertInto<B, Specialized> for A
 where
-    A: Color<Specialized>,
-    B: ConvertFrom<A, Specialized> + Color<Specialized>,
+    A: Color,
+    B: ConvertFrom<A, Specialized> + Color,
 {
     fn convert_into(self) -> B {
         B::convert_from(self)

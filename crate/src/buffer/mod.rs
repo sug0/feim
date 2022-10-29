@@ -108,9 +108,9 @@ impl<C: Copy + Color> Image for RawPixBuf<C> {
 impl<C: Color> ImageMut for RawPixBuf<C> {
     type Pixel = C;
 
-    fn color_set<P>(&mut self, x: usize, y: usize, color: P)
+    fn color_set<P, ColorSpecialized>(&mut self, x: usize, y: usize, color: P)
     where
-        P: ConvertInto<C>,
+        P: ConvertInto<C, ColorSpecialized>,
     {
         let width = self.width();
         let buffer = self.as_typed_mut();

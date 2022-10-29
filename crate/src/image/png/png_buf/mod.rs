@@ -55,9 +55,9 @@ impl Image for PngBuf {
 impl ImageMut for PngBuf {
     type Pixel = PngPix;
 
-    fn color_set<C>(&mut self, x: usize, y: usize, color: C)
+    fn color_set<C, ColorSpecialized>(&mut self, x: usize, y: usize, color: C)
     where
-        C: ConvertInto<PngPix> + Color,
+        C: ConvertInto<PngPix, ColorSpecialized>,
     {
         match self {
             PngBuf::Gray(buf) => buf.color_set(x, y, color),

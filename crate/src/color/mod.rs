@@ -8,8 +8,6 @@ mod nrgba64;
 mod rgb;
 mod rgb48;
 
-use crate::specialized::No;
-
 pub use cmyk::*;
 pub use gray::*;
 pub use gray16::*;
@@ -18,7 +16,7 @@ pub use nrgba64::*;
 pub use rgb::*;
 pub use rgb48::*;
 
-pub trait Color<Specialized = No> {
+pub trait Color {
     /// Return an alpha premultiplied color in RGBA 16 bits.
     ///
     /// Components are returned as native-endian values.
