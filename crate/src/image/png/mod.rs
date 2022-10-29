@@ -2,7 +2,6 @@ mod png_buf;
 
 pub use png_buf::*;
 
-use std::default::Default;
 use std::io::{self, Read, Write};
 
 use png::{BitDepth, ColorType, Decoder, DecodingError, Encoder, EncodingError, Transformations};

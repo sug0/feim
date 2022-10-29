@@ -1,4 +1,3 @@
-use std::default::Default;
 use std::env;
 use std::io::{self, BufWriter};
 use std::process;

@@ -1,4 +1,3 @@
-use std::default::Default;
 use std::io::{self, BufRead, Read, Write};
 
 use crate::image::Format;
