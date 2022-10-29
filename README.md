@@ -10,7 +10,7 @@ in your `Cargo.toml` file:
 
 ```toml
 [dependencies.feim]
-tag = "v0.13"
+tag = "v0.14"
 features = ["enable-all-formats"]
 git = "https://git.sr.ht/~sugo/feim"
 ```
