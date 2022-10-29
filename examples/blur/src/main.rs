@@ -59,23 +59,11 @@ fn convolve(im: &RawPixBuf<Nrgba64Be>, x: usize, y: usize) -> Nrgba64Be {
     Nrgba64Be::be(accum.0 as u16, accum.1 as u16, accum.2 as u16, 0xffff)
 }
 
-fn get_clamped(im: &RawPixBuf<Nrgba64Be>, mut x: isize, mut y: isize) -> (f32, f32, f32) {
+fn get_clamped(im: &RawPixBuf<Nrgba64Be>, x: isize, y: isize) -> (f32, f32, f32) {
     let w = im.width() as isize;
     let h = im.height() as isize;
-    if x < 0 {
-        x = 0;
-    }
-    if x >= w {
-        x = w - 1;
-    }
-    if y < 0 {
-        y = 0;
-    }
-    if y >= h {
-        y = h - 1;
-    }
-    let x = x as usize;
-    let y = y as usize;
+    let x = x.clamp(0, w - 1) as usize;
+    let y = y.clamp(0, h - 1) as usize;
     let c = im.as_typed()[im.width() * y + x];
     (c.r() as f32, c.g() as f32, c.b() as f32)
 }
