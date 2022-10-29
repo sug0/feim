@@ -1,12 +1,10 @@
 use std::io::{self, BufReader, BufWriter};
 
 use feim::buffer::{AsTyped, AsTypedMut, RawPixBuf};
-use feim::color::{BigEndian, Nrgba64};
+use feim::color::Nrgba64Be;
 use feim::image::farbfeld::Farbfeld;
 use feim::image::Dimensions;
 use feim::serialize::{Decode, EncodeSpecialized, GenericDecodeOptions};
-
-type Nrgba64Be = Nrgba64<BigEndian>;
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
