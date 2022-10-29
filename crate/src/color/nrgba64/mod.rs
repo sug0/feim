@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
-use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian};
+use super::{BigEndian, Color, LittleEndian, NativeEndian};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -40,7 +40,7 @@ macro_rules! impl_channel_fn_set_le {
 
             #[cfg(target_endian = "big")]
             {
-                self.$comp = value.to_be()
+                self.$comp = value.swap_bytes()
             }
 
             self
@@ -53,7 +53,7 @@ macro_rules! impl_channel_fn_set_be {
         pub const fn $set_channel(mut self, value: u16) -> Self {
             #[cfg(target_endian = "little")]
             {
-                self.$comp = value.to_le()
+                self.$comp = value.swap_bytes()
             }
 
             #[cfg(target_endian = "big")]
@@ -84,7 +84,7 @@ macro_rules! impl_channel_fn_le {
 
             #[cfg(target_endian = "big")]
             {
-                self.$c.to_be()
+                self.$c.swap_bytes()
             }
         }
     };
@@ -95,7 +95,7 @@ macro_rules! impl_channel_fn_be {
         pub const fn $c(self) -> u16 {
             #[cfg(target_endian = "little")]
             {
-                self.$c.to_le()
+                self.$c.swap_bytes()
             }
 
             #[cfg(target_endian = "big")]
@@ -205,10 +205,10 @@ impl Color for Nrgba64<BigEndian> {
     fn as_rgba(&self) -> (u32, u32, u32, u32) {
         #[cfg(target_endian = "little")]
         {
-            let r = self.r.to_le();
-            let g = self.g.to_le();
-            let b = self.b.to_le();
-            let a = self.a.to_le();
+            let r = self.r.swap_bytes();
+            let g = self.g.swap_bytes();
+            let b = self.b.swap_bytes();
+            let a = self.a.swap_bytes();
 
             nrgba64_to_rgba(r, g, b, a)
         }
@@ -239,10 +239,10 @@ impl Color for Nrgba64<LittleEndian> {
 
         #[cfg(target_endian = "big")]
         {
-            let r = self.r.to_be();
-            let g = self.g.to_be();
-            let b = self.b.to_be();
-            let a = self.a.to_be();
+            let r = self.r.swap_bytes();
+            let g = self.g.swap_bytes();
+            let b = self.b.swap_bytes();
+            let a = self.a.swap_bytes();
 
             nrgba64_to_rgba(r, g, b, a)
         }
@@ -268,10 +268,10 @@ impl<C: Color> ConvertFrom<C> for Nrgba64<BigEndian> {
     fn convert_from(c: C) -> Self {
         let (r, g, b, a) = c.as_rgba();
         Nrgba64 {
-            r: ((r & 0xffff) as u16).to_be(),
-            g: ((g & 0xffff) as u16).to_be(),
-            b: ((b & 0xffff) as u16).to_be(),
-            a: ((a & 0xffff) as u16).to_be(),
+            r: ((r & 0xffff) as u16).swap_bytes(),
+            g: ((g & 0xffff) as u16).swap_bytes(),
+            b: ((b & 0xffff) as u16).swap_bytes(),
+            a: ((a & 0xffff) as u16).swap_bytes(),
             _endianness: PhantomData,
         }
     }
@@ -281,10 +281,10 @@ impl<C: Color> ConvertFrom<C> for Nrgba64<LittleEndian> {
     fn convert_from(c: C) -> Self {
         let (r, g, b, a) = c.as_rgba();
         Nrgba64 {
-            r: ((r & 0xffff) as u16).to_le(),
-            g: ((g & 0xffff) as u16).to_le(),
-            b: ((b & 0xffff) as u16).to_le(),
-            a: ((a & 0xffff) as u16).to_le(),
+            r: ((r & 0xffff) as u16).swap_bytes(),
+            g: ((g & 0xffff) as u16).swap_bytes(),
+            b: ((b & 0xffff) as u16).swap_bytes(),
+            a: ((a & 0xffff) as u16).swap_bytes(),
             _endianness: PhantomData,
         }
     }
@@ -306,10 +306,10 @@ impl From<Nrgba64<BigEndian>> for u64 {
     fn from(c: Nrgba64<BigEndian>) -> u64 {
         #[cfg(target_endian = "little")]
         let (r, g, b, a) = {
-            let r = ((c.r as u64) << (16 * 0)).to_le();
-            let g = ((c.g as u64) << (16 * 1)).to_le();
-            let b = ((c.b as u64) << (16 * 2)).to_le();
-            let a = ((c.a as u64) << (16 * 3)).to_le();
+            let r = ((c.r as u64) << (16 * 0)).swap_bytes();
+            let g = ((c.g as u64) << (16 * 1)).swap_bytes();
+            let b = ((c.b as u64) << (16 * 2)).swap_bytes();
+            let a = ((c.a as u64) << (16 * 3)).swap_bytes();
             (r, g, b, a)
         };
 
@@ -339,10 +339,10 @@ impl From<Nrgba64<LittleEndian>> for u64 {
 
         #[cfg(target_endian = "big")]
         let (r, g, b, a) = {
-            let r = ((c.r as u64) << (16 * 0)).to_be();
-            let g = ((c.g as u64) << (16 * 1)).to_be();
-            let b = ((c.b as u64) << (16 * 2)).to_be();
-            let a = ((c.a as u64) << (16 * 3)).to_be();
+            let r = ((c.r as u64) << (16 * 0)).swap_bytes();
+            let g = ((c.g as u64) << (16 * 1)).swap_bytes();
+            let b = ((c.b as u64) << (16 * 2)).swap_bytes();
+            let a = ((c.a as u64) << (16 * 3)).swap_bytes();
             (r, g, b, a)
         };
 
@@ -352,17 +352,48 @@ impl From<Nrgba64<LittleEndian>> for u64 {
 
 // -------------------------------------------------------------------------- //
 
-impl<E: Endianness> From<u64> for Nrgba64<E> {
+fn get_components(c: u64) -> (u16, u16, u16, u16) {
+    let r = (c & 0xffff) as u16;
+    let g = ((c & 0xffff0000) >> 16) as u16;
+    let b = ((c & 0xffff00000000) >> 32) as u16;
+    let a = ((c & 0xffff000000000000) >> 48) as u16;
+    (r, g, b, a)
+}
+
+impl From<u64> for Nrgba64<NativeEndian> {
     fn from(c: u64) -> Self {
-        let r = (c & 0xffff) as u16;
-        let g = ((c & 0xffff0000) >> 16) as u16;
-        let b = ((c & 0xffff00000000) >> 32) as u16;
-        let a = ((c & 0xffff000000000000) >> 48) as u16;
+        let (r, g, b, a) = get_components(c);
         Self {
             r,
             g,
             b,
             a,
+            _endianness: PhantomData,
+        }
+    }
+}
+
+impl From<u64> for Nrgba64<BigEndian> {
+    fn from(c: u64) -> Self {
+        let (r, g, b, a) = get_components(c);
+        Self {
+            r: r.to_be(),
+            g: g.to_be(),
+            b: b.to_be(),
+            a: a.to_be(),
+            _endianness: PhantomData,
+        }
+    }
+}
+
+impl From<u64> for Nrgba64<LittleEndian> {
+    fn from(c: u64) -> Self {
+        let (r, g, b, a) = get_components(c);
+        Self {
+            r: r.to_le(),
+            g: g.to_le(),
+            b: b.to_le(),
+            a: a.to_le(),
             _endianness: PhantomData,
         }
     }

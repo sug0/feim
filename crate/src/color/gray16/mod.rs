@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
-use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian};
+use super::{BigEndian, Color, LittleEndian, NativeEndian};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -52,7 +52,7 @@ impl Gray16<LittleEndian> {
 
         #[cfg(target_endian = "big")]
         {
-            self.y.to_be()
+            self.y.swap_bytes()
         }
     }
 
@@ -64,7 +64,7 @@ impl Gray16<LittleEndian> {
 
         #[cfg(target_endian = "big")]
         {
-            self.y = y.to_be()
+            self.y = y.swap_bytes()
         }
 
         self
@@ -82,7 +82,7 @@ impl Gray16<BigEndian> {
     pub const fn y(self) -> u16 {
         #[cfg(target_endian = "little")]
         {
-            self.y.to_le()
+            self.y.swap_bytes()
         }
 
         #[cfg(target_endian = "big")]
@@ -94,7 +94,7 @@ impl Gray16<BigEndian> {
     pub const fn set_y(mut self, y: u16) -> Self {
         #[cfg(target_endian = "little")]
         {
-            self.y = y.to_le()
+            self.y = y.swap_bytes()
         }
 
         #[cfg(target_endian = "big")]
@@ -130,7 +130,7 @@ impl Color for Gray16<BigEndian> {
     fn as_rgba(&self) -> (u32, u32, u32, u32) {
         #[cfg(target_endian = "little")]
         {
-            gray16_to_rgba(self.y.to_le())
+            gray16_to_rgba(self.y.swap_bytes())
         }
 
         #[cfg(target_endian = "big")]
@@ -149,7 +149,7 @@ impl Color for Gray16<LittleEndian> {
 
         #[cfg(target_endian = "big")]
         {
-            gray16_to_rgba(self.y.to_be())
+            gray16_to_rgba(self.y.swap_bytes())
         }
     }
 }
@@ -201,7 +201,7 @@ impl From<Gray16<BigEndian>> for u16 {
     fn from(c: Gray16<BigEndian>) -> u16 {
         #[cfg(target_endian = "little")]
         {
-            c.y.to_le()
+            c.y.swap_bytes()
         }
 
         #[cfg(target_endian = "big")]
@@ -220,17 +220,35 @@ impl From<Gray16<LittleEndian>> for u16 {
 
         #[cfg(target_endian = "big")]
         {
-            c.y.to_be()
+            c.y.swap_bytes()
         }
     }
 }
 
 // -------------------------------------------------------------------------- //
 
-impl<E: Endianness> From<u16> for Gray16<E> {
+impl From<u16> for Gray16<NativeEndian> {
     fn from(y: u16) -> Self {
         Self {
             y,
+            _endianness: PhantomData,
+        }
+    }
+}
+
+impl From<u16> for Gray16<BigEndian> {
+    fn from(y: u16) -> Self {
+        Self {
+            y: y.to_be(),
+            _endianness: PhantomData,
+        }
+    }
+}
+
+impl From<u16> for Gray16<LittleEndian> {
+    fn from(y: u16) -> Self {
+        Self {
+            y: y.to_le(),
             _endianness: PhantomData,
         }
     }

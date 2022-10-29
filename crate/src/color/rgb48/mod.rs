@@ -39,7 +39,7 @@ macro_rules! impl_channel_fn_set_le {
 
             #[cfg(target_endian = "big")]
             {
-                self.$comp = value.to_be()
+                self.$comp = value.swap_bytes()
             }
 
             self
@@ -52,7 +52,7 @@ macro_rules! impl_channel_fn_set_be {
         pub const fn $set_channel(mut self, value: u16) -> Self {
             #[cfg(target_endian = "little")]
             {
-                self.$comp = value.to_le()
+                self.$comp = value.swap_bytes()
             }
 
             #[cfg(target_endian = "big")]
@@ -83,7 +83,7 @@ macro_rules! impl_channel_fn_le {
 
             #[cfg(target_endian = "big")]
             {
-                self.$c.to_be()
+                self.$c.swap_bytes()
             }
         }
     };
@@ -94,7 +94,7 @@ macro_rules! impl_channel_fn_be {
         pub const fn $c(self) -> u16 {
             #[cfg(target_endian = "little")]
             {
-                self.$c.to_le()
+                self.$c.swap_bytes()
             }
 
             #[cfg(target_endian = "big")]
@@ -191,9 +191,9 @@ impl Color for Rgb48<BigEndian> {
     fn as_rgba(&self) -> (u32, u32, u32, u32) {
         #[cfg(target_endian = "little")]
         {
-            let r = self.r.to_le();
-            let g = self.g.to_le();
-            let b = self.b.to_le();
+            let r = self.r.swap_bytes();
+            let g = self.g.swap_bytes();
+            let b = self.b.swap_bytes();
 
             rgb48_to_rgba(r, g, b)
         }
@@ -222,9 +222,9 @@ impl Color for Rgb48<LittleEndian> {
 
         #[cfg(target_endian = "big")]
         {
-            let r = self.r.to_be();
-            let g = self.g.to_be();
-            let b = self.b.to_be();
+            let r = self.r.swap_bytes();
+            let g = self.g.swap_bytes();
+            let b = self.b.swap_bytes();
 
             rgb48_to_rgba(r, g, b)
         }
