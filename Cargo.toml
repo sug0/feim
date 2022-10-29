@@ -5,7 +5,8 @@ authors = ["Tiago Carvalho <sugoiuguu@tfwno.gf>"]
 edition = "2018"
 
 [features]
-default = ["fmt-farbfeld", "fmt-jpeg", "fmt-png"]
+default = []
+enable-all-formats = ["fmt-farbfeld", "fmt-jpeg", "fmt-png"]
 fmt-jpeg = ["jpeg-encoder", "jpeg-decoder"]
 fmt-png = ["png"]
 fmt-farbfeld = []
