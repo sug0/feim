@@ -39,7 +39,7 @@ impl Gray16<NativeEndian> {
 impl Gray16<LittleEndian> {
     pub const fn le(y: u16) -> Self {
         Self {
-            y,
+            y: y.to_le(),
             _endianness: PhantomData,
         }
     }
@@ -74,7 +74,7 @@ impl Gray16<LittleEndian> {
 impl Gray16<BigEndian> {
     pub const fn be(y: u16) -> Self {
         Self {
-            y,
+            y: y.to_be(),
             _endianness: PhantomData,
         }
     }

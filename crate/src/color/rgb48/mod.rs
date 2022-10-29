@@ -20,19 +20,6 @@ pub type Rgb48Le = Rgb48<LittleEndian>;
 
 // -------------------------------------------------------------------------- //
 
-macro_rules! impl_constructor {
-    ($endianness:ident) => {
-        pub const fn $endianness(r: u16, b: u16, g: u16) -> Self {
-            Self {
-                r,
-                g,
-                b,
-                _endianness: PhantomData,
-            }
-        }
-    };
-}
-
 macro_rules! impl_channel_fn_set_ne {
     ($comp:ident, $set_channel:ident) => {
         pub const fn $set_channel(mut self, value: u16) -> Self {
@@ -119,7 +106,14 @@ macro_rules! impl_channel_fn_be {
 }
 
 impl Rgb48<NativeEndian> {
-    impl_constructor!(ne);
+    pub const fn ne(r: u16, b: u16, g: u16) -> Self {
+        Self {
+            r,
+            g,
+            b,
+            _endianness: PhantomData,
+        }
+    }
 
     impl_channel_fn_ne!(r);
     impl_channel_fn_ne!(g);
@@ -131,7 +125,14 @@ impl Rgb48<NativeEndian> {
 }
 
 impl Rgb48<LittleEndian> {
-    impl_constructor!(le);
+    pub const fn le(r: u16, b: u16, g: u16) -> Self {
+        Self {
+            r: r.to_le(),
+            g: g.to_le(),
+            b: b.to_le(),
+            _endianness: PhantomData,
+        }
+    }
 
     impl_channel_fn_le!(r);
     impl_channel_fn_le!(g);
@@ -143,7 +144,14 @@ impl Rgb48<LittleEndian> {
 }
 
 impl Rgb48<BigEndian> {
-    impl_constructor!(be);
+    pub const fn be(r: u16, b: u16, g: u16) -> Self {
+        Self {
+            r: r.to_be(),
+            g: g.to_be(),
+            b: b.to_be(),
+            _endianness: PhantomData,
+        }
+    }
 
     impl_channel_fn_be!(r);
     impl_channel_fn_be!(g);
