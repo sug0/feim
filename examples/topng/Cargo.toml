@@ -1,0 +1,7 @@
+[package]
+name = "topng"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+feim = { path = "../../crate", features = ["fmt-farbfeld", "fmt-png"] }
