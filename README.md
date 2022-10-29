@@ -9,6 +9,8 @@ For now, I'll be keeping it kind of low key. Insert this
 in your `Cargo.toml` file:
 
 ```toml
-[dependencies]
-feim = { git = "https://git.sr.ht/~sugo/feim", tag = "v0.12" }
+[dependencies.feim]
+tag = "v0.13"
+features = ["enable-all-formats"]
+git = "https://git.sr.ht/~sugo/feim"
 ```
