@@ -12,5 +12,5 @@ fmt-farbfeld = []
 
 [dependencies]
 jpeg-encoder = { version = "0.5", features = ["simd"], optional = true }
-jpeg-decoder = { version = "0.2", features = ["nightly_aarch64_neon"], optional = true }
+jpeg-decoder = { version = "0.3", features = ["nightly_aarch64_neon"], optional = true }
 png = { version = "0.17", optional = true }
