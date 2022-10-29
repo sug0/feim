@@ -41,10 +41,15 @@ pub enum NativeEndian {}
 
 // -------------------------------------------------------------------------- //
 
-pub(crate) trait Endianness {}
+#[doc(hidden)]
+pub trait EndiannessPrivate {}
 
-impl Endianness for BigEndian {}
+pub trait Endianness: EndiannessPrivate {}
 
-impl Endianness for LittleEndian {}
+impl EndiannessPrivate for BigEndian {}
 
-impl Endianness for NativeEndian {}
+impl EndiannessPrivate for LittleEndian {}
+
+impl EndiannessPrivate for NativeEndian {}
+
+impl<E: EndiannessPrivate> Endianness for E {}

@@ -1,13 +1,23 @@
 use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
-use super::{BigEndian, Color, LittleEndian, NativeEndian};
+use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
 pub struct Gray16<E> {
     y: u16,
     _endianness: PhantomData<E>,
+}
+
+impl<E1: Endianness> Gray16<E1> {
+    pub const fn cast<E2: Endianness>(self) -> Gray16<E2> {
+        let Gray16 { y, .. } = self;
+        Gray16 {
+            y,
+            _endianness: PhantomData,
+        }
+    }
 }
 
 pub type Gray16Ne = Gray16<NativeEndian>;

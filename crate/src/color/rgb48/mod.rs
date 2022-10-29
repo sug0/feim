@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
-use super::{BigEndian, Color, LittleEndian, NativeEndian};
+use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -10,6 +10,18 @@ pub struct Rgb48<E> {
     g: u16,
     b: u16,
     _endianness: PhantomData<E>,
+}
+
+impl<E1: Endianness> Rgb48<E1> {
+    pub const fn cast<E2: Endianness>(self) -> Rgb48<E2> {
+        let Rgb48 { r, g, b, .. } = self;
+        Rgb48 {
+            r,
+            g,
+            b,
+            _endianness: PhantomData,
+        }
+    }
 }
 
 pub type Rgb48Ne = Rgb48<NativeEndian>;

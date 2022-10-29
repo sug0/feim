@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
-use super::{BigEndian, Color, LittleEndian, NativeEndian};
+use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -11,6 +11,19 @@ pub struct Nrgba64<E> {
     b: u16,
     a: u16,
     _endianness: PhantomData<E>,
+}
+
+impl<E1: Endianness> Nrgba64<E1> {
+    pub const fn cast<E2: Endianness>(self) -> Nrgba64<E2> {
+        let Nrgba64 { r, g, b, a, .. } = self;
+        Nrgba64 {
+            r,
+            g,
+            b,
+            a,
+            _endianness: PhantomData,
+        }
+    }
 }
 
 pub type Nrgba64Ne = Nrgba64<NativeEndian>;

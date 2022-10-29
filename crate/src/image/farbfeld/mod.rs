@@ -3,7 +3,7 @@ use std::io::{self, Read, Write};
 use super::{Dimensions, Format, Image};
 use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
-use crate::color::{BigEndian, Nrgba64};
+use crate::color::{BigEndian, NativeEndian, Nrgba64};
 use crate::impl_format;
 use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions, GenericDecodeOptions};
 use crate::specialized;
@@ -56,6 +56,7 @@ impl<I: Image + Dimensions> Encode<I, specialized::No> for Farbfeld {
             for x in 0..width {
                 let c = buf.color_get(x, y);
                 let c: Nrgba64<BigEndian> = c.convert_into();
+                let c: Nrgba64<NativeEndian> = c.cast();
                 let c: u64 = c.into();
                 let c = c.to_ne_bytes();
                 w.write_all(&c[..])?;
