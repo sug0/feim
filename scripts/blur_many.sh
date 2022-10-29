@@ -21,7 +21,7 @@ img=${1:-'-'}
 cat $img | ./target/release/toff > $final
 
 for i in $(seq 1 $n); do
-    $final < ./target/release/blur > $intermediate
+    < $final ./target/release/blur > $intermediate
     mv $intermediate $final
 done
 
