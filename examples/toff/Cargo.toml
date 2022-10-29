@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-feim = { path = "../..", features = ["enable-all-formats"] }
+feim = { path = "../../crate", features = ["enable-all-formats"] }

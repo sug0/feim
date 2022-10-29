@@ -1,0 +1,17 @@
+[package]
+name = "feim"
+version = "0.12.0"
+authors = ["Tiago Carvalho <sugoiuguu@tfwno.gf>"]
+edition = "2018"
+
+[features]
+default = []
+enable-all-formats = ["fmt-farbfeld", "fmt-jpeg", "fmt-png"]
+fmt-jpeg = ["jpeg-encoder", "jpeg-decoder"]
+fmt-png = ["png"]
+fmt-farbfeld = []
+
+[dependencies]
+jpeg-encoder = { version = "0.5", features = ["simd"], optional = true }
+jpeg-decoder = { version = "0.3", features = ["nightly_aarch64_neon"], optional = true }
+png = { version = "0.17", optional = true }
