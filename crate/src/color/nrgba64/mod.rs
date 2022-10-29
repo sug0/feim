@@ -127,7 +127,7 @@ impl<E> Nrgba64<E> {
 }
 
 impl Nrgba64<NativeEndian> {
-    pub const fn ne(r: u16, b: u16, g: u16, a: u16) -> Self {
+    pub const fn ne(r: u16, g: u16, b: u16, a: u16) -> Self {
         Self {
             r,
             g,
@@ -149,7 +149,7 @@ impl Nrgba64<NativeEndian> {
 }
 
 impl Nrgba64<LittleEndian> {
-    pub const fn le(r: u16, b: u16, g: u16, a: u16) -> Self {
+    pub const fn le(r: u16, g: u16, b: u16, a: u16) -> Self {
         Self {
             r: r.to_le(),
             g: g.to_le(),
@@ -171,7 +171,7 @@ impl Nrgba64<LittleEndian> {
 }
 
 impl Nrgba64<BigEndian> {
-    pub const fn be(r: u16, b: u16, g: u16, a: u16) -> Self {
+    pub const fn be(r: u16, g: u16, a: u16, a: u16) -> Self {
         Self {
             r: r.to_be(),
             g: g.to_be(),
