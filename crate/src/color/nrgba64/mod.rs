@@ -171,7 +171,7 @@ impl Nrgba64<LittleEndian> {
 }
 
 impl Nrgba64<BigEndian> {
-    pub const fn be(r: u16, g: u16, a: u16, a: u16) -> Self {
+    pub const fn be(r: u16, g: u16, b: u16, a: u16) -> Self {
         Self {
             r: r.to_be(),
             g: g.to_be(),
