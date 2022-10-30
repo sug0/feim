@@ -47,6 +47,11 @@ impl<T> RawPixBuf<T> {
         let buf = unsafe { std::mem::transmute(buf) };
         Ok(RawPixBuf { width, height, buf })
     }
+
+    #[inline]
+    pub fn into_pixels(self) -> Box<[T]> {
+        self.buf
+    }
 }
 
 impl<C: Color> AsTyped for RawPixBuf<C> {
