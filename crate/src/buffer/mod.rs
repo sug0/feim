@@ -110,7 +110,7 @@ impl<C: Color> ImageMut for RawPixBuf<C> {
 
     fn color_set<P, ColorSpecialized>(&mut self, x: usize, y: usize, color: P)
     where
-        P: ConvertInto<C, ColorSpecialized>,
+        P: ConvertInto<C, ColorSpecialized> + Color,
     {
         let width = self.width();
         let buffer = self.as_typed_mut();

@@ -71,5 +71,5 @@ pub trait ImageMut<Specialized = No> {
 
     fn color_set<C, ColorSpecialized>(&mut self, x: usize, y: usize, color: C)
     where
-        C: ConvertInto<Self::Pixel, ColorSpecialized>;
+        C: ConvertInto<Self::Pixel, ColorSpecialized> + Color;
 }

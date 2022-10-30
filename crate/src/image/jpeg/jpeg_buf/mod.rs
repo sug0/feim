@@ -47,9 +47,9 @@ impl Image for JpegBuf {
 impl ImageMut for JpegBuf {
     type Pixel = JpegPix;
 
-    fn color_set<C>(&mut self, x: usize, y: usize, color: C)
+    fn color_set<C, ColorSpecialized>(&mut self, x: usize, y: usize, color: C)
     where
-        C: ConvertInto<JpegPix> + Color,
+        C: ConvertInto<JpegPix, ColorSpecialized> + Color,
     {
         match self {
             JpegBuf::Gray(buf) => buf.color_set(x, y, color),
