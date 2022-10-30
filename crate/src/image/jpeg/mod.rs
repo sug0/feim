@@ -95,4 +95,15 @@ impl_encode!(Gray, ColorType::Luma);
 impl_encode!(Cmyk, ColorType::Cmyk);
 impl_encode!(Nrgba, ColorType::Rgba);
 
+impl Encode<JpegBuf> for Jpeg {
+    fn encode<W: Write>(w: W, opts: JpegEncodeOptions, buf: &JpegBuf) -> io::Result<()> {
+        match buf {
+            JpegBuf::Gray16(_) => todo!(),
+            JpegBuf::Gray(buf) => Jpeg::encode(w, opts, buf),
+            JpegBuf::Rgb(buf) => Jpeg::encode(w, opts, buf),
+            JpegBuf::Cmyk(buf) => Jpeg::encode(w, opts, buf),
+        }
+    }
+}
+
 // TODO: default encode for jpeg

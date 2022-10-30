@@ -122,4 +122,17 @@ impl_encode!(Nrgba64Ne, BitDepth::Sixteen, ColorType::Rgba);
 impl_encode!(Rgb, BitDepth::Eight, ColorType::Rgb);
 impl_encode!(Rgb48Ne, BitDepth::Sixteen, ColorType::Rgb);
 
+impl Encode<PngBuf> for Png {
+    fn encode<W: Write>(w: W, opts: PngEncodeOptions, buf: &PngBuf) -> io::Result<()> {
+        match buf {
+            PngBuf::Gray(buf) => Png::encode(w, opts, buf),
+            PngBuf::Gray16(buf) => Png::encode(w, opts, buf),
+            PngBuf::Nrgba(buf) => Png::encode(w, opts, buf),
+            PngBuf::Nrgba64(buf) => Png::encode(w, opts, buf),
+            PngBuf::Rgb(buf) => Png::encode(w, opts, buf),
+            PngBuf::Rgb48(buf) => Png::encode(w, opts, buf),
+        }
+    }
+}
+
 // TODO: default encode / decode
