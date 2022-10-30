@@ -1,7 +1,7 @@
 use std::io::{self, BufReader, BufWriter};
 
 use feim::buffer::RawPixBuf;
-use feim::color::{Nrgba64Be, Nrgba64Ne};
+use feim::color::{Nrgba64Be, Nrgba64Le, Nrgba64Ne};
 use feim::image::{
     farbfeld::Farbfeld,
     jpeg::{Jpeg, JpegBuf},
@@ -30,7 +30,9 @@ fn main() -> io::Result<()> {
                 check_header: false,
             };
             let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode(stdin_reader, opts)?;
-            let image: RawPixBuf<Nrgba64Ne> = image.encode_as();
+            let image: RawPixBuf<Nrgba64Le> = image.encode_as();
+            // TODO: remove unsafe transmute
+            let image: RawPixBuf<Nrgba64Ne> = unsafe { std::mem::transmute(image) };
             let opts = Default::default();
             Png::encode(stdout_writer, opts, &image)
         }
