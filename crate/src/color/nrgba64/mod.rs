@@ -322,8 +322,8 @@ impl<C: Color> ConvertFrom<C> for Nrgba64<LittleEndian> {
 
 impl From<Nrgba64<NativeEndian>> for u64 {
     fn from(c: Nrgba64<NativeEndian>) -> u64 {
-        let r = (c.r as u64) << (16 * 0);
-        let g = (c.g as u64) << (16 * 1);
+        let r = c.r as u64;
+        let g = (c.g as u64) << 16;
         let b = (c.b as u64) << (16 * 2);
         let a = (c.a as u64) << (16 * 3);
         r | g | b | a
@@ -334,8 +334,8 @@ impl From<Nrgba64<BigEndian>> for u64 {
     fn from(c: Nrgba64<BigEndian>) -> u64 {
         #[cfg(target_endian = "little")]
         let (r, g, b, a) = {
-            let r = ((c.r as u64) << (16 * 0)).swap_bytes();
-            let g = ((c.g as u64) << (16 * 1)).swap_bytes();
+            let r = (c.r as u64).swap_bytes();
+            let g = ((c.g as u64) << 16).swap_bytes();
             let b = ((c.b as u64) << (16 * 2)).swap_bytes();
             let a = ((c.a as u64) << (16 * 3)).swap_bytes();
             (r, g, b, a)
@@ -358,8 +358,8 @@ impl From<Nrgba64<LittleEndian>> for u64 {
     fn from(c: Nrgba64<LittleEndian>) -> u64 {
         #[cfg(target_endian = "little")]
         let (r, g, b, a) = {
-            let r = (c.r as u64) << (16 * 0);
-            let g = (c.g as u64) << (16 * 1);
+            let r = c.r as u64;
+            let g = (c.g as u64) << 16;
             let b = (c.b as u64) << (16 * 2);
             let a = (c.a as u64) << (16 * 3);
             (r, g, b, a)
@@ -367,8 +367,8 @@ impl From<Nrgba64<LittleEndian>> for u64 {
 
         #[cfg(target_endian = "big")]
         let (r, g, b, a) = {
-            let r = ((c.r as u64) << (16 * 0)).swap_bytes();
-            let g = ((c.g as u64) << (16 * 1)).swap_bytes();
+            let r = (c.r as u64).swap_bytes();
+            let g = ((c.g as u64) << 16).swap_bytes();
             let b = ((c.b as u64) << (16 * 2)).swap_bytes();
             let a = ((c.a as u64) << (16 * 3)).swap_bytes();
             (r, g, b, a)

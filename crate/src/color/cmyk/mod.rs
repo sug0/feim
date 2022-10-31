@@ -59,8 +59,8 @@ impl<C: Color> ConvertFrom<C> for Cmyk {
 
 impl From<Cmyk> for u32 {
     fn from(cmyk: Cmyk) -> u32 {
-        let c = (cmyk.c as u32) << (8 * 0);
-        let m = (cmyk.m as u32) << (8 * 1);
+        let c = cmyk.c as u32;
+        let m = (cmyk.m as u32) << 8;
         let y = (cmyk.y as u32) << (8 * 2);
         let k = (cmyk.k as u32) << (8 * 3);
         c | m | y | k

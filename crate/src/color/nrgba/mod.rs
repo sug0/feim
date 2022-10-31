@@ -40,8 +40,8 @@ impl<C: Color> ConvertFrom<C> for Nrgba {
 
 impl From<Nrgba> for u32 {
     fn from(c: Nrgba) -> u32 {
-        let r = (c.r as u32) << (8 * 0);
-        let g = (c.g as u32) << (8 * 1);
+        let r = c.r as u32;
+        let g = (c.g as u32) << 8;
         let b = (c.b as u32) << (8 * 2);
         let a = (c.a as u32) << (8 * 3);
         r | g | b | a

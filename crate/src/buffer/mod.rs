@@ -52,8 +52,8 @@ impl<T> RawPixBuf<T> {
     }
 
     #[inline]
-    pub fn into_pixels(self) -> Box<[T]> {
-        self.buf
+    pub fn into_pixels(self) -> Vec<T> {
+        self.buf.into_vec()
     }
 }
 

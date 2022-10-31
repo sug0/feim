@@ -45,7 +45,7 @@ pub trait Format {
             .iter()
             .copied()
             .zip(magic.iter().copied())
-            .all(|(m, n)| m == n || m == '?' as u8)
+            .all(|(m, n)| m == n || m == b'?')
     }
 }
 
