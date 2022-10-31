@@ -2,12 +2,13 @@ use std::env;
 use std::io::{self, BufWriter};
 use std::process;
 
-use feim::buffer::{AsTypedMut, RawPixBuf};
+use feim::buffer::RawPixBuf;
 use feim::color::Nrgba;
 use feim::image::{
     farbfeld::Farbfeld,
     jpeg::{Jpeg, JpegEncodeOptions},
     png::Png,
+    ImageMut,
 };
 use feim::serialize::Encode;
 
@@ -38,7 +39,7 @@ fn main() -> io::Result<()> {
     let mut stdout_writer = BufWriter::new(stdout_lock);
 
     let mut image = RawPixBuf::new(DIM, DIM);
-    draw_image(image.as_typed_mut());
+    draw_image(&mut image);
 
     match encode_as {
         EncodeAs::Ff => Farbfeld::encode(&mut stdout_writer, (), &image),
@@ -53,7 +54,7 @@ fn main() -> io::Result<()> {
     }
 }
 
-fn draw_image(buf: &mut [Nrgba]) {
+fn draw_image(buf: &mut RawPixBuf<Nrgba>) {
     const HALF: usize = DIM / 2;
     const RED: Nrgba = Nrgba {
         r: 255,
@@ -80,7 +81,7 @@ fn draw_image(buf: &mut [Nrgba]) {
             } else {
                 lerp_nrgba(color, WHITE, DIST)
             };
-            buf[y * DIM + x] = color;
+            buf.pixel_set(x, y, color);
         }
     }
 }

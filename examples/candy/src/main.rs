@@ -1,8 +1,9 @@
 use std::io::{self, BufWriter};
 
-use feim::buffer::{AsTypedMut, RawPixBuf};
+use feim::buffer::RawPixBuf;
 use feim::color::{BigEndian, Nrgba64};
 use feim::image::farbfeld::Farbfeld;
+use feim::image::ImageMut;
 use feim::serialize::EncodeSpecialized;
 
 const DIM: usize = 1000;
@@ -15,12 +16,12 @@ fn main() -> io::Result<()> {
     let mut stdout_writer = BufWriter::new(stdout_lock);
 
     let mut image = RawPixBuf::new(DIM, DIM);
-    draw_image(image.as_typed_mut());
+    draw_image(&mut image);
 
     Farbfeld::encode_specialized(&mut stdout_writer, (), &image)
 }
 
-fn draw_image(buf: &mut [Nrgba64Be]) {
+fn draw_image(buf: &mut RawPixBuf<Nrgba64Be>) {
     const MAX: u16 = 0xffff;
     const HALF: usize = DIM / 2;
     const BLACK: Nrgba64Be = Nrgba64::be(0, 0, 0, MAX);
@@ -33,7 +34,7 @@ fn draw_image(buf: &mut [Nrgba64Be]) {
             let xt = x.next_power_of_two();
             let xh = x - HALF;
             let cond = ((xt * yt) + (xh * (yt - yh))) < ((xh >> yt) % (!(yh << xh) | 1));
-            buf[y * DIM + x] = if cond { BLACK } else { WHITE };
+            buf.pixel_set(x, y, if cond { BLACK } else { WHITE });
         }
     }
 }
