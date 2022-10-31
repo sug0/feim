@@ -3,10 +3,10 @@ use std::io::{self, BufReader, BufWriter};
 use feim::buffer::RawPixBuf;
 use feim::color::Nrgba64Be;
 use feim::image::{
+    self,
     farbfeld::Farbfeld,
     jpeg::{Jpeg, JpegBuf},
     png::{Png, PngBuf},
-    Format,
 };
 use feim::serialize::{try_format, Decode, Encode, EncodeSpecialized, GenericDecodeOptions};
 
@@ -19,12 +19,7 @@ fn main() -> io::Result<()> {
     let stdout_lock = stdout.lock();
     let stdout_writer = BufWriter::new(stdout_lock);
 
-    let formats: [&dyn Format; 3] = [
-        &Farbfeld, &Jpeg, &Png,
-        // ...
-    ];
-
-    match try_format(&mut stdin_reader, &formats[..]) {
+    match try_format(&mut stdin_reader, image::built_in_formats()) {
         Ok(0) => {
             let opts = GenericDecodeOptions {
                 check_header: false,
