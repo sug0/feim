@@ -2,13 +2,21 @@ use std::marker::PhantomData;
 
 enum ImpossibleValue {}
 
-pub struct No {
+pub struct NotSpecialized {
     _impossible_value: ImpossibleValue,
 }
 
-pub struct For<T> {
+pub struct SpecializedFor<T> {
     _impossible_value: ImpossibleValue,
     _type: PhantomData<T>,
 }
 
-pub type Aye = For<()>;
+pub struct Specialized {
+    _inner: SpecializedFor<()>,
+}
+
+pub type For<T> = SpecializedFor<T>;
+
+pub type No = NotSpecialized;
+
+pub type Aye = Specialized;
