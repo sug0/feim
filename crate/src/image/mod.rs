@@ -84,3 +84,20 @@ pub trait ImageMut<Specialized = No> {
         self.color_set::<_, specialized::For<Self::Pixel>>(x, y, color)
     }
 }
+
+pub fn built_in_formats() -> &'static [&'static dyn Format] {
+    &[
+        #[cfg(feature = "fmt-farbfeld")]
+        {
+            &farbfeld::Farbfeld
+        },
+        #[cfg(feature = "fmt-jpeg")]
+        {
+            &jpeg::Jpeg
+        },
+        #[cfg(feature = "fmt-png")]
+        {
+            &png::Png
+        },
+    ]
+}
