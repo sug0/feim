@@ -1,11 +1,14 @@
-use std::convert::Infallible;
 use std::marker::PhantomData;
 
-pub struct No(Infallible);
+enum ImpossibleValue {}
 
-pub struct Yes<T> {
-    _impossible_value: Infallible,
+pub struct No {
+    _impossible_value: ImpossibleValue,
+}
+
+pub struct For<T> {
+    _impossible_value: ImpossibleValue,
     _type: PhantomData<T>,
 }
 
-pub type Aye = Yes<()>;
+pub type Aye = For<()>;
