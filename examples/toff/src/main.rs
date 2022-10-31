@@ -4,11 +4,11 @@ use feim::buffer::RawPixBuf;
 use feim::color::Nrgba64Be;
 use feim::image::{
     self,
-    farbfeld::Farbfeld,
+    farbfeld::{Farbfeld, FarbfeldDecodeOptions},
     jpeg::{Jpeg, JpegBuf},
     png::{Png, PngBuf},
 };
-use feim::serialize::{try_format, Decode, Encode, EncodeSpecialized, GenericDecodeOptions};
+use feim::serialize::{try_format, Decode, Encode, EncodeSpecialized};
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -21,7 +21,7 @@ fn main() -> io::Result<()> {
 
     match try_format(&mut stdin_reader, image::built_in_formats()) {
         Ok(0) => {
-            let opts = GenericDecodeOptions {
+            let opts = FarbfeldDecodeOptions {
                 check_header: false,
             };
             let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode(stdin_reader, opts)?;

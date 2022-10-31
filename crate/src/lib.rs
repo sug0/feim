@@ -55,7 +55,7 @@
 //!
 //!     match try_format(&mut stdin_reader, &formats[..]) {
 //!         Ok(0) => {
-//!             let opts = GenericDecodeOptions {
+//!             let opts = FarbfeldDecodeOptions {
 //!                 check_header: false,
 //!             };
 //!             let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode(stdin_reader, opts)?;

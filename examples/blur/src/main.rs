@@ -2,9 +2,9 @@ use std::io::{self, BufReader, BufWriter};
 
 use feim::buffer::RawPixBuf;
 use feim::color::Nrgba64Be;
-use feim::image::farbfeld::Farbfeld;
+use feim::image::farbfeld::{Farbfeld, FarbfeldDecodeOptions};
 use feim::image::{Dimensions, Image, ImageMut};
-use feim::serialize::{Decode, EncodeSpecialized, GenericDecodeOptions};
+use feim::serialize::{Decode, EncodeSpecialized};
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -15,7 +15,7 @@ fn main() -> io::Result<()> {
     let stdout_lock = stdout.lock();
     let stdout_writer = BufWriter::new(stdout_lock);
 
-    let opts = GenericDecodeOptions {
+    let opts = FarbfeldDecodeOptions {
         check_header: false,
     };
     let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode(stdin_reader, opts)?;

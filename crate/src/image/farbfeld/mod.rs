@@ -5,8 +5,18 @@ use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
 use crate::color::{BigEndian, NativeEndian, Nrgba64};
 use crate::impl_format;
-use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions, GenericDecodeOptions};
+use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions};
 use crate::specialized;
+
+pub struct FarbfeldDecodeOptions {
+    pub check_header: bool,
+}
+
+impl Default for FarbfeldDecodeOptions {
+    fn default() -> Self {
+        Self { check_header: true }
+    }
+}
 
 pub struct Farbfeld;
 
@@ -21,7 +31,7 @@ impl EncodeOptions for Farbfeld {
 }
 
 impl DecodeOptions for Farbfeld {
-    type Options = GenericDecodeOptions;
+    type Options = FarbfeldDecodeOptions;
 }
 
 impl Encode<RawPixBuf<Nrgba64<BigEndian>>> for Farbfeld {

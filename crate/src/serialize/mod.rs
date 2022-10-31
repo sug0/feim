@@ -41,16 +41,6 @@ impl<B, F: Decode<B, Aye>> DecodeSpecialized<B> for F {
     }
 }
 
-pub struct GenericDecodeOptions {
-    pub check_header: bool,
-}
-
-impl Default for GenericDecodeOptions {
-    fn default() -> Self {
-        Self { check_header: true }
-    }
-}
-
 pub fn try_format<R: BufRead>(mut r: R, formats: &[&dyn Format]) -> io::Result<usize> {
     let buf = r.fill_buf()?;
     for (i, fmt) in formats.iter().enumerate() {
