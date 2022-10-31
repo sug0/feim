@@ -9,7 +9,7 @@ pub mod png;
 
 use crate::color::convert::ConvertInto;
 use crate::color::Color;
-use crate::specialized::No;
+use crate::specialized::{self, No};
 
 #[macro_export]
 macro_rules! impl_format {
@@ -72,4 +72,15 @@ pub trait ImageMut<Specialized = No> {
     fn color_set<C, ColorSpecialized>(&mut self, x: usize, y: usize, color: C)
     where
         C: ConvertInto<Self::Pixel, ColorSpecialized> + Color;
+
+    fn color_set_generic<C>(&mut self, x: usize, y: usize, color: C)
+    where
+        C: ConvertInto<Self::Pixel, specialized::No> + Color,
+    {
+        self.color_set::<_, specialized::No>(x, y, color)
+    }
+
+    fn pixel_set(&mut self, x: usize, y: usize, color: Self::Pixel) {
+        self.color_set::<_, specialized::For<Self::Pixel>>(x, y, color)
+    }
 }
