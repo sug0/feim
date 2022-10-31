@@ -22,12 +22,12 @@
 //!     Png::encode(output, opts, &image)
 //! }
 //!
-//! fn draw_image(buf: &mut [Rgb]) {
+//! fn draw_image(buf: &mut RawPixBuf<Rgb>) {
 //!     const WHITE: Rgb = Rgb { r: 255, g: 255, b: 255 };
 //!
 //!     for y in 0..DIM {
 //!         for x in 0..DIM {
-//!             buf[y*DIM + x] = WHITE;
+//!             buf.pixel_set(x, y, WHITE);
 //!         }
 //!     }
 //! }
