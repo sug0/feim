@@ -1,7 +1,7 @@
 use super::{Color, Endianness, Nrgba64};
 use crate::buffer::{AsTypedMut, RawPixBuf};
 use crate::image::Dimensions;
-use crate::specialized::No;
+use crate::specialized::{self, No};
 
 pub trait ConvertFrom<C, Specialized = No>
 where
@@ -10,6 +10,13 @@ where
     /// Returns the result of converting a color from `C` into
     /// `Self`.
     fn convert_from(c: C) -> Self;
+}
+
+impl<C: Color> ConvertFrom<C, specialized::For<C>> for C {
+    #[inline(always)]
+    fn convert_from(color: C) -> C {
+        color
+    }
 }
 
 pub trait ConvertInto<C, Specialized = No>
