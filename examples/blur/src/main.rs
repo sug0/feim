@@ -1,9 +1,9 @@
 use std::io::{self, BufReader, BufWriter};
 
-use feim::buffer::{AsTyped, AsTypedMut, RawPixBuf};
+use feim::buffer::RawPixBuf;
 use feim::color::Nrgba64Be;
 use feim::image::farbfeld::Farbfeld;
-use feim::image::Dimensions;
+use feim::image::{Dimensions, Image, ImageMut};
 use feim::serialize::{Decode, EncodeSpecialized, GenericDecodeOptions};
 
 fn main() -> io::Result<()> {
@@ -24,11 +24,10 @@ fn main() -> io::Result<()> {
 
 fn blur(orig: RawPixBuf<Nrgba64Be>) -> RawPixBuf<Nrgba64Be> {
     let mut img = orig.clone();
-    let buf = img.as_typed_mut();
 
     for y in 0..orig.height() {
         for x in 0..orig.width() {
-            buf[y * orig.width() + x] = convolve(&orig, x, y);
+            img.pixel_set(x, y, convolve(&orig, x, y));
         }
     }
 
@@ -64,6 +63,6 @@ fn get_clamped(im: &RawPixBuf<Nrgba64Be>, x: isize, y: isize) -> (f32, f32, f32)
     let h = im.height() as isize;
     let x = x.clamp(0, w - 1) as usize;
     let y = y.clamp(0, h - 1) as usize;
-    let c = im.as_typed()[im.width() * y + x];
+    let c = im.color_get(x, y);
     (c.r() as f32, c.g() as f32, c.b() as f32)
 }
