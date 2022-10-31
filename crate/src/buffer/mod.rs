@@ -44,7 +44,10 @@ impl<T> RawPixBuf<T> {
         if buf.len() != expected_len {
             return Err(buf);
         }
-        let buf = unsafe { std::mem::transmute(buf) };
+        let buf = unsafe {
+            let ptr: *mut T = Box::into_raw(buf) as _;
+            Box::from_raw(std::slice::from_raw_parts_mut(ptr, width * height))
+        };
         Ok(RawPixBuf { width, height, buf })
     }
 
