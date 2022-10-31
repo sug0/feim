@@ -3,8 +3,6 @@
 //! by the API of [Go's image package](https://pkg.go.dev/image). One of the goals
 //! of `feim` was to increase the flexibility users had to work with images, namely
 //! rolling their own custom serialization routines, color formats and image formats.
-//! I believe this makes `feim` the best image processing library available in the Rust
-//! ecosystem, at the moment.
 //!
 //! ## Encoding
 //!
