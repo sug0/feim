@@ -2,6 +2,7 @@ use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
 use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian};
+use crate::specialized;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -165,6 +166,20 @@ impl Color for Gray16<LittleEndian> {
 }
 
 // -------------------------------------------------------------------------- //
+
+impl<E1, E2> ConvertFrom<Gray16<E1>, specialized::Aye> for Gray16<E2>
+where
+    E1: Endianness,
+    E2: Endianness,
+    Gray16<E1>: Color,
+    Gray16<E2>: Color + From<u16>,
+    u16: From<Gray16<E1>>,
+{
+    fn convert_from(c: Gray16<E1>) -> Gray16<E2> {
+        let c: u16 = c.into();
+        c.into()
+    }
+}
 
 impl<C: Color> ConvertFrom<C> for Gray16<NativeEndian> {
     fn convert_from(c: C) -> Self {

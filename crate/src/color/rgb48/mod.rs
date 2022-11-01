@@ -2,6 +2,7 @@ use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
 use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian};
+use crate::specialized;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -245,6 +246,22 @@ impl Color for Rgb48<LittleEndian> {
 
 // -------------------------------------------------------------------------- //
 
+// TODO: specialized: rgb48 -> gray16 | rgb48 -> nrgba64
+
+impl<E1, E2> ConvertFrom<Rgb48<E1>, specialized::Aye> for Rgb48<E2>
+where
+    E1: Endianness,
+    E2: Endianness,
+    Rgb48<E1>: Color,
+    Rgb48<E2>: Color + From<u64>,
+    u64: From<Rgb48<E1>>,
+{
+    fn convert_from(c: Rgb48<E1>) -> Rgb48<E2> {
+        let c: u64 = c.into();
+        c.into()
+    }
+}
+
 impl<C: Color> ConvertFrom<C> for Rgb48<NativeEndian> {
     fn convert_from(c: C) -> Self {
         let (r, g, b, _) = c.as_rgba();
@@ -276,6 +293,106 @@ impl<C: Color> ConvertFrom<C> for Rgb48<LittleEndian> {
             r: ((r & 0xffff) as u16).to_le(),
             g: ((g & 0xffff) as u16).to_le(),
             b: ((b & 0xffff) as u16).to_le(),
+            _endianness: PhantomData,
+        }
+    }
+}
+
+// -------------------------------------------------------------------------- //
+
+impl From<Rgb48<NativeEndian>> for u64 {
+    fn from(c: Rgb48<NativeEndian>) -> u64 {
+        let r = c.r as u64;
+        let g = (c.g as u64) << 16;
+        let b = (c.b as u64) << (16 * 2);
+        r | g | b | 0xffff
+    }
+}
+
+impl From<Rgb48<BigEndian>> for u64 {
+    fn from(c: Rgb48<BigEndian>) -> u64 {
+        #[cfg(target_endian = "little")]
+        let (r, g, b) = {
+            let r = (c.r as u64).swap_bytes();
+            let g = ((c.g as u64) << 16).swap_bytes();
+            let b = ((c.b as u64) << (16 * 2)).swap_bytes();
+            (r, g, b)
+        };
+
+        #[cfg(target_endian = "big")]
+        let (r, g, b) = {
+            let r = (c.r as u64) << (16 * 0);
+            let g = (c.g as u64) << (16 * 1);
+            let b = (c.b as u64) << (16 * 2);
+            (r, g, b)
+        };
+
+        r | g | b | 0xffff
+    }
+}
+
+impl From<Rgb48<LittleEndian>> for u64 {
+    fn from(c: Rgb48<LittleEndian>) -> u64 {
+        #[cfg(target_endian = "little")]
+        let (r, g, b) = {
+            let r = c.r as u64;
+            let g = (c.g as u64) << 16;
+            let b = (c.b as u64) << (16 * 2);
+            (r, g, b)
+        };
+
+        #[cfg(target_endian = "big")]
+        let (r, g, b) = {
+            let r = (c.r as u64).swap_bytes();
+            let g = ((c.g as u64) << 16).swap_bytes();
+            let b = ((c.b as u64) << (16 * 2)).swap_bytes();
+            (r, g, b)
+        };
+
+        r | g | b | 0xffff
+    }
+}
+
+// -------------------------------------------------------------------------- //
+
+fn get_components(c: u64) -> (u16, u16, u16) {
+    let r = (c & 0xffff) as u16;
+    let g = ((c & 0xffff0000) >> 16) as u16;
+    let b = ((c & 0xffff00000000) >> 32) as u16;
+    (r, g, b)
+}
+
+impl From<u64> for Rgb48<NativeEndian> {
+    fn from(c: u64) -> Self {
+        let (r, g, b) = get_components(c);
+        Self {
+            r,
+            g,
+            b,
+            _endianness: PhantomData,
+        }
+    }
+}
+
+impl From<u64> for Rgb48<BigEndian> {
+    fn from(c: u64) -> Self {
+        let (r, g, b) = get_components(c);
+        Self {
+            r: r.to_be(),
+            g: g.to_be(),
+            b: b.to_be(),
+            _endianness: PhantomData,
+        }
+    }
+}
+
+impl From<u64> for Rgb48<LittleEndian> {
+    fn from(c: u64) -> Self {
+        let (r, g, b) = get_components(c);
+        Self {
+            r: r.to_le(),
+            g: g.to_le(),
+            b: b.to_le(),
             _endianness: PhantomData,
         }
     }
