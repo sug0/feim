@@ -51,7 +51,7 @@ pub enum EvalError {
     Temp(String),
 }
 
-pub fn compile<'a>(s: &'a str) -> Result<Expression, CompileError<'a>> {
+pub fn compile(s: &str) -> Result<Expression, CompileError<'_>> {
     let mut expression = Vec::new();
 
     for tok in s.split_whitespace() {
@@ -90,12 +90,12 @@ pub fn compile<'a>(s: &'a str) -> Result<Expression, CompileError<'a>> {
                     Some('0'..='9') => (1, tok),
                     _ => return Err(CompileError::UnknownToken(tok)),
                 };
-                let (num, radix) = if num.starts_with("0b") {
-                    (&num[2..], 2)
-                } else if num.starts_with("0o") {
-                    (&num[2..], 8)
-                } else if num.starts_with("0x") {
-                    (&num[2..], 16)
+                let (num, radix) = if let Some(num) = num.strip_prefix("0b") {
+                    (num, 2)
+                } else if let Some(num) = num.strip_prefix("0o") {
+                    (num, 8)
+                } else if let Some(num) = num.strip_prefix("0x") {
+                    (num, 16)
                 } else {
                     (num, 10)
                 };
@@ -204,16 +204,14 @@ impl Expression {
         let height = height as Num;
 
         // test run
-        if let Err(err) = self.evaluate(Context {
+        self.evaluate(Context {
             depth: BitDepth::One,
             x: 0,
             y: 0,
             w: width,
             h: height,
             t: 0,
-        }) {
-            return Err(err);
-        }
+        })?;
 
         rayon::scope(|s| {
             let (tx, rx) = flume::bounded(32);
@@ -258,7 +256,8 @@ impl Expression {
         {
             let b = try_pop(stk)?;
             let a = try_pop(stk)?;
-            Ok(stk.push(op(a, b)))
+            stk.push(op(a, b));
+            Ok(())
         }
 
         #[inline]
@@ -267,7 +266,8 @@ impl Expression {
             F: FnOnce(Num) -> Num,
         {
             let a = try_pop(stk)?;
-            Ok(stk.push(op(a)))
+            stk.push(op(a));
+            Ok(())
         }
 
         #[inline]
