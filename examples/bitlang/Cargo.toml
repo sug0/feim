@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+flume = "0.10"
+itertools = "0.10"
+rayon = "1.5"
 feim = { path = "../../crate", features = ["fmt-farbfeld"] }
 
 [dev-dependencies]

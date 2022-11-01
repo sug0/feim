@@ -1,5 +1,10 @@
 use std::num::IntErrorKind;
 
+use feim::buffer::RawPixBuf;
+use feim::color::Nrgba64Be;
+use feim::image::{Dimensions, ImageMut};
+use itertools::Itertools;
+
 pub type Num = isize;
 
 #[derive(Copy, Clone, Debug)]
@@ -38,6 +43,11 @@ pub enum Item {
 pub enum CompileError<'a> {
     UnknownToken(&'a str),
     InvalidInteger(&'a str, IntErrorKind),
+}
+
+#[derive(Debug)]
+pub enum EvalError {
+    Temp(String),
 }
 
 pub fn compile<'a>(s: &'a str) -> Result<Expression, CompileError<'a>> {
@@ -102,7 +112,25 @@ pub fn compile<'a>(s: &'a str) -> Result<Expression, CompileError<'a>> {
 }
 
 #[derive(Debug, Copy, Clone)]
+pub enum BitDepth {
+    One,
+    #[allow(dead_code)]
+    Sixteen,
+}
+
+impl BitDepth {
+    fn transform(self, value: Num) -> Nrgba64Be {
+        let y = match self {
+            BitDepth::One => 0xffff * (value as u16 & 1),
+            BitDepth::Sixteen => (value & 0xffff) as u16,
+        };
+        Nrgba64Be::be(y, y, y, 0xffff)
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
 pub struct Context {
+    depth: BitDepth,
     x: Num,
     y: Num,
     w: Num,
@@ -119,6 +147,10 @@ macro_rules! impl_ctx_access {
 }
 
 impl Context {
+    pub fn depth(&self) -> BitDepth {
+        self.depth
+    }
+
     impl_ctx_access!(x);
     impl_ctx_access!(y);
     impl_ctx_access!(w);
@@ -128,6 +160,148 @@ impl Context {
 
 pub struct Expression {
     inner: Vec<Item>,
+}
+
+impl Expression {
+    pub fn evaluate_over(
+        &self,
+        image: &mut RawPixBuf<Nrgba64Be>,
+        depth: BitDepth,
+    ) -> Result<(), EvalError> {
+        let (width, height) = image.dimensions();
+        let width = width as Num;
+        let height = height as Num;
+
+        // test run
+        if let Err(err) = self.evaluate(Context {
+            depth: BitDepth::One,
+            x: 0,
+            y: 0,
+            w: width,
+            h: height,
+            t: 0,
+        }) {
+            return Err(err);
+        }
+
+        rayon::scope(|s| {
+            let (tx, rx) = flume::bounded(32);
+            for ((x, y), t) in (0..width).cartesian_product(0..height).zip(0..) {
+                let tx = tx.clone();
+                s.spawn(move |_| {
+                    let pix = self
+                        .evaluate(Context {
+                            w: width,
+                            h: height,
+                            depth,
+                            x,
+                            y,
+                            t,
+                        })
+                        .unwrap();
+                    tx.send((x, y, pix)).unwrap();
+                });
+            }
+            for _ in 0..(width * height) {
+                let (x, y, pix) = rx.recv().unwrap();
+                image.pixel_set(x as usize, y as usize, pix);
+            }
+        });
+
+        Ok(())
+    }
+
+    fn evaluate(&self, ctx: Context) -> Result<Nrgba64Be, EvalError> {
+        let mut stack = Vec::new();
+
+        #[inline]
+        fn try_pop(stk: &mut Vec<Num>) -> Result<Num, EvalError> {
+            stk.pop()
+                .ok_or_else(|| EvalError::Temp("No stack element to pop".into()))
+        }
+
+        #[inline]
+        fn op_two<F>(stk: &mut Vec<Num>, op: F) -> Result<(), EvalError>
+        where
+            F: FnOnce(Num, Num) -> Num,
+        {
+            let b = try_pop(stk)?;
+            let a = try_pop(stk)?;
+            Ok(stk.push(op(a, b)))
+        }
+
+        #[inline]
+        fn op_one<F>(stk: &mut Vec<Num>, op: F) -> Result<(), EvalError>
+        where
+            F: FnOnce(Num) -> Num,
+        {
+            let a = try_pop(stk)?;
+            Ok(stk.push(op(a)))
+        }
+
+        #[inline]
+        fn to_bool(x: Num) -> bool {
+            x != 0
+        }
+
+        #[inline]
+        fn from_bool(x: bool) -> Num {
+            x as Num
+        }
+
+        for item in self.inner.iter().copied() {
+            match item {
+                Item::Add => op_two(&mut stack, |a, b| a.wrapping_add(b))?,
+                Item::Sub => op_two(&mut stack, |a, b| a.wrapping_sub(b))?,
+                Item::Mul => op_two(&mut stack, |a, b| a.wrapping_mul(b))?,
+                Item::Div => op_two(&mut stack, |a, b| a.wrapping_div(b))?,
+                Item::Mod => op_two(&mut stack, |a, b| a.wrapping_rem(b))?,
+                Item::ShRight => {
+                    op_two(&mut stack, |a, b| a.wrapping_shr((b & 0xffffffff) as u32))?
+                }
+                Item::ShLeft => op_two(&mut stack, |a, b| a.wrapping_shl((b & 0xffffffff) as u32))?,
+                Item::Eq => op_two(&mut stack, |a, b| from_bool(a == b))?,
+                Item::Gt => op_two(&mut stack, |a, b| from_bool(a > b))?,
+                Item::Lt => op_two(&mut stack, |a, b| from_bool(a < b))?,
+                Item::Ge => op_two(&mut stack, |a, b| from_bool(a >= b))?,
+                Item::Le => op_two(&mut stack, |a, b| from_bool(a <= b))?,
+                Item::Or => op_two(&mut stack, |a, b| from_bool(to_bool(a) || to_bool(b)))?,
+                Item::And => op_two(&mut stack, |a, b| from_bool(to_bool(a) && to_bool(b)))?,
+                Item::Not => op_one(&mut stack, |a| from_bool(!to_bool(a)))?,
+                Item::BitOr => op_two(&mut stack, |a, b| a | b)?,
+                Item::BitAnd => op_two(&mut stack, |a, b| a & b)?,
+                Item::BitXor => op_two(&mut stack, |a, b| a ^ b)?,
+                Item::BitNot => op_one(&mut stack, |a| !a)?,
+                Item::Abs => op_one(&mut stack, |a| a.wrapping_abs())?,
+                Item::VarX => stack.push(ctx.x()),
+                Item::VarY => stack.push(ctx.y()),
+                Item::VarW => stack.push(ctx.w()),
+                Item::VarH => stack.push(ctx.h()),
+                Item::VarT => stack.push(ctx.t()),
+                Item::Dup => {
+                    let a = try_pop(&mut stack)?;
+                    stack.push(a);
+                    stack.push(a);
+                }
+                Item::Xch => {
+                    let b = try_pop(&mut stack)?;
+                    let a = try_pop(&mut stack)?;
+                    stack.push(b);
+                    stack.push(a);
+                }
+                Item::Num(n) => stack.push(n),
+            }
+        }
+
+        if stack.len() == 1 {
+            Ok(ctx.depth().transform(stack.remove(0)))
+        } else {
+            Err(EvalError::Temp(format!(
+                "Expect 1 element at the end, got {} stack elements",
+                stack.len()
+            )))
+        }
+    }
 }
 
 #[cfg(test)]
