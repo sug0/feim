@@ -90,3 +90,8 @@ pub fn try_format<R: BufRead>(mut r: R, formats: &[&dyn Format]) -> io::Result<u
     let e = std::io::Error::new(k, "No matching magic found.");
     Err(e)
 }
+
+pub fn try_format_id<R: BufRead>(r: R, formats: &[&dyn Format]) -> io::Result<&'static str> {
+    let i = try_format(r, formats)?;
+    Ok(formats[i].id())
+}
