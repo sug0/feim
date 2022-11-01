@@ -10,10 +10,12 @@ use png::{BitDepth, ColorType, Decoder, DecodingError, Encoder, EncodingError, T
 pub use png::{Compression, FilterType};
 
 use crate::buffer::RawPixBuf;
+use crate::color::convert::ConvertInto;
 use crate::color::{Gray, Gray16Be, Nrgba, Nrgba64Be, Rgb, Rgb48Be};
-use crate::image::Dimensions;
+use crate::image::{Dimensions, Image, ImageMut};
 use crate::impl_format;
-use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions};
+use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions, EncodeSpecialized};
+use crate::specialized;
 
 pub struct Png;
 
@@ -52,7 +54,7 @@ impl Decode<PngBuf> for Png {
             _ => {
                 return Err(io::Error::new(
                     io::ErrorKind::Other,
-                    "Invalid color type detected",
+                    "Unsupported color type detected",
                 ))
             }
         };
@@ -125,14 +127,27 @@ impl_encode!(Rgb48Be, BitDepth::Sixteen, ColorType::Rgb);
 impl Encode<PngBuf> for Png {
     fn encode<W: Write>(w: W, opts: PngEncodeOptions, buf: &PngBuf) -> io::Result<()> {
         match buf {
-            PngBuf::Gray(buf) => Png::encode(w, opts, buf),
-            PngBuf::Gray16(buf) => Png::encode(w, opts, buf),
-            PngBuf::Nrgba(buf) => Png::encode(w, opts, buf),
-            PngBuf::Nrgba64(buf) => Png::encode(w, opts, buf),
-            PngBuf::Rgb(buf) => Png::encode(w, opts, buf),
-            PngBuf::Rgb48(buf) => Png::encode(w, opts, buf),
+            PngBuf::Gray(buf) => Png::encode_specialized(w, opts, buf),
+            PngBuf::Gray16(buf) => Png::encode_specialized(w, opts, buf),
+            PngBuf::Nrgba(buf) => Png::encode_specialized(w, opts, buf),
+            PngBuf::Nrgba64(buf) => Png::encode_specialized(w, opts, buf),
+            PngBuf::Rgb(buf) => Png::encode_specialized(w, opts, buf),
+            PngBuf::Rgb48(buf) => Png::encode_specialized(w, opts, buf),
         }
     }
 }
 
-// TODO: default encode / decode
+impl<I: Image + Dimensions> Encode<I, specialized::No> for Png {
+    fn encode<W: Write>(w: W, opts: PngEncodeOptions, buf: &I) -> io::Result<()> {
+        let (width, height) = buf.dimensions();
+        let mut new_buf = RawPixBuf::new(width, height);
+        for y in 0..height {
+            for x in 0..width {
+                let c = buf.color_get(x, y);
+                let c: Nrgba64Be = c.convert_into();
+                new_buf.pixel_set(x, y, c);
+            }
+        }
+        Png::encode_specialized(w, opts, &new_buf)
+    }
+}

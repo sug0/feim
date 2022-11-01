@@ -8,7 +8,7 @@ use feim::image::{
     jpeg::{Jpeg, JpegBuf},
     png::Png,
 };
-use feim::serialize::{try_format, Decode, Encode, EncodeSpecialized};
+use feim::serialize::{try_format, Decode, EncodeSpecialized};
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -26,23 +26,23 @@ fn main() -> io::Result<()> {
             };
             let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode(stdin_reader, opts)?;
             let opts = Default::default();
-            Png::encode(stdout_writer, opts, &image)
+            Png::encode_specialized(stdout_writer, opts, &image)
         }
         Ok(1) => {
             let image = Jpeg::decode(stdin_reader, ())?;
             let opts = Default::default();
 
             match &image {
-                JpegBuf::Gray(buf) => Png::encode(stdout_writer, opts, buf),
+                JpegBuf::Gray(buf) => Png::encode_specialized(stdout_writer, opts, buf),
                 JpegBuf::Gray16(buf) => Png::encode_specialized(stdout_writer, opts, buf),
-                JpegBuf::Rgb(buf) => Png::encode(stdout_writer, opts, buf),
+                JpegBuf::Rgb(buf) => Png::encode_specialized(stdout_writer, opts, buf),
                 JpegBuf::Cmyk(_) => todo!(),
             }
         }
         Ok(2) => {
             let image = Png::decode(stdin_reader, ())?;
             let opts = Default::default();
-            Png::encode(stdout_writer, opts, &image)
+            Png::encode_specialized(stdout_writer, opts, &image)
         }
         Ok(_) => unreachable!(),
         Err(e) => Err(e),

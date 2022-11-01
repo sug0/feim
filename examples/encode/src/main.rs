@@ -10,7 +10,7 @@ use feim::image::{
     png::Png,
     ImageMut,
 };
-use feim::serialize::Encode;
+use feim::serialize::{Encode, EncodeSpecialized};
 
 const DIM: usize = 500;
 
@@ -45,7 +45,7 @@ fn main() -> io::Result<()> {
         EncodeAs::Ff => Farbfeld::encode(&mut stdout_writer, (), &image),
         EncodeAs::Png => {
             let opts = Default::default();
-            Png::encode(&mut stdout_writer, opts, &image)
+            Png::encode_specialized(&mut stdout_writer, opts, &image)
         }
         EncodeAs::Jpg => {
             let opts = JpegEncodeOptions::new(85).unwrap();
