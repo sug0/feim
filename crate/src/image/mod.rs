@@ -7,6 +7,9 @@ pub mod jpeg;
 #[cfg(feature = "fmt-png")]
 pub mod png;
 
+#[cfg(feature = "fmt-webp")]
+pub mod webp;
+
 use crate::color::convert::ConvertInto;
 use crate::color::Color;
 use crate::specialized::{self, No};
@@ -98,6 +101,10 @@ pub fn built_in_formats() -> &'static [&'static dyn Format] {
         #[cfg(feature = "fmt-png")]
         {
             &png::Png
+        },
+        #[cfg(feature = "fmt-webp")]
+        {
+            &webp::Webp
         },
     ]
 }
