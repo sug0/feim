@@ -5,7 +5,7 @@ use feim::color::convert::ConvertInto;
 use feim::color::{Gray, Nrgba64Be};
 use feim::image::farbfeld::{Farbfeld, FarbfeldDecodeOptions};
 use feim::image::{Dimensions, Image, ImageMut};
-use feim::serialize::{DecodeSpecialized, EncodeGeneric};
+use feim::serialize::{DecodeSpecialized, EncodeSpecialized};
 use feim::specialized;
 
 struct Mask<'a> {
@@ -36,10 +36,10 @@ fn main() -> io::Result<()> {
         check_header: false,
     };
     let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode_specialized(stdin_reader, opts)?;
-    Farbfeld::encode_generic(stdout_writer, (), &halftone(image))
+    Farbfeld::encode_specialized(stdout_writer, (), &halftone(image))
 }
 
-fn halftone(orig: RawPixBuf<Nrgba64Be>) -> RawPixBuf<Gray> {
+fn halftone(orig: RawPixBuf<Nrgba64Be>) -> RawPixBuf<Nrgba64Be> {
     let mut img = RawPixBuf::new(orig.width(), orig.height());
 
     for y in (0..orig.height()).step_by(MASK.height) {
@@ -52,9 +52,15 @@ fn halftone(orig: RawPixBuf<Nrgba64Be>) -> RawPixBuf<Gray> {
 }
 
 impl Mask<'_> {
-    fn apply(&self, orig: &RawPixBuf<Nrgba64Be>, im: &mut RawPixBuf<Gray>, x: usize, y: usize) {
-        const BLACK: Gray = Gray { y: 0 };
-        const WHITE: Gray = Gray { y: 0xff };
+    fn apply(
+        &self,
+        orig: &RawPixBuf<Nrgba64Be>,
+        im: &mut RawPixBuf<Nrgba64Be>,
+        x: usize,
+        y: usize,
+    ) {
+        const BLACK: Nrgba64Be = Nrgba64Be::be(0, 0, 0, 0xffff);
+        const WHITE: Nrgba64Be = Nrgba64Be::be(0xffff, 0xffff, 0xffff, 0xffff);
 
         let w_max = im.width() - 1;
         let h_max = im.height() - 1;
