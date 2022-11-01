@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+clap = { version = "4.0", features = ["derive"] }
 flume = "0.10"
 itertools = "0.10"
 rayon = "1.5"

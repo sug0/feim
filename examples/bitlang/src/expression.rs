@@ -1,3 +1,4 @@
+use std::fmt;
 use std::num::IntErrorKind;
 
 use feim::buffer::RawPixBuf;
@@ -114,8 +115,38 @@ pub fn compile<'a>(s: &'a str) -> Result<Expression, CompileError<'a>> {
 #[derive(Debug, Copy, Clone)]
 pub enum BitDepth {
     One,
-    #[allow(dead_code)]
     Sixteen,
+}
+
+impl fmt::Display for BitDepth {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let depth = match self {
+            BitDepth::One => "1",
+            BitDepth::Sixteen => "16",
+        };
+        write!(f, "{depth}")
+    }
+}
+
+impl clap::ValueEnum for BitDepth {
+    fn value_variants<'a>() -> &'a [Self] {
+        &[BitDepth::One, BitDepth::Sixteen]
+    }
+
+    fn from_str(input: &str, _: bool) -> Result<Self, String> {
+        match input {
+            "1" => Ok(BitDepth::One),
+            "16" => Ok(BitDepth::Sixteen),
+            _ => Err(format!("Invalid bit-depth: {input}")),
+        }
+    }
+
+    fn to_possible_value(&self) -> Option<clap::builder::PossibleValue> {
+        Some(clap::builder::PossibleValue::new(match self {
+            BitDepth::One => "1",
+            BitDepth::Sixteen => "16",
+        }))
+    }
 }
 
 impl BitDepth {
@@ -254,8 +285,14 @@ impl Expression {
                 Item::Add => op_two(&mut stack, |a, b| a.wrapping_add(b))?,
                 Item::Sub => op_two(&mut stack, |a, b| a.wrapping_sub(b))?,
                 Item::Mul => op_two(&mut stack, |a, b| a.wrapping_mul(b))?,
-                Item::Div => op_two(&mut stack, |a, b| a.wrapping_div(b))?,
-                Item::Mod => op_two(&mut stack, |a, b| a.wrapping_rem(b))?,
+                Item::Div => op_two(
+                    &mut stack,
+                    |a, b| if b == 0 { a } else { a.wrapping_div(b) },
+                )?,
+                Item::Mod => op_two(
+                    &mut stack,
+                    |a, b| if b == 0 { a } else { a.wrapping_rem(b) },
+                )?,
                 Item::ShRight => {
                     op_two(&mut stack, |a, b| a.wrapping_shr((b & 0xffffffff) as u32))?
                 }
