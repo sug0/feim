@@ -49,7 +49,7 @@ fn main() -> io::Result<()> {
         }
         EncodeAs::Jpg => {
             let opts = JpegEncodeOptions::new(85).unwrap();
-            Jpeg::encode(&mut stdout_writer, opts, &image)
+            Jpeg::encode_specialized(&mut stdout_writer, opts, &image)
         }
     }
 }

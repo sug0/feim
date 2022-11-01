@@ -4,7 +4,7 @@ use feim::buffer::RawPixBuf;
 use feim::color::Gray;
 use feim::image::jpeg::{Jpeg, JpegEncodeOptions};
 use feim::image::ImageMut;
-use feim::serialize::Encode;
+use feim::serialize::EncodeSpecialized;
 
 const DIM: usize = 2000;
 
@@ -20,7 +20,7 @@ fn main() -> io::Result<()> {
     };
 
     let opts = JpegEncodeOptions::new(85).unwrap();
-    Jpeg::encode(&mut stdout_writer, opts, &image)
+    Jpeg::encode_specialized(&mut stdout_writer, opts, &image)
 }
 
 const fn shade(y: u8) -> Gray {

@@ -8,10 +8,12 @@ use jpeg_decoder::{Decoder, Error, PixelFormat};
 use jpeg_encoder::{ColorType, Encoder, EncodingError};
 
 use crate::buffer::RawPixBuf;
+use crate::color::convert::ConvertInto;
 use crate::color::{Cmyk, Gray, Nrgba, Rgb};
-use crate::image::Dimensions;
+use crate::image::{Dimensions, Image, ImageMut};
 use crate::impl_format;
-use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions};
+use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions, EncodeSpecialized};
+use crate::specialized;
 
 pub struct Jpeg;
 
@@ -99,11 +101,24 @@ impl Encode<JpegBuf> for Jpeg {
     fn encode<W: Write>(w: W, opts: JpegEncodeOptions, buf: &JpegBuf) -> io::Result<()> {
         match buf {
             JpegBuf::Gray16(_) => todo!(),
-            JpegBuf::Gray(buf) => Jpeg::encode(w, opts, buf),
-            JpegBuf::Rgb(buf) => Jpeg::encode(w, opts, buf),
-            JpegBuf::Cmyk(buf) => Jpeg::encode(w, opts, buf),
+            JpegBuf::Gray(buf) => Jpeg::encode_specialized(w, opts, buf),
+            JpegBuf::Rgb(buf) => Jpeg::encode_specialized(w, opts, buf),
+            JpegBuf::Cmyk(buf) => Jpeg::encode_specialized(w, opts, buf),
         }
     }
 }
 
-// TODO: default encode for jpeg
+impl<I: Image + Dimensions> Encode<I, specialized::No> for Jpeg {
+    fn encode<W: Write>(w: W, opts: JpegEncodeOptions, buf: &I) -> io::Result<()> {
+        let (width, height) = buf.dimensions();
+        let mut new_buf = RawPixBuf::new(width, height);
+        for y in 0..height {
+            for x in 0..width {
+                let c = buf.color_get(x, y);
+                let c: Rgb = c.convert_into();
+                new_buf.pixel_set(x, y, c);
+            }
+        }
+        Jpeg::encode_specialized(w, opts, &new_buf)
+    }
+}
