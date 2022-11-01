@@ -1,8 +1,8 @@
 pub use webp::WebPImage as WebpBuf;
 
-//use crate::image::{Dimensions, Image, ImageMut};
+use crate::color::convert::ConvertInto;
 use crate::color::{Color, Nrgba, Rgb};
-use crate::image::{Dimensions, Image};
+use crate::image::{Dimensions, Image, ImageMut};
 
 #[derive(Copy, Clone, Debug)]
 pub enum WebpPix {
@@ -48,5 +48,16 @@ impl Image for WebpBuf {
         } else {
             WebpPix::Rgb(Rgb { r, g, b })
         }
+    }
+}
+
+impl ImageMut for WebpBuf {
+    type Pixel = WebpPix;
+
+    fn color_set<C, ColorSpecialized>(&mut self, _x: usize, _y: usize, _color: C)
+    where
+        C: ConvertInto<WebpPix, ColorSpecialized> + Color,
+    {
+        todo!()
     }
 }
