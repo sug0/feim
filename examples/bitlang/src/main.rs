@@ -17,9 +17,9 @@ struct Args {
     expr: String,
     #[arg(short, long, default_value_t = expression::BitDepth::One)]
     depth: expression::BitDepth,
-    #[arg(short, long, default_value_t = DIM)]
+    #[arg(long, default_value_t = DIM)]
     width: NonZeroUsize,
-    #[arg(short, long, default_value_t = DIM)]
+    #[arg(long, default_value_t = DIM)]
     height: NonZeroUsize,
 }
 
