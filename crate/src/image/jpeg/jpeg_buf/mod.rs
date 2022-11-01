@@ -1,12 +1,12 @@
 use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
-use crate::color::{Cmyk, Color, Gray, Gray16Ne, Rgb};
+use crate::color::{Cmyk, Color, Gray, Gray16Be, Rgb};
 use crate::image::{Dimensions, Image, ImageMut};
 
 #[derive(Clone, Debug)]
 pub enum JpegBuf {
     Gray(RawPixBuf<Gray>),
-    Gray16(RawPixBuf<Gray16Ne>),
+    Gray16(RawPixBuf<Gray16Be>),
     Rgb(RawPixBuf<Rgb>),
     Cmyk(RawPixBuf<Cmyk>),
 }
@@ -85,7 +85,7 @@ impl AsMut<[u8]> for JpegBuf {
 #[derive(Copy, Clone, Debug)]
 pub enum JpegPix {
     Gray(Gray),
-    Gray16(Gray16Ne),
+    Gray16(Gray16Be),
     Rgb(Rgb),
     Cmyk(Cmyk),
 }

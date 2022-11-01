@@ -44,7 +44,7 @@ fn main() -> io::Result<()> {
                 PngBuf::Gray(buf) => Farbfeld::encode(stdout_writer, (), buf),
                 PngBuf::Gray16(buf) => Farbfeld::encode(stdout_writer, (), buf),
                 PngBuf::Nrgba(buf) => Farbfeld::encode(stdout_writer, (), buf),
-                PngBuf::Nrgba64(buf) => Farbfeld::encode(stdout_writer, (), buf),
+                PngBuf::Nrgba64(buf) => Farbfeld::encode_specialized(stdout_writer, (), buf),
                 PngBuf::Rgb(buf) => Farbfeld::encode(stdout_writer, (), buf),
                 PngBuf::Rgb48(buf) => Farbfeld::encode(stdout_writer, (), buf),
             }

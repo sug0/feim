@@ -10,7 +10,7 @@ use png::{BitDepth, ColorType, Decoder, DecodingError, Encoder, EncodingError, T
 pub use png::{Compression, FilterType};
 
 use crate::buffer::RawPixBuf;
-use crate::color::{Gray, Gray16Ne, Nrgba, Nrgba64Ne, Rgb, Rgb48Ne};
+use crate::color::{Gray, Gray16Be, Nrgba, Nrgba64Be, Rgb, Rgb48Be};
 use crate::image::Dimensions;
 use crate::impl_format;
 use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions};
@@ -116,11 +116,11 @@ macro_rules! impl_encode {
 }
 
 impl_encode!(Gray, BitDepth::Eight, ColorType::Grayscale);
-impl_encode!(Gray16Ne, BitDepth::Sixteen, ColorType::Grayscale);
+impl_encode!(Gray16Be, BitDepth::Sixteen, ColorType::Grayscale);
 impl_encode!(Nrgba, BitDepth::Eight, ColorType::Rgba);
-impl_encode!(Nrgba64Ne, BitDepth::Sixteen, ColorType::Rgba);
+impl_encode!(Nrgba64Be, BitDepth::Sixteen, ColorType::Rgba);
 impl_encode!(Rgb, BitDepth::Eight, ColorType::Rgb);
-impl_encode!(Rgb48Ne, BitDepth::Sixteen, ColorType::Rgb);
+impl_encode!(Rgb48Be, BitDepth::Sixteen, ColorType::Rgb);
 
 impl Encode<PngBuf> for Png {
     fn encode<W: Write>(w: W, opts: PngEncodeOptions, buf: &PngBuf) -> io::Result<()> {

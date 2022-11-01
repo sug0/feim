@@ -1,16 +1,16 @@
 use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
-use crate::color::{Color, Gray, Gray16Ne, Nrgba, Nrgba64Ne, Rgb, Rgb48Ne};
+use crate::color::{Color, Gray, Gray16Be, Nrgba, Nrgba64Be, Rgb, Rgb48Be};
 use crate::image::{Dimensions, Image, ImageMut};
 
 #[derive(Clone, Debug)]
 pub enum PngBuf {
     Gray(RawPixBuf<Gray>),
-    Gray16(RawPixBuf<Gray16Ne>),
+    Gray16(RawPixBuf<Gray16Be>),
     Nrgba(RawPixBuf<Nrgba>),
-    Nrgba64(RawPixBuf<Nrgba64Ne>),
+    Nrgba64(RawPixBuf<Nrgba64Be>),
     Rgb(RawPixBuf<Rgb>),
-    Rgb48(RawPixBuf<Rgb48Ne>),
+    Rgb48(RawPixBuf<Rgb48Be>),
 }
 
 impl Dimensions for PngBuf {
@@ -73,11 +73,11 @@ impl ImageMut for PngBuf {
 #[derive(Copy, Clone, Debug)]
 pub enum PngPix {
     Gray(Gray),
-    Gray16(Gray16Ne),
+    Gray16(Gray16Be),
     Nrgba(Nrgba),
-    Nrgba64(Nrgba64Ne),
+    Nrgba64(Nrgba64Be),
     Rgb(Rgb),
-    Rgb48(Rgb48Ne),
+    Rgb48(Rgb48Be),
 }
 
 impl Color for PngPix {
