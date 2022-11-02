@@ -44,6 +44,7 @@ fn main() -> io::Result<()> {
             let opts = Default::default();
             Png::encode_specialized(stdout_writer, opts, &image)
         }
+        Ok(3) => todo!(),
         Ok(_) => unreachable!(),
         Err(e) => Err(e),
     }

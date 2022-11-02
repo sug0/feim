@@ -49,6 +49,7 @@ fn main() -> io::Result<()> {
                 PngBuf::Rgb48(buf) => Farbfeld::encode(stdout_writer, (), buf),
             }
         }
+        Ok(3) => todo!(),
         Ok(_) => unreachable!(),
         Err(e) => Err(e),
     }
