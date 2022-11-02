@@ -51,11 +51,19 @@ impl ImageMut for JpegBuf {
     where
         C: ConvertInto<JpegPix, ColorSpecialized> + Color,
     {
-        match self {
-            JpegBuf::Gray(buf) => buf.color_set(x, y, color),
-            JpegBuf::Gray16(buf) => buf.color_set(x, y, color),
-            JpegBuf::Rgb(buf) => buf.color_set(x, y, color),
-            JpegBuf::Cmyk(buf) => buf.color_set(x, y, color),
+        let color = <_ as ConvertInto<JpegPix, ColorSpecialized>>::convert_into(color);
+        match (self, color) {
+            (JpegBuf::Gray(buf), JpegPix::Gray(c)) => buf.pixel_set(x, y, c),
+            (JpegBuf::Gray(buf), c) => buf.color_set_generic(x, y, c),
+
+            (JpegBuf::Gray16(buf), JpegPix::Gray16(c)) => buf.pixel_set(x, y, c),
+            (JpegBuf::Gray16(buf), c) => buf.color_set_generic(x, y, c),
+
+            (JpegBuf::Rgb(buf), JpegPix::Rgb(c)) => buf.pixel_set(x, y, c),
+            (JpegBuf::Rgb(buf), c) => buf.color_set_generic(x, y, c),
+
+            (JpegBuf::Cmyk(buf), JpegPix::Cmyk(c)) => buf.pixel_set(x, y, c),
+            (JpegBuf::Cmyk(buf), c) => buf.color_set_generic(x, y, c),
         }
     }
 }

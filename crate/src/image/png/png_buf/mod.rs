@@ -59,13 +59,25 @@ impl ImageMut for PngBuf {
     where
         C: ConvertInto<PngPix, ColorSpecialized> + Color,
     {
-        match self {
-            PngBuf::Gray(buf) => buf.color_set(x, y, color),
-            PngBuf::Gray16(buf) => buf.color_set(x, y, color),
-            PngBuf::Nrgba(buf) => buf.color_set(x, y, color),
-            PngBuf::Nrgba64(buf) => buf.color_set(x, y, color),
-            PngBuf::Rgb(buf) => buf.color_set(x, y, color),
-            PngBuf::Rgb48(buf) => buf.color_set(x, y, color),
+        let color = <_ as ConvertInto<PngPix, ColorSpecialized>>::convert_into(color);
+        match (self, color) {
+            (PngBuf::Gray(buf), PngPix::Gray(c)) => buf.pixel_set(x, y, c),
+            (PngBuf::Gray(buf), c) => buf.color_set_generic(x, y, c),
+
+            (PngBuf::Gray16(buf), PngPix::Gray16(c)) => buf.pixel_set(x, y, c),
+            (PngBuf::Gray16(buf), c) => buf.color_set_generic(x, y, c),
+
+            (PngBuf::Nrgba(buf), PngPix::Nrgba(c)) => buf.pixel_set(x, y, c),
+            (PngBuf::Nrgba(buf), c) => buf.color_set_generic(x, y, c),
+
+            (PngBuf::Nrgba64(buf), PngPix::Nrgba64(c)) => buf.pixel_set(x, y, c),
+            (PngBuf::Nrgba64(buf), c) => buf.color_set_generic(x, y, c),
+
+            (PngBuf::Rgb(buf), PngPix::Rgb(c)) => buf.pixel_set(x, y, c),
+            (PngBuf::Rgb(buf), c) => buf.color_set_generic(x, y, c),
+
+            (PngBuf::Rgb48(buf), PngPix::Rgb48(c)) => buf.pixel_set(x, y, c),
+            (PngBuf::Rgb48(buf), c) => buf.color_set_generic(x, y, c),
         }
     }
 }
