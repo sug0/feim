@@ -10,9 +10,10 @@ enable-all-formats = ["fmt-farbfeld", "fmt-jpeg", "fmt-png", "fmt-webp"]
 fmt-jpeg = ["jpeg-encoder", "jpeg-decoder"]
 fmt-png = ["png"]
 fmt-farbfeld = []
-fmt-webp = ["webp"]
+fmt-webp = ["webp", "either"]
 
 [dependencies]
+either = { version = "1.8", optional = true }
 jpeg-encoder = { version = "0.5", features = ["simd"], optional = true }
 jpeg-decoder = { version = "0.3", features = ["nightly_aarch64_neon"], optional = true }
 png = { version = "0.17", optional = true }
