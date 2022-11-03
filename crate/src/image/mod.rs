@@ -100,6 +100,24 @@ pub enum BuiltInFormat {
     Webp,
 }
 
+impl BuiltInFormat {
+    pub fn get(self) -> &'static dyn Format {
+        match self {
+            #[cfg(feature = "fmt-farbfeld")]
+            BuiltInFormat::Farbfeld => &farbfeld::Farbfeld,
+
+            #[cfg(feature = "fmt-jpeg")]
+            BuiltInFormat::Jpeg => &jpeg::Jpeg,
+
+            #[cfg(feature = "fmt-png")]
+            BuiltInFormat::Png => &png::Png,
+
+            #[cfg(feature = "fmt-webp")]
+            BuiltInFormat::Webp => &webp::Webp,
+        }
+    }
+}
+
 pub fn built_in_formats() -> &'static [(BuiltInFormat, &'static dyn Format)] {
     &[
         #[cfg(feature = "fmt-farbfeld")]
