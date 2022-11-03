@@ -33,6 +33,11 @@ impl<T> RawPixBuf<T> {
         RawPixBuf { width, height, buf }
     }
 
+    pub fn new_from_dims<D: Dimensions>(dims: &D) -> Self {
+        let (width, height) = dims.dimensions();
+        Self::new(width, height)
+    }
+
     #[inline]
     pub fn from_vec(width: usize, height: usize, buf: Vec<u8>) -> Result<Self, Vec<u8>> {
         let slice = buf.into_boxed_slice();

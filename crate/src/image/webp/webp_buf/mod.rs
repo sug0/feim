@@ -1,6 +1,7 @@
 use either::*;
 use webp::WebPImage;
 
+use crate::buffer::RawPixBuf;
 use crate::color::convert::ConvertInto;
 use crate::color::{Color, Nrgba, Rgb};
 use crate::image::{Dimensions, Image, ImageMut};
@@ -98,6 +99,22 @@ impl ImageMut for NrgbaWebpBuf {
         self.inner[index + 1] = color.g;
         self.inner[index + 2] = color.b;
         self.inner[index + 3] = color.a;
+    }
+}
+
+impl From<RgbWebpBuf> for RawPixBuf<Rgb> {
+    fn from(buf: RgbWebpBuf) -> Self {
+        let mut new_buf = RawPixBuf::new_from_dims(&buf);
+        new_buf.as_mut().copy_from_slice(&buf.inner);
+        new_buf
+    }
+}
+
+impl From<NrgbaWebpBuf> for RawPixBuf<Nrgba> {
+    fn from(buf: NrgbaWebpBuf) -> Self {
+        let mut new_buf = RawPixBuf::new_from_dims(&buf);
+        new_buf.as_mut().copy_from_slice(&buf.inner);
+        new_buf
     }
 }
 
