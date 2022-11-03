@@ -124,5 +124,16 @@ impl From<&NrgbaWebpBuf> for RawPixBuf<Nrgba> {
     }
 }
 
-// TODO: as ref / as ref mut for [u8]
+impl<const HAS_ALPHA: bool> AsRef<[u8]> for WebpBuf<HAS_ALPHA> {
+    fn as_ref(&self) -> &[u8] {
+        &self.inner
+    }
+}
+
+impl<const HAS_ALPHA: bool> AsMut<[u8]> for WebpBuf<HAS_ALPHA> {
+    fn as_mut(&mut self) -> &mut [u8] {
+        &mut self.inner
+    }
+}
+
 // TODO: as typed / as typed mut for rgb and nrgba
