@@ -91,6 +91,6 @@ where
         }
     }
     let k = std::io::ErrorKind::Other;
-    let e = std::io::Error::new(k, "No matching magic found.");
+    let e = std::io::Error::new(k, "No matching magic found");
     Err(e)
 }
