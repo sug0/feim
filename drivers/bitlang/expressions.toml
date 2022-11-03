@@ -3,3 +3,4 @@ width = 2500
 height = 2500
 depth = 16
 generate = "0xff x * t y - & dup * abs t >> 0xf0f /"
+farbfeld_hash = { b3sum = "65f48f6907e2e1b94c82c2c0fe5554f300984f57c8006cec6837559ee0c335de" }
