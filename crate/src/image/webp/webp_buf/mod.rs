@@ -28,6 +28,12 @@ pub struct WebpBuf<const HAS_ALPHA: bool> {
     inner: WebPImage,
 }
 
+impl<const HAS_ALPHA: bool> WebpBuf<HAS_ALPHA> {
+    pub fn into_inner(self) -> WebPImage {
+        self.inner
+    }
+}
+
 impl<const HAS_ALPHA: bool> Dimensions for WebpBuf<HAS_ALPHA> {
     #[inline]
     fn width(&self) -> usize {
