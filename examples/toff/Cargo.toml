@@ -4,4 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+either = "1.8"
 feim = { path = "../../crate", features = ["enable-all-formats"] }

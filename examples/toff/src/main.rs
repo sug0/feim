@@ -7,6 +7,7 @@ use feim::image::{
     farbfeld::{Farbfeld, FarbfeldDecodeOptions},
     jpeg::{Jpeg, JpegBuf},
     png::{Png, PngBuf},
+    webp::Webp,
     BuiltInFormat,
 };
 use feim::serialize::{try_format, Decode, Encode, EncodeSpecialized};
@@ -50,7 +51,14 @@ fn main() -> io::Result<()> {
                 PngBuf::Rgb48(buf) => Farbfeld::encode(stdout_writer, (), buf),
             }
         }
-        Ok(BuiltInFormat::Webp) => todo!(),
+        Ok(BuiltInFormat::Webp) => {
+            let image = Webp::decode(stdin_reader, ())?;
+
+            match &image {
+                either::Left(rgb_buf) => Farbfeld::encode(stdout_writer, (), rgb_buf),
+                either::Right(nrgba_buf) => Farbfeld::encode(stdout_writer, (), nrgba_buf),
+            }
+        }
         Err(e) => Err(e),
     }
 }
