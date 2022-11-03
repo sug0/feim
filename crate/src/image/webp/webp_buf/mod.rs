@@ -1,7 +1,7 @@
 use either::*;
 use webp::WebPImage;
 
-use crate::buffer::RawPixBuf;
+use crate::buffer::{AsTyped, AsTypedMut, RawPixBuf};
 use crate::color::convert::ConvertInto;
 use crate::color::{Color, Nrgba, Rgb};
 use crate::image::{Dimensions, Image, ImageMut};
@@ -136,4 +136,40 @@ impl<const HAS_ALPHA: bool> AsMut<[u8]> for WebpBuf<HAS_ALPHA> {
     }
 }
 
-// TODO: as typed / as typed mut for rgb and nrgba
+macro_rules! as_typed {
+    ($type:ty, $pixel:ty) => {
+        impl AsTyped for $type {
+            type Pixel = $pixel;
+
+            fn as_typed(&self) -> &[Self::Pixel] {
+                unsafe {
+                    let len = self.inner.len() / std::mem::size_of::<Self::Pixel>();
+                    let ptr: *const Self::Pixel = self.inner.as_ptr() as _;
+                    std::slice::from_raw_parts(ptr, len)
+                }
+            }
+        }
+    };
+}
+
+macro_rules! as_typed_mut {
+    ($type:ty, $pixel:ty) => {
+        impl AsTypedMut for $type {
+            type Pixel = $pixel;
+
+            fn as_typed_mut(&mut self) -> &mut [Self::Pixel] {
+                unsafe {
+                    let len = self.inner.len() / std::mem::size_of::<Self::Pixel>();
+                    let ptr: *mut Self::Pixel = self.inner.as_mut_ptr() as _;
+                    std::slice::from_raw_parts_mut(ptr, len)
+                }
+            }
+        }
+    };
+}
+
+as_typed!(RgbWebpBuf, Rgb);
+as_typed!(NrgbaWebpBuf, Nrgba);
+
+as_typed_mut!(RgbWebpBuf, Rgb);
+as_typed_mut!(NrgbaWebpBuf, Nrgba);
