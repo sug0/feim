@@ -88,12 +88,8 @@ impl EncodeOptions for Png {
 
 macro_rules! impl_encode {
     ($type:ty, $depth:expr, $color:expr) => {
-        impl Encode<RawPixBuf<$type>> for Png {
-            fn encode<W: Write>(
-                w: W,
-                opts: PngEncodeOptions,
-                buf: &RawPixBuf<$type>,
-            ) -> io::Result<()> {
+        impl Encode<$type> for Png {
+            fn encode<W: Write>(w: W, opts: PngEncodeOptions, buf: &$type) -> io::Result<()> {
                 let width = (buf.width() & u32::MAX as usize) as u32;
                 let height = (buf.height() & u32::MAX as usize) as u32;
 
@@ -117,12 +113,25 @@ macro_rules! impl_encode {
     };
 }
 
-impl_encode!(Gray, BitDepth::Eight, ColorType::Grayscale);
-impl_encode!(Gray16Be, BitDepth::Sixteen, ColorType::Grayscale);
-impl_encode!(Nrgba, BitDepth::Eight, ColorType::Rgba);
-impl_encode!(Nrgba64Be, BitDepth::Sixteen, ColorType::Rgba);
-impl_encode!(Rgb, BitDepth::Eight, ColorType::Rgb);
-impl_encode!(Rgb48Be, BitDepth::Sixteen, ColorType::Rgb);
+impl_encode!(RawPixBuf<Gray>, BitDepth::Eight, ColorType::Grayscale);
+impl_encode!(RawPixBuf<Gray16Be>, BitDepth::Sixteen, ColorType::Grayscale);
+impl_encode!(RawPixBuf<Nrgba>, BitDepth::Eight, ColorType::Rgba);
+impl_encode!(RawPixBuf<Nrgba64Be>, BitDepth::Sixteen, ColorType::Rgba);
+impl_encode!(RawPixBuf<Rgb>, BitDepth::Eight, ColorType::Rgb);
+impl_encode!(RawPixBuf<Rgb48Be>, BitDepth::Sixteen, ColorType::Rgb);
+
+#[cfg(feature = "fmt-webp")]
+impl_encode!(
+    crate::image::webp::RgbWebpBuf,
+    BitDepth::Eight,
+    ColorType::Rgb
+);
+#[cfg(feature = "fmt-webp")]
+impl_encode!(
+    crate::image::webp::NrgbaWebpBuf,
+    BitDepth::Eight,
+    ColorType::Rgba
+);
 
 impl Encode<PngBuf> for Png {
     fn encode<W: Write>(w: W, opts: PngEncodeOptions, buf: &PngBuf) -> io::Result<()> {
