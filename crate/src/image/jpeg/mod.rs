@@ -70,11 +70,11 @@ impl EncodeOptions for Jpeg {
 
 macro_rules! impl_encode {
     ($type:ty, $color:expr) => {
-        impl Encode<RawPixBuf<$type>> for Jpeg {
+        impl Encode<$type> for Jpeg {
             fn encode<W: Write>(
                 w: W,
                 JpegEncodeOptions { quality }: JpegEncodeOptions,
-                buf: &RawPixBuf<$type>,
+                buf: &$type,
             ) -> io::Result<()> {
                 let width = (buf.width() & 0xffff) as u16;
                 let height = (buf.height() & 0xffff) as u16;
@@ -92,10 +92,15 @@ macro_rules! impl_encode {
     };
 }
 
-impl_encode!(Rgb, ColorType::Rgb);
-impl_encode!(Gray, ColorType::Luma);
-impl_encode!(Cmyk, ColorType::Cmyk);
-impl_encode!(Nrgba, ColorType::Rgba);
+impl_encode!(RawPixBuf<Rgb>, ColorType::Rgb);
+impl_encode!(RawPixBuf<Gray>, ColorType::Luma);
+impl_encode!(RawPixBuf<Cmyk>, ColorType::Cmyk);
+impl_encode!(RawPixBuf<Nrgba>, ColorType::Rgba);
+
+#[cfg(feature = "fmt-webp")]
+impl_encode!(crate::image::webp::RgbWebpBuf, ColorType::Rgb);
+#[cfg(feature = "fmt-webp")]
+impl_encode!(crate::image::webp::NrgbaWebpBuf, ColorType::Rgba);
 
 impl Encode<JpegBuf> for Jpeg {
     fn encode<W: Write>(w: W, opts: JpegEncodeOptions, buf: &JpegBuf) -> io::Result<()> {
