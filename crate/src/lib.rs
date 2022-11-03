@@ -47,13 +47,17 @@
 //!     let stdout_lock = stdout.lock();
 //!     let mut stdout_writer = BufWriter::new(stdout_lock);
 //!
+//!     // NOTE: you should be using [`feim::image::BuiltInFormat`]
+//!     // as the tag type instead of integers. a readily available
+//!     // iterator with all built-in formats is available from
+//!     // [`feim::image::built_in_formats_iter`].
 //!     let formats: [&dyn Format; 2] = [
-//!         &Farbfeld,
-//!         &Jpeg,
+//!         (0, &Farbfeld),
+//!         (1, &Jpeg),
 //!         // ...
 //!     ];
 //!
-//!     match try_format(&mut stdin_reader, &formats[..]) {
+//!     match try_format(&mut stdin_reader, formats) {
 //!         Ok(0) => {
 //!             let opts = FarbfeldDecodeOptions {
 //!                 check_header: false,

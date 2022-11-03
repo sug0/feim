@@ -34,6 +34,7 @@ pub trait Format {
     /// - feim:ff
     /// - feim:png
     /// - feim:jpeg
+    /// - feim:webp
     fn id(&self) -> &'static str;
 
     /// Returns the magic string situated at the start of the image file.
