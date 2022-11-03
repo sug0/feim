@@ -88,23 +88,39 @@ pub trait ImageMut<Specialized = No> {
     }
 }
 
-pub fn built_in_formats() -> &'static [&'static dyn Format] {
+#[derive(Debug, Copy, Clone)]
+pub enum BuiltInFormat {
+    #[cfg(feature = "fmt-farbfeld")]
+    Farbfeld,
+    #[cfg(feature = "fmt-jpeg")]
+    Jpeg,
+    #[cfg(feature = "fmt-png")]
+    Png,
+    #[cfg(feature = "fmt-webp")]
+    Webp,
+}
+
+pub fn built_in_formats() -> &'static [(BuiltInFormat, &'static dyn Format)] {
     &[
         #[cfg(feature = "fmt-farbfeld")]
         {
-            &farbfeld::Farbfeld
+            (BuiltInFormat::Farbfeld, &farbfeld::Farbfeld)
         },
         #[cfg(feature = "fmt-jpeg")]
         {
-            &jpeg::Jpeg
+            (BuiltInFormat::Jpeg, &jpeg::Jpeg)
         },
         #[cfg(feature = "fmt-png")]
         {
-            &png::Png
+            (BuiltInFormat::Png, &png::Png)
         },
         #[cfg(feature = "fmt-webp")]
         {
-            &webp::Webp
+            (BuiltInFormat::Webp, &webp::Webp)
         },
     ]
+}
+
+pub fn built_in_formats_iter() -> impl Iterator<Item = (BuiltInFormat, &'static dyn Format)> {
+    built_in_formats().iter().copied()
 }

@@ -79,9 +79,13 @@ impl<B, F: Decode<B, No>> DecodeGeneric<B> for F {
 
 // -------------------------------------------------------------------------- //
 
-pub fn try_format<R: BufRead>(mut r: R, formats: &[&dyn Format]) -> io::Result<usize> {
+pub fn try_format<'f, I, F, R>(mut r: R, formats: F) -> io::Result<I>
+where
+    F: IntoIterator<Item = (I, &'f dyn Format)>,
+    R: BufRead,
+{
     let buf = r.fill_buf()?;
-    for (i, fmt) in formats.iter().enumerate() {
+    for (i, fmt) in formats {
         if fmt.is_valid_magic(buf) {
             return Ok(i);
         }
@@ -89,9 +93,4 @@ pub fn try_format<R: BufRead>(mut r: R, formats: &[&dyn Format]) -> io::Result<u
     let k = std::io::ErrorKind::Other;
     let e = std::io::Error::new(k, "No matching magic found.");
     Err(e)
-}
-
-pub fn try_format_id<R: BufRead>(r: R, formats: &[&dyn Format]) -> io::Result<&'static str> {
-    let i = try_format(r, formats)?;
-    Ok(formats[i].id())
 }

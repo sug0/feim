@@ -7,6 +7,7 @@ use feim::image::{
     farbfeld::{Farbfeld, FarbfeldDecodeOptions},
     jpeg::{Jpeg, JpegBuf},
     png::Png,
+    BuiltInFormat,
 };
 use feim::serialize::{try_format, Decode, EncodeSpecialized};
 
@@ -19,8 +20,8 @@ fn main() -> io::Result<()> {
     let stdout_lock = stdout.lock();
     let stdout_writer = BufWriter::new(stdout_lock);
 
-    match try_format(&mut stdin_reader, image::built_in_formats()) {
-        Ok(0) => {
+    match try_format(&mut stdin_reader, image::built_in_formats_iter()) {
+        Ok(BuiltInFormat::Farbfeld) => {
             let opts = FarbfeldDecodeOptions {
                 check_header: false,
             };
@@ -28,7 +29,7 @@ fn main() -> io::Result<()> {
             let opts = Default::default();
             Png::encode_specialized(stdout_writer, opts, &image)
         }
-        Ok(1) => {
+        Ok(BuiltInFormat::Jpeg) => {
             let image = Jpeg::decode(stdin_reader, ())?;
             let opts = Default::default();
 
@@ -39,13 +40,12 @@ fn main() -> io::Result<()> {
                 JpegBuf::Cmyk(_) => todo!(),
             }
         }
-        Ok(2) => {
+        Ok(BuiltInFormat::Png) => {
             let image = Png::decode(stdin_reader, ())?;
             let opts = Default::default();
             Png::encode_specialized(stdout_writer, opts, &image)
         }
-        Ok(3) => todo!(),
-        Ok(_) => unreachable!(),
+        Ok(BuiltInFormat::Webp) => todo!(),
         Err(e) => Err(e),
     }
 }
