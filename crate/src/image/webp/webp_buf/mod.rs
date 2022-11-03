@@ -6,7 +6,7 @@ use crate::color::convert::ConvertInto;
 use crate::color::{Color, Nrgba, Rgb};
 use crate::image::{Dimensions, Image, ImageMut};
 
-pub trait WebpFeimExt {
+pub(super) trait WebpFeimExt {
     fn into_feim(self) -> Either<RgbWebpBuf, NrgbaWebpBuf>;
 }
 
