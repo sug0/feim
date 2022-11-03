@@ -1,6 +1,8 @@
+* add bitmap images?
+    + use [this crate](https://docs.rs/bitmaps)
 * make error in decode and encode an associate type,
   not io::Error
-* fix blur example
 * implement mozjpeg backend?
 * generic image impl, with enum containing all enabled formats
     + create feature flag for it
+    + or hide it under `enable-all-formats` feature flag?
