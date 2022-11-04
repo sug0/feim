@@ -1,3 +1,4 @@
+#[cfg(feature = "fmt-farbfeld-stream")]
 pub mod stream;
 
 use std::io::{self, Read, Write};

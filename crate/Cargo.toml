@@ -6,10 +6,14 @@ edition = "2018"
 
 [features]
 default = []
-enable-all-formats = ["fmt-farbfeld", "fmt-jpeg", "fmt-png", "fmt-webp"]
+enable-all-formats = [
+    "fmt-farbfeld", "fmt-farbfeld-stream",
+    "fmt-jpeg", "fmt-png", "fmt-webp",
+]
 fmt-jpeg = ["jpeg-encoder", "jpeg-decoder"]
 fmt-png = ["png"]
 fmt-farbfeld = []
+fmt-farbfeld-stream = ["kanal"]
 fmt-webp = ["webp", "either"]
 
 [dependencies]
@@ -17,6 +21,7 @@ either = { version = "1.8", optional = true }
 jpeg-encoder = { version = "0.5", features = ["simd"], optional = true }
 jpeg-decoder = { version = "0.3", features = ["nightly_aarch64_neon"], optional = true }
 png = { version = "0.17", optional = true }
+kanal = { version = "0.1.0-pre4", optional = true }
 
 [dependencies.webp]
 git = "https://github.com/sug0/webp"

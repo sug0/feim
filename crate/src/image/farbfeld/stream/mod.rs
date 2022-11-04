@@ -1,17 +1,78 @@
-use std::cmp::Ordering;
+use std::cmp::{Ordering, Reverse};
 use std::collections::BinaryHeap;
 use std::io::{self, Write};
-use std::sync::mpsc;
 
 use super::Farbfeld;
 use super::{Dimensions, Format};
-use crate::color::{Nrgba64Be, Nrgba64Ne};
+use crate::color::{Color, Nrgba64Be, Nrgba64Ne};
+use crate::image::{ConvertInto, ImageMut};
 use crate::serialize::Encode;
 
+#[derive(Debug, Copy, Clone)]
+pub struct Params {
+    pub buffer_cap: usize,
+    pub width: usize,
+    pub height: usize,
+}
+
+#[derive(Debug, Clone)]
 pub struct FarbfeldPixelStream {
     width: u32,
     height: u32,
-    pixels: mpsc::Receiver<Pixel>,
+    pixels: kanal::Receiver<Pixel>,
+}
+
+enum RollOver {
+    Next { window: u64 },
+    Eof,
+}
+
+#[derive(Debug, Clone)]
+pub struct FarbfeldPixelStreamPusher {
+    tx: kanal::Sender<Pixel>,
+}
+
+impl ImageMut for FarbfeldPixelStreamPusher {
+    type Pixel = Nrgba64Be;
+
+    fn color_set<P, ColorSpecialized>(&mut self, x: usize, y: usize, color: P)
+    where
+        P: ConvertInto<Nrgba64Be, ColorSpecialized> + Color,
+    {
+        let color: Nrgba64Be = color.convert_into();
+        self.tx
+            .send(Pixel::bind(x, y, color))
+            .expect("FarbfeldPixelStream was closed!")
+    }
+}
+
+impl FarbfeldPixelStream {
+    pub fn new(params: Params) -> (FarbfeldPixelStreamPusher, Self) {
+        let (tx, rx) = kanal::bounded(params.buffer_cap);
+        let rx = Self {
+            width: params.width as u32,
+            height: params.height as u32,
+            pixels: rx,
+        };
+        let tx = FarbfeldPixelStreamPusher { tx };
+        (tx, rx)
+    }
+
+    fn roll_over(&self, window: u64) -> RollOver {
+        let x = (window & 0xffffffff) as u32;
+        let y = (window >> 32) as u32;
+
+        let new_x = (x + 1) % self.width;
+        let new_y = if new_x != 0 { y } else { y + 1 };
+
+        if new_y < self.height {
+            RollOver::Next {
+                window: get_coords(new_x, new_y),
+            }
+        } else {
+            RollOver::Eof
+        }
+    }
 }
 
 pub struct Pixel {
@@ -22,13 +83,13 @@ pub struct Pixel {
 
 impl PartialOrd for Pixel {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.coords().cmp(&other.coords()))
+        Some(self.cmp(other))
     }
 }
 
 impl Ord for Pixel {
     fn cmp(&self, other: &Self) -> Ordering {
-        (self.x, self.y).cmp(&(other.x, other.x))
+        self.coords().cmp(&other.coords())
     }
 }
 
@@ -49,7 +110,7 @@ impl Pixel {
 
     #[inline]
     fn coords(&self) -> u64 {
-        ((self.x as u64) << 32) | (self.y as u64)
+        get_coords(self.x, self.y)
     }
 }
 
@@ -78,32 +139,51 @@ impl Encode<FarbfeldPixelStream> for Farbfeld {
         let mut window = 0;
         let mut heap = BinaryHeap::new();
 
-        // TODO: this logic is still broken I reckon
-        while let Ok(pixel) = stream.pixels.recv() {
+        'recvpix: loop {
+            let Ok(pixel) = stream.pixels.recv() else {
+                return Err(io::Error::new(io::ErrorKind::BrokenPipe, "Encoding ended early"));
+            };
+            if pixel.x >= stream.width || pixel.y >= stream.height {
+                return Err(io::Error::new(
+                    io::ErrorKind::Other,
+                    format!("Pixel out of bounds: ({}, {})", pixel.x, pixel.y),
+                ));
+            }
             let coords = pixel.coords();
-            heap.push(pixel);
+            if heap
+                .peek()
+                .map(|Reverse(pix): &Reverse<Pixel>| pix.coords() > coords)
+                .unwrap_or(false)
+            {
+                // guard against any attempts to
+                // rewrite a pixel coord
+                continue;
+            }
+            heap.push(Reverse(pixel));
             if coords > window {
                 continue;
             }
-            while let Some(pixel) = heap.pop() {
+            'bufwrite: while let Some(Reverse(pixel)) = heap.pop() {
                 let c: Nrgba64Ne = pixel.color.cast();
                 let c: u64 = c.into();
                 let c = c.to_ne_bytes();
                 w.write_all(&c[..])?;
-                let coords = pixel.coords();
-                if coords > window {
-                    window = coords;
-                    break;
+                match stream.roll_over(pixel.coords()) {
+                    RollOver::Next { window: coords } if coords > window => {
+                        window = coords;
+                        break 'bufwrite;
+                    }
+                    RollOver::Next { .. } => (),
+                    RollOver::Eof => break 'recvpix,
                 }
             }
-        }
-        while let Some(pixel) = heap.pop() {
-            let c: Nrgba64Ne = pixel.color.cast();
-            let c: u64 = c.into();
-            let c = c.to_ne_bytes();
-            w.write_all(&c[..])?;
         }
 
         Ok(())
     }
+}
+
+#[inline]
+fn get_coords(x: u32, y: u32) -> u64 {
+    ((y as u64) << 32) | (x as u64)
 }
