@@ -13,7 +13,7 @@ enable-all-formats = [
 fmt-jpeg = ["jpeg-encoder", "jpeg-decoder"]
 fmt-png = ["png"]
 fmt-farbfeld = []
-fmt-farbfeld-stream = ["kanal"]
+fmt-farbfeld-stream = ["fmt-farbfeld", "kanal"]
 fmt-webp = ["webp", "either"]
 
 [dependencies]
