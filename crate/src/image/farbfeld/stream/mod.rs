@@ -78,6 +78,7 @@ impl Encode<FarbfeldPixelStream> for Farbfeld {
         let mut window = 0;
         let mut heap = BinaryHeap::new();
 
+        // TODO: this logic is still broken I reckon
         while let Ok(pixel) = stream.pixels.recv() {
             let coords = pixel.coords();
             heap.push(pixel);
