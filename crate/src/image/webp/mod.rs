@@ -37,7 +37,7 @@ impl Decode<Either<RgbWebpBuf, NrgbaWebpBuf>> for Webp {
 
 pub fn simple_config(lossless: bool, quality: f32) -> WebpEncodeOptions {
     let mut opts = WebpEncodeOptions::new().unwrap();
-    opts.lossless = if lossless { 1 } else { 0 };
+    opts.lossless = i32::from(lossless);
     opts.alpha_compression = if lossless { 0 } else { 1 };
     opts.quality = quality.clamp(0.0, 100.0);
     opts
