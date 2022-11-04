@@ -155,9 +155,13 @@ impl Encode<FarbfeldPixelStream> for Farbfeld {
                 .map(|Reverse(pix): &Reverse<Pixel>| pix.coords() > coords)
                 .unwrap_or(false)
             {
-                // guard against any attempts to
-                // rewrite a pixel coord
-                continue;
+                return Err(io::Error::new(
+                    io::ErrorKind::Other,
+                    format!(
+                        "Attempted to encode the same pixel twice: ({}, {})",
+                        pixel.x, pixel.y
+                    ),
+                ));
             }
             heap.push(Reverse(pixel));
             if coords > window {
