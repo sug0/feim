@@ -5,6 +5,8 @@ use feim::buffer::RawPixBuf;
 use feim::color::Nrgba64Be;
 use feim::image::{Dimensions, ImageMut};
 use itertools::Itertools;
+use serde_repr::Deserialize_repr;
+use thiserror::Error;
 
 pub type Num = isize;
 
@@ -40,18 +42,21 @@ pub enum Item {
     Num(Num),
 }
 
-#[derive(Debug)]
-pub enum CompileError<'a> {
-    UnknownToken(&'a str),
-    InvalidInteger(&'a str, IntErrorKind),
+#[derive(Error, Debug)]
+pub enum CompileError {
+    #[error("Unkown token: {0}")]
+    UnknownToken(String),
+    #[error("Invalid integer: {0}: {1:?}")]
+    InvalidInteger(String, IntErrorKind),
 }
 
-#[derive(Debug)]
+#[derive(Error, Debug)]
 pub enum EvalError {
+    #[error("Evaluation error: {0}")]
     Temp(String),
 }
 
-pub fn compile(s: &str) -> Result<Expression, CompileError<'_>> {
+pub fn compile(s: &str) -> Result<Expression, CompileError> {
     let mut expression = Vec::new();
 
     for tok in s.split_whitespace() {
@@ -88,7 +93,7 @@ pub fn compile(s: &str) -> Result<Expression, CompileError<'_>> {
                     Some('+') => (1, &tok[1..]),
                     Some('-') => (-1, &tok[1..]),
                     Some('0'..='9') => (1, tok),
-                    _ => return Err(CompileError::UnknownToken(tok)),
+                    _ => return Err(CompileError::UnknownToken(tok.into())),
                 };
                 let (num, radix) = if let Some(num) = num.strip_prefix("0b") {
                     (num, 2)
@@ -102,8 +107,8 @@ pub fn compile(s: &str) -> Result<Expression, CompileError<'_>> {
                 Num::from_str_radix(num, radix)
                     .map(|n| Item::Num(n * sign))
                     .map_err(|e| match e.kind().clone() {
-                        IntErrorKind::InvalidDigit => CompileError::UnknownToken(tok),
-                        err_kind => CompileError::InvalidInteger(tok, err_kind),
+                        IntErrorKind::InvalidDigit => CompileError::UnknownToken(tok.into()),
+                        err_kind => CompileError::InvalidInteger(tok.into(), err_kind),
                     })?
             }),
         }
@@ -112,10 +117,11 @@ pub fn compile(s: &str) -> Result<Expression, CompileError<'_>> {
     Ok(Expression { inner: expression })
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Deserialize_repr, Debug, Copy, Clone)]
+#[repr(u8)]
 pub enum BitDepth {
-    One,
-    Sixteen,
+    One = 1,
+    Sixteen = 16,
 }
 
 impl fmt::Display for BitDepth {
