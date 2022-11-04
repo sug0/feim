@@ -1,3 +1,4 @@
+* stream encode with farbfeld on bitlang
 * add bitmap images?
     + use [this crate](https://docs.rs/bitmaps)
 * make error in decode and encode an associate type,
