@@ -15,7 +15,7 @@ pub struct Params {
     pub height: usize,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FarbfeldPixelStream {
     width: u32,
     height: u32,
