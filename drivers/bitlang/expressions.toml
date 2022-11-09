@@ -11,3 +11,10 @@ height = 2500
 depth = 1
 generate = "w y * x + dup t % t ^ /"
 farbfeld_hash = { blake3 = "5a91745beaf5970b7988dd236cae1129b9c1848a3994e7c2d04860a4bd3cdbed" }
+
+[expressions.eye_fucker]
+width = 1200
+height = 1200
+depth = 16
+generate = "x y - y x - * x y & - dup 2 * t + -"
+farbfeld_hash = { blake3 = "d4f8f6c4cdfc095e5db1d4daa042b4828a4b359b1804ba344b4b063737d0d1a3" }
