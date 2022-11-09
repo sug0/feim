@@ -75,7 +75,7 @@ impl FarbfeldPixelStream {
     }
 }
 
-pub struct Pixel {
+struct Pixel {
     x: u32,
     y: u32,
     color: Nrgba64Be,
@@ -102,7 +102,7 @@ impl PartialEq for Pixel {
 impl Eq for Pixel {}
 
 impl Pixel {
-    pub fn bind(x: usize, y: usize, color: Nrgba64Be) -> Self {
+    fn bind(x: usize, y: usize, color: Nrgba64Be) -> Self {
         let x = x as u32;
         let y = y as u32;
         Self { x, y, color }
