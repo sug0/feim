@@ -29,7 +29,19 @@ enum RollOver {
 
 #[derive(Debug, Clone)]
 pub struct FarbfeldPixelStreamPusher {
+    width: u32,
+    height: u32,
     tx: kanal::Sender<Pixel>,
+}
+
+impl Dimensions for FarbfeldPixelStreamPusher {
+    fn width(&self) -> usize {
+        self.width as usize
+    }
+
+    fn height(&self) -> usize {
+        self.height as usize
+    }
 }
 
 impl ImageMut for FarbfeldPixelStreamPusher {
@@ -54,7 +66,11 @@ impl FarbfeldPixelStream {
             height: params.height as u32,
             pixels: rx,
         };
-        let tx = FarbfeldPixelStreamPusher { tx };
+        let tx = FarbfeldPixelStreamPusher {
+            tx,
+            width: params.width as u32,
+            height: params.height as u32,
+        };
         (tx, rx)
     }
 
