@@ -17,5 +17,5 @@ git = "https://git.sr.ht/~sugo/feim"
 
 ## Examples
 
-To consult example code, browse the [`drivers`] directory
+To consult example code, browse the [`drivers`](drivers/) directory
 in this repository.
