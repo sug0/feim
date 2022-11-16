@@ -6,7 +6,7 @@ use feim::image::jpeg::{Jpeg, JpegEncodeOptions};
 use feim::image::ImageMut;
 use feim::serialize::EncodeSpecialized;
 
-const DIM: usize = 2000;
+const DIM: usize = 5000;
 const MAX_DEPTH: usize = 100;
 
 struct Params<'a> {
@@ -52,6 +52,14 @@ fn draw_image(buf: &mut RawPixBuf<Gray>) {
     for pix in buf.as_typed_mut() {
         *pix = shade(0xff);
     }
+    draw_image_recur(Params {
+        dir: GrowDir::Left,
+        height: DIM / 2,
+        cx: (DIM - 1) / 2 + DIM / 3,
+        cy: DIM - 1,
+        depth: MAX_DEPTH,
+        buf,
+    });
     draw_image_recur(Params {
         dir: GrowDir::Right,
         height: DIM / 2,
