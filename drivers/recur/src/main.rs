@@ -7,18 +7,18 @@ use feim::image::ImageMut;
 use feim::serialize::EncodeSpecialized;
 
 const DIM: usize = 2000;
+const MAX_DEPTH: usize = 100;
 
 struct Params<'a> {
     dir: GrowDir,
     buf: &'a mut RawPixBuf<Gray>,
-    trunk_height: usize,
+    height: usize,
     depth: usize,
     cx: usize,
     cy: usize,
 }
 
 enum GrowDir {
-    Upwards,
     Left,
     Right,
 }
@@ -42,17 +42,22 @@ const fn shade(y: u8) -> Gray {
     Gray { y }
 }
 
+const fn depth_shade(depth: usize) -> Gray {
+    let y = (0xff * depth / MAX_DEPTH) << 3;
+    shade((y & 0xff) as u8)
+}
+
 fn draw_image(buf: &mut RawPixBuf<Gray>) {
     // set image to white
     for pix in buf.as_typed_mut() {
         *pix = shade(0xff);
     }
     draw_image_recur(Params {
-        dir: GrowDir::Upwards,
-        trunk_height: (DIM - 1) / 4,
+        dir: GrowDir::Right,
+        height: DIM / 2,
         cx: (DIM - 1) / 2,
         cy: DIM - 1,
-        depth: 100,
+        depth: MAX_DEPTH,
         buf,
     });
 }
@@ -64,34 +69,19 @@ fn draw_image_recur(p: Params<'_>) {
         return;
     }
     match p.dir {
-        GrowDir::Upwards => {
-            let y_max = p.cy.saturating_sub(p.trunk_height);
-            let y_coords = (y_max..=p.cy).take_while(|&y| y < DIM);
-            for y in y_coords {
-                p.buf.pixel_set(p.cx, y, shade(0));
-            }
-            draw_image_recur(Params {
-                dir: GrowDir::Left,
-                trunk_height: 3 * p.trunk_height / 4,
-                cx: p.cx,
-                cy: y_max,
-                depth: p.depth - 1,
-                buf: p.buf,
-            });
-        }
         GrowDir::Left => {
-            let y_max = p.cy.saturating_sub(p.trunk_height);
-            let x_max = p.cx.saturating_sub(p.trunk_height);
+            let y_max = p.cy.saturating_sub(p.height);
+            let x_max = p.cx.saturating_sub(p.height);
             let y_coords = (y_max..=p.cy).take_while(|&y| y < DIM);
             for y in y_coords {
                 let x_coords = (x_max..=p.cx).take_while(|&x| x < DIM);
                 for x in x_coords {
-                    p.buf.pixel_set(x, y, shade(0));
+                    p.buf.pixel_set(x, y, depth_shade(p.depth));
                 }
             }
             draw_image_recur(Params {
                 dir: GrowDir::Right,
-                trunk_height: p.trunk_height / 2,
+                height: p.height / 2,
                 cx: x_max,
                 cy: y_max,
                 depth: p.depth - 1,
@@ -99,18 +89,18 @@ fn draw_image_recur(p: Params<'_>) {
             });
         }
         GrowDir::Right => {
-            let y_max = p.cy.saturating_sub(p.trunk_height);
-            let x_max = p.cx.saturating_add(p.trunk_height);
+            let y_max = p.cy.saturating_sub(p.height);
+            let x_max = p.cx.saturating_add(p.height);
             let y_coords = (y_max..=p.cy).take_while(|&y| y < DIM);
             for y in y_coords {
                 let x_coords = (p.cx..=x_max).take_while(|&x| x < DIM);
                 for x in x_coords {
-                    p.buf.pixel_set(x, y, shade(0));
+                    p.buf.pixel_set(x, y, depth_shade(p.depth));
                 }
             }
             draw_image_recur(Params {
                 dir: GrowDir::Left,
-                trunk_height: p.trunk_height / 2,
+                height: p.height / 2,
                 cx: x_max,
                 cy: y_max,
                 depth: p.depth - 1,
