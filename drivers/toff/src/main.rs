@@ -1,10 +1,8 @@
 use std::io::{self, BufReader, BufWriter};
 
-use feim::buffer::RawPixBuf;
-use feim::color::Nrgba64Be;
 use feim::image::{
     self,
-    farbfeld::{Farbfeld, FarbfeldDecodeOptions},
+    farbfeld::Farbfeld,
     jpeg::{Jpeg, JpegBuf},
     png::{Png, PngBuf},
     webp::Webp,
@@ -19,15 +17,12 @@ fn main() -> io::Result<()> {
 
     let stdout = io::stdout();
     let stdout_lock = stdout.lock();
-    let stdout_writer = BufWriter::new(stdout_lock);
+    let mut stdout_writer = BufWriter::new(stdout_lock);
 
     match try_format(&mut stdin_reader, image::built_in_formats_iter()) {
         Ok(BuiltInFormat::Farbfeld) => {
-            let opts = FarbfeldDecodeOptions {
-                check_header: false,
-            };
-            let image: RawPixBuf<Nrgba64Be> = Farbfeld::decode(stdin_reader, opts)?;
-            Farbfeld::encode_specialized(stdout_writer, (), &image)
+            io::copy(&mut stdin_reader, &mut stdout_writer)?;
+            Ok(())
         }
         Ok(BuiltInFormat::Jpeg) => {
             let image = Jpeg::decode(stdin_reader, ())?;
