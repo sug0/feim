@@ -19,7 +19,7 @@ fn main() -> io::Result<()> {
 
     let stdout = io::stdout();
     let stdout_lock = stdout.lock();
-    let stdout_writer = BufWriter::new(stdout_lock);
+    let mut stdout_writer = BufWriter::new(stdout_lock);
 
     match try_format(&mut stdin_reader, image::built_in_formats_iter()) {
         Ok(BuiltInFormat::Farbfeld) => {
@@ -42,9 +42,8 @@ fn main() -> io::Result<()> {
             }
         }
         Ok(BuiltInFormat::Png) => {
-            let image = Png::decode(stdin_reader, ())?;
-            let opts = Default::default();
-            Png::encode_specialized(stdout_writer, opts, &image)
+            io::copy(&mut stdin_reader, &mut stdout_writer)?;
+            Ok(())
         }
         Ok(BuiltInFormat::Webp) => {
             let image = Webp::decode(stdin_reader, ())?;
