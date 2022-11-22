@@ -46,3 +46,10 @@ height = 500
 depth = 1
 generate = "h w / w h = || x y && w t & - && t h ^ t w + << w h / w h | = % * y h + x t < ^ ~ ~ >>"
 farbfeld_hash = { blake3 = "fe66a0c73759882b456c6c3ddd93706d431be6c44087ca186f3124edb7ed497e" }
+
+[expressions.techno]
+width = 500
+height = 500
+depth = 1
+generate = "x y && y h - < x h && ! >= w ! x w <= * t t - t h << && && || w x / w x & <= w t % t t << / & x t >= y t >> - h t << x ! * < || &&"
+farbfeld_hash = { blake3 = "9a3dfd98286b3bd6eb7de5639a5acf7682c6b64f7feec3c7bb65af0cb40bc2ad" }
