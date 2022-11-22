@@ -3,14 +3,14 @@ use std::io::{self, BufWriter};
 use bracket_geometry::prelude::*;
 use feim::buffer::{AsTypedMut, RawPixBuf};
 use feim::color::Gray;
-use feim::image::jpeg::{Jpeg, JpegEncodeOptions};
+use feim::image::png::{Png, PngEncodeOptions};
 use feim::image::ImageMut;
 use feim::serialize::EncodeSpecialized;
 
 const DIM: usize = 500;
 const MAX_DEPTH: usize = 8;
-const ANGLE: f32 = 15.0;
-const LENGTH: f32 = 50.0;
+const ANGLE: f32 = 12.0;
+const LENGTH: f32 = 100.0;
 const LENGTH_FRAC: f32 = 0.8;
 
 struct Params<'a> {
@@ -33,8 +33,8 @@ fn main() -> io::Result<()> {
         image
     };
 
-    let opts = JpegEncodeOptions::new(85).unwrap();
-    Jpeg::encode_specialized(&mut stdout_writer, opts, &image)
+    let opts = PngEncodeOptions::default();
+    Png::encode_specialized(&mut stdout_writer, opts, &image)
 }
 
 const fn shade(y: u8) -> Gray {
@@ -70,17 +70,17 @@ fn draw_image_recur(params: Params<'_>) {
         return;
     }
 
-    let (sin, cos) = (distance * std::f32::consts::PI / 180.0).sin_cos();
+    let (sin, cos) = (direction * std::f32::consts::PI / 180.0).sin_cos();
     let (x2, y2) = (x1 + distance * sin, y1 - distance * cos);
 
     let line_points = Bresenham::new(
         Point {
             x: x1 as i32,
-            y: x2 as i32,
+            y: y1 as i32,
         },
         Point {
             x: x2 as i32,
-            y: x2 as i32,
+            y: y2 as i32,
         },
     );
 
