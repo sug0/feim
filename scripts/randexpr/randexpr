@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+
+import os
+import random
+
+from sys import argv
+from pathlib import Path
+from hashlib import blake2s
+from functools import reduce
+from multiprocessing import Pool
+from argparse import ArgumentParser
+
+def main():
+    global CONST_MAX
+    global BIT_DEPTH
+
+    parser = ArgumentParser(
+            prog=argv[0],
+            description='Generate random expressions.')
+    parser.add_argument('--depth', type=int, default=3)
+    parser.add_argument('--count', type=int, default=10)
+    parser.add_argument('--bits', type=int, default=BIT_DEPTH)
+    parser.add_argument('--const-max', type=int, default=CONST_MAX)
+    parser.add_argument('--generate', action='store_true', default=False)
+
+    args = parser.parse_args()
+
+    if not args.generate:
+        for _i in range(args.count):
+            print(str(expr(args.depth)))
+        return
+
+    CONST_MAX = args.const_max
+    BIT_DEPTH = args.bits
+
+    try:
+        os.mkdir('output')
+    except FileExistsError:
+        pass
+
+    with Pool(os.cpu_count()) as pool:
+        exprs = list(map(lambda d: str(expr(d)), [args.depth] * args.count))
+        pool.map(image, exprs)
+
+        hashes = set()
+        for hexpr, hpng in pool.map(hash_png, exprs):
+            if hpng in hashes:
+                os.unlink(f'output/{hexpr}.meta')
+                os.unlink(f'output/{hexpr}.png')
+            else:
+                hashes.add(hpng)
+
+def hash_png(expr):
+    hexpr = blake2s(expr.encode()).digest().hex()[:36]
+    data = Path(f'output/{hexpr}.png').read_bytes()
+    hpng = blake2s(data).digest()
+    return hexpr, hpng
+
+def image(expr):
+    hash = blake2s(expr.encode()).digest().hex()[:36]
+    Path(f'output/{hash}.meta').write_text(expr + '\n')
+    os.system(f"../../target/release/bitlang -d {BIT_DEPTH} -e '{expr}' | ../../target/release/topng > output/{hash}.png")
+
+def expr(depth):
+    if depth == 0:
+        return Node(Node.LEAF, x=pick_operand())
+
+    op = pick_operator()
+    depth = depth - 1
+
+    match op.operands:
+        case 1:
+            return Node(Node.ONE_WAY, op=op, x=expr(depth))
+        case 2:
+            return Node(Node.TWO_WAY, op=op, x=expr(depth), y=expr(depth))
+        case _:
+            pass
+
+class Node(object):
+    LEAF = 0
+    ONE_WAY = 1
+    TWO_WAY = 2
+
+    def __init__(self, kind, op=None, x=None, y=None):
+        self.kind = kind
+        self.op = op
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return self._str()[:-1]
+
+    def _str(self):
+        match self.kind:
+            case Node.LEAF:
+                return f'{self.x.val} '
+            case Node.ONE_WAY:
+                return f'{self.x._str()}{self.op.op} '
+            case Node.TWO_WAY:
+                return f'{self.x._str()}{self.y._str()}{self.op.op} '
+            case _:
+                pass
+
+def pick_operand():
+    return random.choice(OPERANDS)
+
+def pick_operator():
+    return random.choice(OPERATORS)
+
+class Operator(object):
+    def __init__(self, op, operands):
+        self.op = op
+        self.operands = operands
+
+class Operand(object):
+    def __init__(self, val):
+        self._val = val
+
+    @property
+    def val(self):
+        if self._val == 'n':
+            return str(int(CONST_MAX * random.random()))
+        else:
+            return self._val
+
+OPERATORS = [
+    #Operator('dup', 1),
+    Operator('abs', 1),
+    Operator('~', 1),
+    Operator('!', 1),
+    Operator('+', 2),
+    Operator('-', 2),
+    Operator('*', 2),
+    Operator('/', 2),
+    Operator('%', 2),
+    Operator('>>', 2),
+    Operator('<<', 2),
+    Operator('|', 2),
+    Operator('&', 2),
+    Operator('^', 2),
+    #Operator('xch', 2),
+    Operator('=', 2),
+    Operator('<', 2),
+    Operator('<=', 2),
+    Operator('>=', 2),
+    Operator('&&', 2),
+    Operator('||', 2),
+]
+
+OPERANDS = [
+    Operand('x'),
+    Operand('y'),
+    Operand('w'),
+    Operand('h'),
+    Operand('t'),
+    #Operand('n'),
+]
+
+BIT_DEPTH = 16
+CONST_MAX = 0xffff
+
+if __name__ == '__main__':
+    main()
