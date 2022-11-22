@@ -18,3 +18,27 @@ height = 1200
 depth = 16
 generate = "x y - y x - * x y & - dup 2 * t + -"
 farbfeld_hash = { blake3 = "d4f8f6c4cdfc095e5db1d4daa042b4828a4b359b1804ba344b4b063737d0d1a3" }
+
+[expressions.runaway]
+width = 500
+height = 500
+depth = 1
+generate = "t w || x w - || h t << h y >> && << w x >> y x <= < t abs y x * = <= >> abs"
+
+[expressions.runaway]
+width = 500
+height = 500
+depth = 1
+generate = "t w || x w - || h t << h y >> && << w x >> y x <= < t abs y x * = <= >> abs"
+
+[expressions.life_of_pi]
+width = 500
+height = 500
+depth = 1
+generate = "x t | x ! | abs h x ^ y x + < y w / w x * >> << * t y + w t << ^ t t & t t + & >> y h < t ~ || x h << ! | <= ^"
+
+[expressions.prison_cell]
+width = 500
+height = 500
+depth = 1
+generate = "y ! h h * | w w ^ y t = << >= x w | h x | << y w <= w h - ^ * <= h w | abs x abs abs ^ y t - t y / <= w x >> x w >= << < - +"
