@@ -39,3 +39,10 @@ height = 500
 depth = 1
 generate = "y ! h h * | w w ^ y t = << >= x w | h x | << y w <= w h - ^ * <= h w | abs x abs abs ^ y t - t y / <= w x >> x w >= << < - +"
 farbfeld_hash = { blake3 = "c7f03380a206c2b6679348fb0828edbc746f0ff251c6c22517a5c4faf99ba0d4" }
+
+[expressions.grim]
+width = 500
+height = 500
+depth = 1
+generate = "h w / w h = || x y && w t & - && t h ^ t w + << w h / w h | = % * y h + x t < ^ ~ ~ >>"
+farbfeld_hash = { blake3 = "fe66a0c73759882b456c6c3ddd93706d431be6c44087ca186f3124edb7ed497e" }
