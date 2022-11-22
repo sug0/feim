@@ -1,26 +1,25 @@
 use std::io::{self, BufWriter};
 
+use bracket_geometry::prelude::*;
 use feim::buffer::{AsTypedMut, RawPixBuf};
 use feim::color::Gray;
 use feim::image::jpeg::{Jpeg, JpegEncodeOptions};
 use feim::image::ImageMut;
 use feim::serialize::EncodeSpecialized;
 
-const DIM: usize = 5000;
-const MAX_DEPTH: usize = 100;
+const DIM: usize = 500;
+const MAX_DEPTH: usize = 8;
+const ANGLE: f32 = 15.0;
+const LENGTH: f32 = 50.0;
+const LENGTH_FRAC: f32 = 0.8;
 
 struct Params<'a> {
-    dir: GrowDir,
     buf: &'a mut RawPixBuf<Gray>,
-    height: usize,
     depth: usize,
-    cx: usize,
-    cy: usize,
-}
-
-enum GrowDir {
-    Left,
-    Right,
+    direction: f32,
+    distance: f32,
+    cx: f32,
+    cy: f32,
 }
 
 fn main() -> io::Result<()> {
@@ -42,78 +41,75 @@ const fn shade(y: u8) -> Gray {
     Gray { y }
 }
 
-const fn depth_shade(depth: usize) -> Gray {
-    let y = (0xff * depth / MAX_DEPTH) << 3;
-    shade((y & 0xff) as u8)
-}
-
 fn draw_image(buf: &mut RawPixBuf<Gray>) {
     // set image to white
     for pix in buf.as_typed_mut() {
         *pix = shade(0xff);
     }
     draw_image_recur(Params {
-        dir: GrowDir::Left,
-        height: DIM / 2,
-        cx: (DIM - 1) / 2 + DIM / 3,
-        cy: DIM - 1,
+        cx: (DIM / 2) as f32,
+        cy: (DIM * 9 / 10) as f32,
         depth: MAX_DEPTH,
-        buf,
-    });
-    draw_image_recur(Params {
-        dir: GrowDir::Right,
-        height: DIM / 2,
-        cx: (DIM - 1) / 2,
-        cy: DIM - 1,
-        depth: MAX_DEPTH,
+        distance: LENGTH,
+        direction: 0.0,
         buf,
     });
 }
 
-// https://excalidraw.com/#json=YRtf0cDBfCknQZ9MkterY,p8lizfbHxbxLlpcvwB_Lrg
-// https://www.todamateria.com.br/razoes-trigonometricas/
-fn draw_image_recur(p: Params<'_>) {
-    if p.depth == 0 || p.cx > DIM || p.cy > DIM {
+fn draw_image_recur(params: Params<'_>) {
+    let Params {
+        buf,
+        depth,
+        direction,
+        distance,
+        cx: x1,
+        cy: y1,
+    } = params;
+
+    if depth == 0 || x1 as usize > DIM || y1 as usize > DIM {
         return;
     }
-    match p.dir {
-        GrowDir::Left => {
-            let y_max = p.cy.saturating_sub(p.height);
-            let x_max = p.cx.saturating_sub(p.height);
-            let y_coords = (y_max..=p.cy).take_while(|&y| y < DIM);
-            for y in y_coords {
-                let x_coords = (x_max..=p.cx).take_while(|&x| x < DIM);
-                for x in x_coords {
-                    p.buf.pixel_set(x, y, depth_shade(p.depth));
-                }
-            }
-            draw_image_recur(Params {
-                dir: GrowDir::Right,
-                height: p.height / 2,
-                cx: x_max,
-                cy: y_max,
-                depth: p.depth - 1,
-                buf: p.buf,
-            });
+
+    let (sin, cos) = (distance * std::f32::consts::PI / 180.0).sin_cos();
+    let (x2, y2) = (x1 + distance * sin, y1 - distance * cos);
+
+    let line_points = Bresenham::new(
+        Point {
+            x: x1 as i32,
+            y: x2 as i32,
+        },
+        Point {
+            x: x2 as i32,
+            y: x2 as i32,
+        },
+    );
+
+    for Point { x, y } in line_points {
+        let x = x as usize;
+        let y = y as usize;
+        if x > DIM || y > DIM {
+            return;
         }
-        GrowDir::Right => {
-            let y_max = p.cy.saturating_sub(p.height);
-            let x_max = p.cx.saturating_add(p.height);
-            let y_coords = (y_max..=p.cy).take_while(|&y| y < DIM);
-            for y in y_coords {
-                let x_coords = (p.cx..=x_max).take_while(|&x| x < DIM);
-                for x in x_coords {
-                    p.buf.pixel_set(x, y, depth_shade(p.depth));
-                }
-            }
-            draw_image_recur(Params {
-                dir: GrowDir::Left,
-                height: p.height / 2,
-                cx: x_max,
-                cy: y_max,
-                depth: p.depth - 1,
-                buf: p.buf,
-            });
-        }
+        buf.pixel_set(x, y, shade(0));
     }
+
+    let depth = depth - 1;
+    let distance = distance * LENGTH_FRAC;
+
+    draw_image_recur(Params {
+        direction: direction - ANGLE,
+        buf,
+        depth,
+        distance,
+        cx: x2,
+        cy: y2,
+    });
+    draw_image_recur(Params {
+        direction: direction + ANGLE,
+        buf,
+        depth,
+        distance,
+        cx: x2,
+        cy: y2,
+    });
 }
