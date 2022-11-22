@@ -7,11 +7,12 @@ use feim::image::png::{Png, PngEncodeOptions};
 use feim::image::ImageMut;
 use feim::serialize::EncodeSpecialized;
 
-const DIM: usize = 500;
+const DIM: usize = 1000;
 const MAX_DEPTH: usize = 8;
-const ANGLE: f32 = 12.0;
-const LENGTH: f32 = 100.0;
+const ANGLE: f32 = 20.0;
+const LENGTH: f32 = 200.0;
 const LENGTH_FRAC: f32 = 0.8;
+const THICKNESS: i32 = 15;
 
 struct Params<'a> {
     buf: &'a mut RawPixBuf<Gray>,
@@ -39,6 +40,11 @@ fn main() -> io::Result<()> {
 
 const fn shade(y: u8) -> Gray {
     Gray { y }
+}
+
+const fn depth_shade(depth: usize) -> Gray {
+    let y = (128 * depth / MAX_DEPTH) + 75;
+    shade((y & 0xff) as u8)
 }
 
 fn draw_image(buf: &mut RawPixBuf<Gray>) {
@@ -83,14 +89,20 @@ fn draw_image_recur(params: Params<'_>) {
             y: y2 as i32,
         },
     );
+    let color = depth_shade(depth);
 
     for Point { x, y } in line_points {
-        let x = x as usize;
         let y = y as usize;
-        if x > DIM || y > DIM {
+        if y > DIM {
             return;
         }
-        buf.pixel_set(x, y, shade(0));
+        for i in -THICKNESS..=THICKNESS {
+            let x = (x + i) as usize;
+            if x > DIM {
+                return;
+            }
+            buf.pixel_set(x, y, color);
+        }
     }
 
     let depth = depth - 1;
