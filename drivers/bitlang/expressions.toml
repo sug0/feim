@@ -53,3 +53,17 @@ height = 500
 depth = 1
 generate = "x y && y h - < x h && ! >= w ! x w <= * t t - t h << && && || w x / w x & <= w t % t t << / & x t >= y t >> - h t << x ! * < || &&"
 farbfeld_hash = { blake3 = "9a3dfd98286b3bd6eb7de5639a5acf7682c6b64f7feec3c7bb65af0cb40bc2ad" }
+
+[expressions.cyb_space]
+width = 500
+height = 500
+depth = 1
+generate = "x w - abs h h % w w % <= >= h x || h y - < t x - ~ / <= w h = x abs * x w * y ! <= % t y >> w w | >> ! && & y w < h w * + w ~ abs << y y << w w & & t y << w w ^ && << + w y = x y << >> x abs x h >> < / h t * h ~ - x abs y w < || << >> ^ || h y << t h && && abs ~ w x <= ! y t - x h = / >= h w <= h h << && t x >= ~ && = ^ abs && w y / h h * <= ! abs ~ y ! h t & * w t && h t - < >= h t << abs y h = abs = - h w <= h t < << t h < w w / % << ~ << && ! >= y x || x y * | h ~ w y * % | ~ w t < x y <= - w x << abs >> w h ^ ! ! - - x t = t t - - t t >> y x < | || x w <= w w && << y t >> w t < % * < x t - ~ ! x y | ~ h h % t x < || <= <= & / h t & abs ! h ! abs t ~ abs >= - x ~ abs x h / y h <= / / h t << abs w t && t t >> < ^ <= << x t / h t / * w w >= y y >> && * h t | t h ^ <= w h - x h < < % = h h && x y ^ - h x << t y | ^ < x t <= w y ^ < w ! h t / - - = ^ >> || x x / h abs & x t & y x & % - abs w y >> w ~ | h t % h y - / = w ! h y & % x y >= h w + ^ < ^ * w w | x t || < y x <= h x = - << w y <= y t >> && w y / x x << % <= & abs || y ! h h - + x h >= y x + / & t t && t y % >> h t << y t * = <= | y w % w w = + w x ^ y w = <= << t w << h h - / w t && ! * / << abs <= = * !"
+farbfeld_hash = { blake3 = "348e91cd41caad32b95f6fc50031803e39c9a85dac53b793f6b5ed40ec5c7465" }
+
+[expressions.triangle_soup]
+width = 500
+height = 500
+depth = 1
+generate = "y t | y t % / w h < t h % >= >> y x / x t + & h t >> y t + <= < << h h & x h & % ~ h h * y t && <= h t << x y << = && | >> t y >= y w <= | h w ^ y h < && | t ! x h < && x y = y h / && + ^ w x / h ~ >> t h >> h y - << && t x << y y || <= w abs h y % >> < <= << && t y - x h | >= w w % t h + && << t w * ! h t && abs ^ / w w | y y << | y x ^ abs < w x <= x h * >= x ~ w ~ <= && * | y x = x h * - t abs abs <= x h = t h << && t t >> h h >= * <= & t t << y h < ^ ~ w w = w ! * t h ^ t t | < <= >= && & ^ h x >> h x + && h y || h ! <= ^ h h && t h - | w y / h h <= - + || w t % h h < >> w ~ abs << w y % y w <= < w x && t t && <= * | | x h <= w ~ & w y <= ! ^ t y << w y << >= abs <= abs % ~ + h x * y t + - x ~ t w % % && x ~ x t + >= x w = x x < || <= & x abs y h % < x y - y h * = / y y < y x < + w y - h y + << + = + x ~ y y || || t t >> ~ && y ~ y h * && y h / y t * || << && h h % h y << + y h < x x << ^ % w x & x w >= << t t || y h - | && >> & = ~ y ~ abs t h >= w t ^ <= & w y << h t * | t t * h y >= <= << >= x w ^ ! w w << h y | <= = h t ^ h t >= <= h x && t abs >= << & % w h | x y + <= h h >> ! < y w = t t >> = x abs h x <= | || ^ y y / t ! << x y && x x >= << || abs ^ >= w w - x y | % y x << x abs && * y h - x h | >> x w < h t >= >= ^ % h w & t x ^ * t abs w x % | | t y / x t || >= ~ = >> w t & y y & & x w < t h >= + / ! ! - & + = !"
+farbfeld_hash = { blake3 = "131296321e39f9b04c2267a40831a7294dd311aa1a33e8f62ecd63fc651999c6" }
