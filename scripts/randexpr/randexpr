@@ -13,10 +13,14 @@ from argparse import ArgumentParser
 def main():
     global CONST_MAX
     global BIT_DEPTH
+    global WIDTH
+    global HEIGHT
 
     parser = ArgumentParser(
             prog=argv[0],
             description='Generate random expressions.')
+    parser.add_argument('--width', type=int, default=WIDTH)
+    parser.add_argument('--height', type=int, default=HEIGHT)
     parser.add_argument('--depth', type=int, default=3)
     parser.add_argument('--count', type=int, default=10)
     parser.add_argument('--bits', type=int, default=BIT_DEPTH)
@@ -32,6 +36,8 @@ def main():
 
     CONST_MAX = args.const_max
     BIT_DEPTH = args.bits
+    WIDTH = args.width
+    HEIGHT = args.height
 
     try:
         os.mkdir('output')
@@ -59,7 +65,7 @@ def hash_png(expr):
 def image(expr):
     hash = blake2s(expr.encode()).digest().hex()[:36]
     Path(f'output/{hash}.meta').write_text(expr + '\n')
-    os.system(f"../../target/release/bitlang -d {BIT_DEPTH} -e '{expr}' | ../../target/release/topng > output/{hash}.png")
+    os.system(f"../../target/release/bitlang -W {WIDTH} -H {HEIGHT} -d {BIT_DEPTH} -e '{expr}' | ../../target/release/topng > output/{hash}.png")
 
 def expr(depth):
     if depth == 0:
@@ -158,6 +164,8 @@ OPERANDS = [
 
 BIT_DEPTH = 16
 CONST_MAX = 0xffff
+WIDTH = 500
+HEIGHT = 500
 
 if __name__ == '__main__':
     main()
