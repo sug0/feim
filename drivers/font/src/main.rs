@@ -33,8 +33,7 @@ fn main() -> io::Result<()> {
 
     let image = {
         let mut image = RawPixBuf::new(DIM, DIM);
-        draw_image(&font, &mut image);
-        let _ = font;
+        draw_image(font, &mut image);
         image
     };
 
@@ -46,7 +45,7 @@ const fn shade(y: u8) -> Gray {
     Gray { y }
 }
 
-fn draw_image(font: &Font, buf: &mut RawPixBuf<Gray>) {
+fn draw_image(font: Font, buf: &mut RawPixBuf<Gray>) {
     // set image to white
     for pix in buf.as_typed_mut() {
         *pix = shade(0xff);
