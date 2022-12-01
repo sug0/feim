@@ -1,0 +1,8 @@
+[package]
+name = "font"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fontdue = "0.7"
+feim = { path = "../../crate", features = ["fmt-jpeg"] }
