@@ -1,3 +1,4 @@
+* add num traits to color types
 * make this crate `no_std`
     + use [this crate](https://lib.rs/crates/embedded-io) for I/O
 * split `feim` into different sub-crates
