@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<_> = env::args().collect();
 
     if args.len() < 3 {
-        usage(&args)?;
+        usage()?;
     }
 
     let fst_file = File::open(&args[1])?;
@@ -42,8 +42,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn usage(args: &[String]) -> Result<(), String> {
-    Err(format!("Usage: {} <first-img> <second-img>", args[0]))
+fn usage() -> Result<(), &'static str> {
+    Err("Need to provide two image args")
 }
 
 fn multiply(
