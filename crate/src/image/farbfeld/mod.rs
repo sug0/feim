@@ -8,6 +8,7 @@ use crate::impl_format;
 use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions};
 use crate::specialized;
 
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct FarbfeldDecodeOptions {
     pub check_header: bool,
 }

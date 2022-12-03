@@ -68,6 +68,7 @@ impl Decode<PngBuf> for Png {
     }
 }
 
+#[derive(Debug, Copy, Clone)]
 pub struct PngEncodeOptions {
     pub filter: FilterType,
     pub compression: Compression,

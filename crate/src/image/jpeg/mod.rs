@@ -50,6 +50,7 @@ impl Decode<JpegBuf> for Jpeg {
     }
 }
 
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct JpegEncodeOptions {
     quality: u8,
 }
