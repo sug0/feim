@@ -8,7 +8,7 @@ clap = { version = "4.0", features = ["derive"] }
 flume = "0.10"
 itertools = "0.10"
 rayon = "1.5"
-feim = { path = "../../crate", features = ["fmt-farbfeld-stream"] }
+feim = { path = "../../crate", features = ["fmt-farbfeld"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_repr = "0.1"
 thiserror = "1.0"

@@ -1,6 +1,3 @@
-#[cfg(feature = "fmt-farbfeld-stream")]
-pub mod stream;
-
 use std::io::{self, Read, Write};
 
 use super::{Dimensions, Format, Image};
