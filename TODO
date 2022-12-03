@@ -1,6 +1,10 @@
-* stream encode with farbfeld on bitlang
+* make this crate `no_std`
+    + use [this crate](https://lib.rs/crates/embedded-io) for I/O
+* split `feim` into different sub-crates
+    * e.g. `feim-serialization`, `feim-colors`, `feim-images`, etc
 * add bitmap images?
     + use [this crate](https://docs.rs/bitmaps)
+    + or [this crate](https://github.com/heliaxdev/index-set)
 * make error in decode and encode an associate type,
   not io::Error
 * implement mozjpeg backend?
