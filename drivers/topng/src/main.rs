@@ -38,7 +38,7 @@ fn main() -> io::Result<()> {
                 JpegBuf::Gray(buf) => Png::encode_specialized(stdout_writer, opts, buf),
                 JpegBuf::Gray16(buf) => Png::encode_specialized(stdout_writer, opts, buf),
                 JpegBuf::Rgb(buf) => Png::encode_specialized(stdout_writer, opts, buf),
-                cmyk_buf @ JpegBuf::Cmyk(_) => Png::encode_generic(stdout_writer, opts, cmyk_buf),
+                JpegBuf::Cmyk(buf) => Png::encode_generic(stdout_writer, opts, buf),
             }
         }
         Ok(BuiltInFormat::Png) => {

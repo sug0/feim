@@ -108,7 +108,7 @@ impl_encode!(crate::image::webp::NrgbaWebpBuf, ColorType::Rgba);
 impl Encode<JpegBuf> for Jpeg {
     fn encode<W: Write>(w: W, opts: JpegEncodeOptions, buf: &JpegBuf) -> io::Result<()> {
         match buf {
-            gray16_buf @ JpegBuf::Gray16(_) => Jpeg::encode_generic(w, opts, gray16_buf),
+            JpegBuf::Gray16(buf) => Jpeg::encode_generic(w, opts, buf),
             JpegBuf::Gray(buf) => Jpeg::encode_specialized(w, opts, buf),
             JpegBuf::Rgb(buf) => Jpeg::encode_specialized(w, opts, buf),
             JpegBuf::Cmyk(buf) => Jpeg::encode_specialized(w, opts, buf),
