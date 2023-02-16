@@ -12,7 +12,9 @@ use crate::color::convert::ConvertInto;
 use crate::color::{Cmyk, Gray, Nrgba, Rgb};
 use crate::image::{Dimensions, Image, ImageMut};
 use crate::impl_format;
-use crate::serialize::{Decode, DecodeOptions, Encode, EncodeOptions, EncodeSpecialized};
+use crate::serialize::{
+    Decode, DecodeOptions, Encode, EncodeGeneric, EncodeOptions, EncodeSpecialized,
+};
 use crate::specialized;
 
 pub struct Jpeg;
@@ -106,7 +108,7 @@ impl_encode!(crate::image::webp::NrgbaWebpBuf, ColorType::Rgba);
 impl Encode<JpegBuf> for Jpeg {
     fn encode<W: Write>(w: W, opts: JpegEncodeOptions, buf: &JpegBuf) -> io::Result<()> {
         match buf {
-            JpegBuf::Gray16(_) => todo!(),
+            gray16_buf @ JpegBuf::Gray16(_) => Jpeg::encode_generic(w, opts, gray16_buf),
             JpegBuf::Gray(buf) => Jpeg::encode_specialized(w, opts, buf),
             JpegBuf::Rgb(buf) => Jpeg::encode_specialized(w, opts, buf),
             JpegBuf::Cmyk(buf) => Jpeg::encode_specialized(w, opts, buf),
