@@ -10,7 +10,7 @@ use feim::image::{
     webp::Webp,
     BuiltInFormat,
 };
-use feim::serialize::{try_format, Decode, EncodeSpecialized};
+use feim::serialize::{try_format, Decode, EncodeGeneric, EncodeSpecialized};
 
 fn main() -> io::Result<()> {
     let stdin = io::stdin();
@@ -38,7 +38,7 @@ fn main() -> io::Result<()> {
                 JpegBuf::Gray(buf) => Png::encode_specialized(stdout_writer, opts, buf),
                 JpegBuf::Gray16(buf) => Png::encode_specialized(stdout_writer, opts, buf),
                 JpegBuf::Rgb(buf) => Png::encode_specialized(stdout_writer, opts, buf),
-                JpegBuf::Cmyk(_) => todo!(),
+                cmyk_buf @ JpegBuf::Cmyk(_) => Png::encode_generic(stdout_writer, opts, cmyk_buf),
             }
         }
         Ok(BuiltInFormat::Png) => {
