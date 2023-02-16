@@ -21,7 +21,7 @@ jpeg-decoder = { version = "0.3", features = ["nightly_aarch64_neon"], optional 
 png = { version = "0.17", optional = true }
 
 [dependencies.webp]
-git = "https://github.com/sug0/webp"
-rev = "164503bf4b5f6c8390fc6943252767d7294d48d2"
+git = "https://github.com/jaredforth/webp"
+rev = "9b602d7787c7f7cdccbea9d421582c1b617a7761"
 default-features = false
 optional = true
