@@ -40,6 +40,12 @@ fn main() -> io::Result<()> {
 
 impl CmdLineArgs {
     fn braille<W: Write>(&self, im: RawPixBuf<Nrgba64Be>, mut w: W) -> io::Result<()> {
+        if im.width() % 2 != 0 {
+            panic!("width % 2 != 0")
+        }
+        if im.height() % 4 != 0 {
+            panic!("height % 4 != 0")
+        }
         for y in (0..im.height()).step_by(4) {
             for x in (0..im.width()).step_by(2) {
                 let mut bits = 0u32;
