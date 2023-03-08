@@ -12,7 +12,7 @@ in your `Cargo.toml` file:
 [dependencies.feim]
 tag = "v0.19"
 features = ["enable-all-formats"]
-git = "https://git.sr.ht/~sugo/feim"
+git = "https://github.com/sug0/feim"
 ```
 
 ## Examples
