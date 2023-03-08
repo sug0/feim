@@ -1,7 +1,6 @@
 # feim
 
-A modular crate for working with images in the most sought after
-language of 2021.
+A modular crate for working with images in Rust.
 
 ## How to use this mess
 
@@ -22,5 +21,5 @@ in this repository.
 
 ## About this repository
 
-This is a low traffic version of <https://git.sr.ht/~sugo/feim>.
+This is a low traffic version of <https://sr.ht/~sugo/feim>.
 Pushes on GitHub are less frequent.
