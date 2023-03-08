@@ -1,10 +1,14 @@
 use super::convert::ConvertFrom;
-use super::Color;
+use super::{Color, Zero};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
 pub struct Gray {
     pub y: u8,
+}
+
+impl Zero for Gray {
+    const ZERO: Self = Gray { y: 0 };
 }
 
 impl Color for Gray {

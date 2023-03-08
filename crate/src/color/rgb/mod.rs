@@ -1,5 +1,5 @@
 use super::convert::ConvertFrom;
-use super::Color;
+use super::{Color, Zero};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -7,6 +7,10 @@ pub struct Rgb {
     pub r: u8,
     pub g: u8,
     pub b: u8,
+}
+
+impl Zero for Rgb {
+    const ZERO: Self = Rgb { r: 0, g: 0, b: 0 };
 }
 
 impl Color for Rgb {

@@ -1,5 +1,5 @@
 use super::convert::ConvertFrom;
-use super::Color;
+use super::{Color, Zero};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -8,6 +8,15 @@ pub struct Cmyk {
     pub m: u8,
     pub y: u8,
     pub k: u8,
+}
+
+impl Zero for Cmyk {
+    const ZERO: Self = Cmyk {
+        c: 0,
+        m: 0,
+        y: 0,
+        k: 0,
+    };
 }
 
 impl Color for Cmyk {

@@ -16,6 +16,12 @@ pub use nrgba64::*;
 pub use rgb::*;
 pub use rgb48::*;
 
+/// A color which contains a zero value.
+pub trait Zero: Color {
+    /// The zero value of this color.
+    const ZERO: Self;
+}
+
 pub trait Color {
     /// Return an alpha premultiplied color in RGBA 16 bits.
     ///

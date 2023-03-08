@@ -1,5 +1,5 @@
 use crate::color::convert::ConvertInto;
-use crate::color::Color;
+use crate::color::{Color, Zero};
 use crate::image::{Dimensions, Image, ImageMut};
 
 pub trait AsTyped {
@@ -21,7 +21,10 @@ pub struct RawPixBuf<T> {
     buf: Box<[T]>,
 }
 
-impl<T> RawPixBuf<T> {
+impl<T> RawPixBuf<T>
+where
+    T: Zero,
+{
     pub fn new(width: usize, height: usize) -> Self {
         let buf = unsafe {
             let elems = width * height;
@@ -55,7 +58,9 @@ impl<T> RawPixBuf<T> {
         };
         Ok(RawPixBuf { width, height, buf })
     }
+}
 
+impl<T> RawPixBuf<T> {
     #[inline]
     pub fn into_pixels(self) -> Vec<T> {
         self.buf.into_vec()

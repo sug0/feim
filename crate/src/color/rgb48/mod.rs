@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
-use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian};
+use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian, Zero};
 use crate::specialized;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
@@ -192,6 +192,18 @@ fn rgb48_to_rgba(r: u16, g: u16, b: u16) -> (u32, u32, u32, u32) {
     let a = 0xffff;
 
     (r, g, b, a)
+}
+
+impl<E> Zero for Rgb48<E>
+where
+    Rgb48<E>: Color,
+{
+    const ZERO: Self = Rgb48 {
+        r: 0,
+        g: 0,
+        b: 0,
+        _endianness: PhantomData,
+    };
 }
 
 impl Color for Rgb48<NativeEndian> {

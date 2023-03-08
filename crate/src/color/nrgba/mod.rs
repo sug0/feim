@@ -1,5 +1,5 @@
 use super::convert::ConvertFrom;
-use super::Color;
+use super::{Color, Zero};
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 #[repr(C)]
@@ -8,6 +8,15 @@ pub struct Nrgba {
     pub g: u8,
     pub b: u8,
     pub a: u8,
+}
+
+impl Zero for Nrgba {
+    const ZERO: Self = Nrgba {
+        r: 0,
+        g: 0,
+        b: 0,
+        a: 0,
+    };
 }
 
 impl Color for Nrgba {

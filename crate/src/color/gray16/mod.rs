@@ -1,7 +1,7 @@
 use std::marker::PhantomData;
 
 use super::convert::ConvertFrom;
-use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian};
+use super::{BigEndian, Color, Endianness, LittleEndian, NativeEndian, Zero};
 use crate::specialized;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
@@ -129,6 +129,16 @@ fn gray16_to_rgba(y: u16) -> (u32, u32, u32, u32) {
     let a = 0xffff;
 
     (r, g, b, a)
+}
+
+impl<E> Zero for Gray16<E>
+where
+    Gray16<E>: Color,
+{
+    const ZERO: Self = Gray16 {
+        y: 0,
+        _endianness: PhantomData,
+    };
 }
 
 impl Color for Gray16<NativeEndian> {
