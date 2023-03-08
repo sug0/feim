@@ -17,7 +17,7 @@ pub use rgb::*;
 pub use rgb48::*;
 
 /// A color which contains a zero value.
-pub trait Zero: Color {
+pub trait Zero: Color + Copy {
     /// The zero value of this color.
     const ZERO: Self;
 }

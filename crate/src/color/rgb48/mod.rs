@@ -196,7 +196,7 @@ fn rgb48_to_rgba(r: u16, g: u16, b: u16) -> (u32, u32, u32, u32) {
 
 impl<E> Zero for Rgb48<E>
 where
-    Rgb48<E>: Color,
+    Rgb48<E>: Color + Copy,
 {
     const ZERO: Self = Rgb48 {
         r: 0,

@@ -133,7 +133,7 @@ fn gray16_to_rgba(y: u16) -> (u32, u32, u32, u32) {
 
 impl<E> Zero for Gray16<E>
 where
-    Gray16<E>: Color,
+    Gray16<E>: Color + Copy,
 {
     const ZERO: Self = Gray16 {
         y: 0,

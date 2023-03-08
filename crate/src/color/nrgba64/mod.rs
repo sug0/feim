@@ -211,7 +211,7 @@ fn nrgba64_to_rgba(r: u16, g: u16, b: u16, a: u16) -> (u32, u32, u32, u32) {
 
 impl<E> Zero for Nrgba64<E>
 where
-    Nrgba64<E>: Color,
+    Nrgba64<E>: Color + Copy,
 {
     const ZERO: Self = Nrgba64 {
         r: 0,
