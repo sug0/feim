@@ -19,3 +19,8 @@ git = "https://git.sr.ht/~sugo/feim"
 
 To consult example code, browse the [`drivers`](drivers/) directory
 in this repository.
+
+## About this repository
+
+This is a low traffic version of <https://git.sr.ht/~sugo/feim>.
+Pushes on GitHub are less frequent.
